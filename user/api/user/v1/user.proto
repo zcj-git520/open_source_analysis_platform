@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "user/user/v1;v1";
+option java_multiple_files = true;
+option java_package = "user.v1";
+
+service User {
+	rpc Register (RegisterRequest) returns (RegisterReply){
+		option (google.api.http) = {
+        post: "/v1/register"
+        body: "*"
+      };
+			}
+
+	rpc Login (LoginRequest) returns (LoginReply){
+		  option (google.api.http) = {
+        post: "/v1/login"
+        body: "*"
+      };
+	}
+	rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply){
+		  option (google.api.http) = {
+        put: "/v1/user"
+        body: "*"
+      };
+	}
+	rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){
+		option (google.api.http) = {
+        delete: "/v1/user/{uid}"
+      };
+	}
+	rpc GetUser (GetUserRequest) returns (GetUserReply){
+		option (google.api.http) = {
+        get: "/v1/user/{uid}"
+      };
+	}
+	rpc ListUser (ListUserRequest) returns (ListUserReply){
+		option (google.api.http) = {
+        get: "/v1/user"
+      };
+	}
+}
+
+// 创建用户信息
+message RegisterRequest {
+	string nickname = 1 [(validate.rules).string ={min_len: 5, max_len: 15}];
+	string password = 2 [(validate.rules).string ={min_len: 8, max_len: 15}];
+	string email = 3 [(validate.rules).string ={min_len: 1}];
+	string avatar = 4 [(validate.rules).string ={min_len: 11}];
+	string gender = 5 [(validate.rules).string.len=1];
+}
+
+// 用户信息返回
+message RegisterReply {
+	int64 uid = 1;
+}
+
+message LoginRequest {
+	string nickname = 1 [(validate.rules).string ={min_len: 5, max_len: 15}];
+	string password = 2 [(validate.rules).string ={min_len: 8, max_len: 15}];
+}
+
+message LoginReply {
+	int64 uid = 1;
+  string token = 2;
+}
+
+message UpdateUserRequest {
+	int64 uid = 1;
+	string nickname = 2;
+	string password = 3;
+	string avatar = 4;
+	string verificationCode = 5;
+	string gender = 6;
+}
+message UpdateUserReply {
+	int64 uid = 1;
+	string token = 2;
+}
+
+message DeleteUserRequest {
+	int64 uid = 1;
+}
+message DeleteUserReply {
+	int64 uid = 1;
+}
+
+message GetUserRequest {
+	int64 uid = 1;
+}
+message GetUserReply {
+	string nickname = 2;
+	string email = 3;
+	string avatar = 4;
+	string gender = 5;
+}
+
+message ListUserRequest {
+	int32 page = 1;
+  int32 size = 2;
+}
+message ListUserReply {
+	int32 total = 1;
+	repeated GetUserReply users = 2;
+}
