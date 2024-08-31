@@ -10,16 +10,16 @@ import (
 )
 
 type UserInfo struct {
-	ID        int64  `gorm:"primarykey;type:int" json:"id"`
-	Uid       int64  `gorm:"type:int" json:"uid"`
-	Status    int    `gorm:"type:TINYINT" json:"status"`
-	Nickname  string `gorm:"type:varchar(50)" json:"username"`
-	Password  string `gorm:"type:varchar(50)" json:"password"`
-	Email     string `gorm:"type:varchar(50)" json:"email"`
-	Avatar    string `gorm:"type:varchar(255)" json:"avatar"`
-	Gender    int    `gorm:"type:TINYINT" json:"gender"`
-	CreatedAt int64  `gorm:"type:int" json:"created_at"`
-	UpdatedAt int64  `gorm:"type:int" json:"updated_at"`
+	ID        int64     `gorm:"primarykey;type:int" json:"id"`
+	Uid       int64     `gorm:"type:int" json:"uid"`
+	Status    int       `gorm:"type:TINYINT" json:"status"`
+	Nickname  string    `gorm:"type:varchar(50)" json:"username"`
+	Password  string    `gorm:"type:varchar(50)" json:"password"`
+	Email     string    `gorm:"type:varchar(50)" json:"email"`
+	Avatar    string    `gorm:"type:varchar(255)" json:"avatar"`
+	Gender    int       `gorm:"type:TINYINT" json:"gender"`
+	CreatedAt time.Time `gorm:"column:created_at;type:datetime" json:"created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime" json:"updated_at"`
 }
 
 func (UserInfo) TableName() string {
@@ -71,7 +71,7 @@ func (u *userRepo) InsertUser(ctx context.Context, user *biz.UserInfo) (int64, e
 		Email:     user.Email,
 		Avatar:    user.Avatar,
 		Gender:    user.Gender,
-		CreatedAt: time.Now().Unix(),
-		UpdatedAt: time.Now().Unix(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}).Error
 }

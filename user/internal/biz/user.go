@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"time"
 	pb "user/api/user/v1"
 )
 
@@ -13,16 +14,16 @@ type UserRepo interface {
 }
 
 type UserInfo struct {
-	ID        int64  `json:"id"`
-	Uid       int64  `json:"uid"`
-	Status    int    `json:"status"`
-	Nickname  string `json:"username"`
-	Password  string `json:"password"`
-	Email     string `json:"email"`
-	Avatar    string `json:"avatar"`
-	Gender    int    `json:"gender"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
+	ID        int64     `json:"id"`
+	Uid       int64     `json:"uid"`
+	Status    int       `json:"status"`
+	Nickname  string    `json:"username"`
+	Password  string    `json:"password"`
+	Email     string    `json:"email"`
+	Avatar    string    `json:"avatar"`
+	Gender    int       `json:"gender"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type User struct {
