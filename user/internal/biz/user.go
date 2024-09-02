@@ -62,7 +62,7 @@ func NewUser(repo UserRepo, logger log.Logger) *User {
 
 func (u *User) sendVerificationCodeByEmail(ctx context.Context, to string) error {
 	email := pkg.NewEmailSMTP(pkg.WithSmtpHost("smtp.qq.com"), pkg.WithSmtpPort(587),
-		pkg.WithSmtpUsername("osap.work@qq.com"), pkg.WithSmtpPassword("dkcgahsacpdcbdjg"),
+		pkg.WithSmtpUsername("osap.work@qq.com"), pkg.WithSmtpPassword(""),
 		pkg.WithFrom("osap.work@qq.com"),
 		pkg.WithTo([]string{to}))
 	// 生成验证码
