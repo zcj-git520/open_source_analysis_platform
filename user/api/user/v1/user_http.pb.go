@@ -25,6 +25,7 @@ const OperationUserListUser = "/user.v1.User/ListUser"
 const OperationUserLogin = "/user.v1.User/Login"
 const OperationUserRegister = "/user.v1.User/Register"
 const OperationUserUpdateUser = "/user.v1.User/UpdateUser"
+const OperationUserVerify = "/user.v1.User/Verify"
 
 type UserHTTPServer interface {
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
@@ -33,16 +34,40 @@ type UserHTTPServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserReply, error)
+	Verify(context.Context, *VerifyRequest) (*VerifyReply, error)
 }
 
 func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
+	r.POST("/v1/verify", _User_Verify0_HTTP_Handler(srv))
 	r.POST("/v1/register", _User_Register0_HTTP_Handler(srv))
 	r.POST("/v1/login", _User_Login0_HTTP_Handler(srv))
 	r.PUT("/v1/user", _User_UpdateUser0_HTTP_Handler(srv))
 	r.DELETE("/v1/user/{uid}", _User_DeleteUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/{uid}", _User_GetUser0_HTTP_Handler(srv))
 	r.GET("/v1/user", _User_ListUser0_HTTP_Handler(srv))
+}
+
+func _User_Verify0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in VerifyRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserVerify)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Verify(ctx, req.(*VerifyRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*VerifyReply)
+		return ctx.Result(200, reply)
+	}
 }
 
 func _User_Register0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -181,6 +206,7 @@ type UserHTTPClient interface {
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *UpdateUserReply, err error)
+	Verify(ctx context.Context, req *VerifyRequest, opts ...http.CallOption) (rsp *VerifyReply, err error)
 }
 
 type UserHTTPClientImpl struct {
@@ -263,6 +289,19 @@ func (c *UserHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUserReque
 	opts = append(opts, http.Operation(OperationUserUpdateUser))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserHTTPClientImpl) Verify(ctx context.Context, in *VerifyRequest, opts ...http.CallOption) (*VerifyReply, error) {
+	var out VerifyReply
+	pattern := "/v1/verify"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserVerify))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -11,6 +11,13 @@ option java_multiple_files = true;
 option java_package = "user.v1";
 
 service User {
+	rpc Verify (VerifyRequest) returns (VerifyReply){
+		option (google.api.http) = {
+        post: "/v1/verify"
+        body: "*"
+      };
+	}
+
 	rpc Register (RegisterRequest) returns (RegisterReply){
 		option (google.api.http) = {
         post: "/v1/register"
@@ -24,22 +31,26 @@ service User {
         body: "*"
       };
 	}
+
 	rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply){
 		  option (google.api.http) = {
         put: "/v1/user"
         body: "*"
       };
 	}
+
 	rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){
 		option (google.api.http) = {
         delete: "/v1/user/{uid}"
       };
 	}
+
 	rpc GetUser (GetUserRequest) returns (GetUserReply){
 		option (google.api.http) = {
         get: "/v1/user/{uid}"
       };
 	}
+
 	rpc ListUser (ListUserRequest) returns (ListUserReply){
 		option (google.api.http) = {
         get: "/v1/user"
@@ -47,13 +58,22 @@ service User {
 	}
 }
 
+
+message VerifyRequest {
+	string email = 1 [(validate.rules).string ={min_len: 1}];
+}
+
+message VerifyReply {
+	bool success = 1;
+}
+
 // 创建用户信息
 message RegisterRequest {
 	string nickname = 1 [(validate.rules).string ={min_len: 5, max_len: 15}];
 	string password = 2 [(validate.rules).string ={min_len: 8, max_len: 15}];
 	string email = 3 [(validate.rules).string ={min_len: 1}];
-	string avatar = 4 [(validate.rules).string ={min_len: 11}];
-	string gender = 5 [(validate.rules).string.len=1];
+	string phone = 4 [(validate.rules).string ={min_len: 11, max_len: 11}];
+	string verificationCode = 5 [(validate.rules).string ={min_len: 6, max_len: 6}];
 }
 
 // 用户信息返回

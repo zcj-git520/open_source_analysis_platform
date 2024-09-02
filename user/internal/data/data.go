@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
@@ -71,8 +72,8 @@ func NewRedis(c *conf.Data) *redis.Client {
 		ReadTimeout:  c.Redis.ReadTimeout.AsDuration(),
 	})
 	rdb.AddHook(redisotel.TracingHook{})
-	if err := rdb.Close(); err != nil {
-		log.Error(err)
+	if err := rdb.Ping(context.Background()).Err(); err != nil {
+		panic(err)
 	}
 	return rdb
 }

@@ -35,6 +35,218 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on VerifyRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *VerifyRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VerifyRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in VerifyRequestMultiError, or
+// nil if none found.
+func (m *VerifyRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VerifyRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetEmail()) < 1 {
+		err := VerifyRequestValidationError{
+			field:  "Email",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return VerifyRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// VerifyRequestMultiError is an error wrapping multiple validation errors
+// returned by VerifyRequest.ValidateAll() if the designated constraints
+// aren't met.
+type VerifyRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VerifyRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VerifyRequestMultiError) AllErrors() []error { return m }
+
+// VerifyRequestValidationError is the validation error returned by
+// VerifyRequest.Validate if the designated constraints aren't met.
+type VerifyRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VerifyRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VerifyRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VerifyRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VerifyRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VerifyRequestValidationError) ErrorName() string { return "VerifyRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e VerifyRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVerifyRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VerifyRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VerifyRequestValidationError{}
+
+// Validate checks the field values on VerifyReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *VerifyReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VerifyReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in VerifyReplyMultiError, or
+// nil if none found.
+func (m *VerifyReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VerifyReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return VerifyReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// VerifyReplyMultiError is an error wrapping multiple validation errors
+// returned by VerifyReply.ValidateAll() if the designated constraints aren't met.
+type VerifyReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VerifyReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VerifyReplyMultiError) AllErrors() []error { return m }
+
+// VerifyReplyValidationError is the validation error returned by
+// VerifyReply.Validate if the designated constraints aren't met.
+type VerifyReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VerifyReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VerifyReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VerifyReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VerifyReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VerifyReplyValidationError) ErrorName() string { return "VerifyReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e VerifyReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVerifyReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VerifyReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VerifyReplyValidationError{}
+
 // Validate checks the field values on RegisterRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -90,21 +302,22 @@ func (m *RegisterRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetAvatar()) < 11 {
+	if utf8.RuneCountInString(m.GetPhone()) != 11 {
 		err := RegisterRequestValidationError{
-			field:  "Avatar",
-			reason: "value length must be at least 11 runes",
+			field:  "Phone",
+			reason: "value length must be 11 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+
 	}
 
-	if utf8.RuneCountInString(m.GetGender()) != 1 {
+	if utf8.RuneCountInString(m.GetVerificationCode()) != 6 {
 		err := RegisterRequestValidationError{
-			field:  "Gender",
-			reason: "value length must be 1 runes",
+			field:  "VerificationCode",
+			reason: "value length must be 6 runes",
 		}
 		if !all {
 			return err
