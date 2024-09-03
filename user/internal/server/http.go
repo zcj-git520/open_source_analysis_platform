@@ -16,14 +16,14 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, user *service.UserService, ac *conf.Auth, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
 			validate.Validator(),
 			selector.Server(
 				jwt.Server(func(token *jwtv5.Token) (interface{}, error) {
-					return []byte("osap"), nil
+					return []byte(ac.JwtKey), nil
 				}, jwt.WithSigningMethod(jwtv5.SigningMethodHS256)),
 			).Match(NewWhiteListMatcher()).Build(),
 		),

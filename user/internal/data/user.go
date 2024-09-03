@@ -78,6 +78,14 @@ func (u *userRepo) FindUserByPhone(ctx context.Context, phone string) (*biz.User
 	return u.changeType(ctx, user), nil
 }
 
+func (u *userRepo) FindUserByUid(ctx context.Context, uid int64) (*biz.UserInfo, error) {
+	user := &UserInfo{}
+	if err := u.data.db.Where("uid = ? and status = 0", uid).Find(user).Error; err != nil {
+		return nil, err
+	}
+	return u.changeType(ctx, user), nil
+}
+
 func (u *userRepo) InsertUser(ctx context.Context, user *biz.UserInfo) (int64, error) {
 	sn := pkg.NewSnowflake(1, 1)
 	uid := sn.NextId()
@@ -95,6 +103,26 @@ func (u *userRepo) InsertUser(ctx context.Context, user *biz.UserInfo) (int64, e
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}).Error
+}
+
+func (u *userRepo) UpdateUser(ctx context.Context, user *biz.UserInfo) error {
+	userInfo := &UserInfo{UpdatedAt: time.Now()}
+	if user.Nickname != "" {
+		userInfo.Nickname = user.Nickname
+	}
+	if user.Password != "" {
+		userInfo.Password = user.Password
+	}
+	if user.Email != "" {
+		userInfo.Email = user.Email
+	}
+	if user.Avatar != "" {
+		userInfo.Avatar = user.Avatar
+	}
+	if user.Gender != 0 {
+		userInfo.Gender = user.Gender
+	}
+	return u.data.db.Model(&UserInfo{}).Where("uid = ?", user.Uid).Updates(userInfo).Error
 }
 
 func (u *userRepo) SetVerifyCodeCache(ctx context.Context, email, code string, expTime time.Duration) error {

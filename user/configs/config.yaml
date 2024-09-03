@@ -10,8 +10,8 @@ data:
     driver: mysql
     source: root:123456@tcp(127.0.0.1:3306)/osap_user?parseTime=True&loc=Local
   redis:
-    addr: 127.0.0.1:6379
-    password: ""
+    addr: 192.168.50.109:16379
+    password: "Shds@402"
     db: 0
     read_timeout: 0.2s
     write_timeout: 0.2s
@@ -21,4 +21,7 @@ email:
   smtp_host: "smtp.qq.com"
   smtp_port: 587
   smtp_username: "osap.work@qq.com"
-  smtp_password: "xxxxxx"
+  smtp_password: "dkcgahsacpdcbdjg"
+
+auth:
+  jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S

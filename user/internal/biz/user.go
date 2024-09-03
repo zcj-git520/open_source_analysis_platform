@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"time"
 	pb "user/api/user/v1"
+	"user/internal/conf"
 	"user/internal/pkg"
 	"user/internal/pkg/auth"
 )
@@ -35,6 +36,8 @@ type UserRepo interface {
 	GetVerifyCodeCache(ctx context.Context, email string) (string, error)
 	DeleteVerifyCodeCache(ctx context.Context, email string) error
 	FindUserByName(ctx context.Context, name string) (*UserInfo, error)
+	FindUserByUid(ctx context.Context, uid int64) (*UserInfo, error)
+	UpdateUser(ctx context.Context, user *UserInfo) error
 }
 
 type UserInfo struct {
@@ -54,16 +57,49 @@ type UserInfo struct {
 type User struct {
 	repo UserRepo
 	log  *log.Helper
+	ac   *conf.Auth
+	ec   *conf.Email
 }
 
-func NewUser(repo UserRepo, logger log.Logger) *User {
-	return &User{repo: repo, log: log.NewHelper(logger)}
+func NewUser(repo UserRepo, logger log.Logger, ac *conf.Auth, ec *conf.Email) *User {
+	return &User{repo: repo, ac: ac, ec: ec, log: log.NewHelper(logger)}
+}
+
+func (u *User) createToken(ctx context.Context, uid int64) (string, error) {
+	user, err := u.repo.FindUserByUid(ctx, uid)
+	// 用户已存在
+	if err != nil || user == nil || user.Uid == 0 {
+		return "", fmt.Errorf("user not found")
+	}
+	token, err := auth.CreateToken(auth.Claims{
+		Uid:      user.Uid,
+		Nickname: user.Nickname,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+		Gender:   user.Gender,
+		Phone:    user.Phone,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    Issuer,
+			Subject:   Audience,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+		},
+	}, u.ac.JwtKey)
+	if err != nil {
+		return "", fmt.Errorf("token create error")
+	}
+	return token, nil
 }
 
 func (u *User) sendVerificationCodeByEmail(ctx context.Context, to string) error {
-	email := pkg.NewEmailSMTP(pkg.WithSmtpHost("smtp.qq.com"), pkg.WithSmtpPort(587),
-		pkg.WithSmtpUsername("osap.work@qq.com"), pkg.WithSmtpPassword(""),
-		pkg.WithFrom("osap.work@qq.com"),
+	//email := pkg.NewEmailSMTP(pkg.WithSmtpHost("smtp.qq.com"), pkg.WithSmtpPort(587),
+	//	pkg.WithSmtpUsername("osap.work@qq.com"), pkg.WithSmtpPassword("dkcgahsacpdcbdjg"),
+	//	pkg.WithFrom("osap.work@qq.com"),
+	//	pkg.WithTo([]string{to}))
+	email := pkg.NewEmailSMTP(pkg.WithSmtpHost(u.ec.SmtpHost), pkg.WithSmtpPort(int(u.ec.SmtpPort)),
+		pkg.WithSmtpUsername(u.ec.SmtpUsername), pkg.WithSmtpPassword(u.ec.SmtpPassword),
+		pkg.WithFrom(u.ec.From),
 		pkg.WithTo([]string{to}))
 	// 生成验证码
 	rand.Seed(time.Now().UnixNano())
@@ -130,33 +166,80 @@ func (u *User) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Regis
 
 func (u *User) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply, error) {
 	// 判断用户名是否存在
-	user, err := u.repo.FindUserByName(ctx, req.Nickname)
+	user, err := u.repo.FindUserByName(ctx, req.Username)
 	if err != nil || user == nil || user.Uid == 0 {
 		return nil, fmt.Errorf("user not exists")
 	}
 	if !pkg.CheckPassword(user.Password, req.Password) {
 		return nil, fmt.Errorf("password error")
 	}
-	token, err := auth.CreateToken(&auth.Claims{
-		Uid:      user.Uid,
-		Nickname: user.Nickname,
-		Email:    user.Email,
-		Avatar:   user.Avatar,
-		Gender:   user.Gender,
-		Phone:    user.Phone,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    Issuer,
-			Subject:   Audience,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			NotBefore: jwt.NewNumericDate(time.Now()),
-		},
-	}, jwtKey)
+	token, err := u.createToken(ctx, user.Uid)
 	if err != nil {
-		return nil, fmt.Errorf("token create error")
+		return nil, fmt.Errorf("create token error")
 	}
 	return &pb.LoginReply{
 		Token: token,
 		Uid:   user.Uid,
+	}, nil
+}
+
+func (u *User) Update(ctx context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserReply, error) {
+	// 根据用户uid，获取用户信息
+	uid := auth.GetUid(ctx)
+	if uid == 0 {
+		u.log.Errorf("user not login: uid:%v", uid)
+		return nil, fmt.Errorf("user not login")
+	}
+	// 查询uid是否存在
+	user, err := u.repo.FindUserByUid(ctx, uid)
+	if err != nil || user == nil || user.Uid == 0 {
+		return nil, fmt.Errorf("user not exists")
+	}
+	userInfo := &UserInfo{
+		Uid:      user.Uid,
+		Status:   int(req.Status),
+		Nickname: req.Nickname,
+		Password: req.Password,
+		Avatar:   req.Avatar,
+		Gender:   int(req.Gender),
+		Phone:    req.Phone,
+	}
+	// 更新用户信息
+	if req.Password != "" {
+		if !pkg.CheckPassword(user.Password, req.Password) {
+			pwd, _ := pkg.HashPassword(req.Password)
+			userInfo.Password = pwd
+		}
+	}
+	if err = u.repo.UpdateUser(ctx, userInfo); err != nil {
+		return &pb.UpdateUserReply{}, fmt.Errorf("update user error:%v", err)
+	}
+	token, err := u.createToken(ctx, user.Uid)
+	if err != nil {
+		return nil, fmt.Errorf("create token error")
+	}
+	return &pb.UpdateUserReply{
+		Token: token,
+		Uid:   user.Uid,
+	}, nil
+}
+
+func (u *User) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserReply, error) {
+	uid := auth.GetUid(ctx)
+	if uid == 0 {
+		u.log.Errorf("user not login: uid:%v", uid)
+		return nil, fmt.Errorf("user not login")
+	}
+	user, err := u.repo.FindUserByUid(ctx, uid)
+	if err != nil || user == nil || user.Uid == 0 {
+		return nil, fmt.Errorf("user not exists")
+	}
+	return &pb.GetUserReply{
+		Uid:      user.Uid,
+		Username: user.Nickname,
+		Email:    user.Email,
+		Phone:    user.Phone,
+		Avatar:   user.Avatar,
+		Gender:   int32(user.Gender),
 	}, nil
 }
