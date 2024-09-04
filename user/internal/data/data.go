@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 	"user/internal/conf"
+	"user/internal/domain"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/extra/redisotel"
@@ -58,7 +59,7 @@ func NewDB(c *conf.Data) *gorm.DB {
 		log.Errorf("failed opening connection to mysql: %v", err)
 		//panic("failed to connect database")
 	}
-	_ = db.AutoMigrate(&UserInfo{})
+	_ = db.AutoMigrate(&UserInfo{}, &domain.RepoInfo{}, &domain.Language{}, &domain.Owner{})
 	return db
 }
 

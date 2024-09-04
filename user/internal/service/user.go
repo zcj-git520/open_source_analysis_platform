@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"net/http"
 	pb "user/api/user/v1"
 	"user/internal/biz"
 )
@@ -9,6 +10,7 @@ import (
 type UserService struct {
 	pb.UnimplementedUserServer
 	uc *biz.User
+	rp *biz.RepoInfo
 }
 
 func NewUserService(uc *biz.User) *UserService {
@@ -33,5 +35,9 @@ func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.
 	return s.uc.GetUser(ctx, req)
 }
 func (s *UserService) ListUser(ctx context.Context, req *pb.ListUserRequest) (*pb.ListUserReply, error) {
+	_ = s.uc.ParseResult(ctx, "golang", http.Header{
+		"Authorization": []string{"token "},
+		"Accept":        []string{"application/json"},
+	}, 1, 10000)
 	return &pb.ListUserReply{}, nil
 }
