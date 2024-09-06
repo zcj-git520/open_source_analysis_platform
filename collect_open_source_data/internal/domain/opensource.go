@@ -9,7 +9,7 @@ type RepoInfo struct {
 	Image           string    `gorm:"type:varchar(255)" json:"image"`          // 仓库图片
 	OwnerID         int64     `gorm:"type:int" json:"owner_id"`                // 仓库所有者ID
 	Private         bool      `gorm:"type:tinyint" json:"private"`             // 是否私有
-	Desc            string    `gorm:"type:varchar(255)" json:"desc"`           // 仓库描述
+	Desc            string    `gorm:"type:MEDIUMTEXT" json:"desc"`             // 仓库描述
 	HtmlURL         string    `gorm:"type:varchar(255)" json:"html_url"`       // 库主页 URL
 	Homepage        string    `gorm:"type:varchar(255)" json:"homepage"`       // 仓库主页 URL
 	CloneURL        string    `gorm:"type:varchar(255)" json:"clone_url"`      // 克隆 URL
@@ -19,7 +19,7 @@ type RepoInfo struct {
 	LanguageId      int64     `gorm:"type:int" json:"language_id"`             // 仓库语言ID
 	ForksCount      int64     `gorm:"type:int" json:"forks_count"`             // 仓库分支数量
 	OpenIssuesCount int64     `gorm:"type:int" json:"open_issues_count"`       // 仓库问题数量
-	Topics          string    `gorm:"type:varchar(255)" json:"topics"`         // 仓库主题
+	Topics          string    `gorm:"type:varchar(500)" json:"topics"`         // 仓库主题
 	Forks           int64     `gorm:"type:int" json:"forks"`                   // 仓库分支数量
 	OpenIssues      int64     `gorm:"type:int" json:"open_issues"`             // 仓库问题数量
 	Watchers        int64     `gorm:"type:int" json:"watchers"`                // 仓库关注者数量
@@ -60,7 +60,7 @@ type Owner struct {
 	HtmlURL     string    `gorm:"type:varchar(255)" json:"html_url"`   // 用户主页URL
 	Name        string    `gorm:"type:varchar(255)" json:"name"`       // 用户名
 	Email       string    `gorm:"type:varchar(255)" json:"email"`      // 用户邮箱
-	Bio         string    `gorm:"type:varchar(255)" json:"bio"`        // 用户简介
+	Bio         string    `gorm:"type:varchar(500)" json:"bio"`        // 用户简介
 	PublicRepos int64     `gorm:"type:int" json:"public_repos"`        // 用户公开仓库数量
 	PublicGists int64     `gorm:"type:int" json:"public_gists"`        // 用户公开代码片段数量
 	Followers   int64     `gorm:"type:int" json:"followers"`           // 用户粉丝数量
@@ -71,4 +71,24 @@ type Owner struct {
 
 func (Owner) TableName() string {
 	return "owner"
+}
+
+type Page struct {
+	PageNum  int   `json:"pageNum"`  // 当前页，默认为1
+	PageSize int   `json:"pageSize"` // 分页条目数据，默认10
+	Total    int64 `json:"total"`    // 查询总数量
+}
+
+func (p *Page) Offset() int {
+	if p.PageSize < 1 {
+		p.PageSize = 1
+	}
+	return (p.PageNum - 1) * p.PageSize
+}
+
+func (p *Page) Limit() int {
+	if p.PageSize < 1 {
+		p.PageSize = 99999999 // 当不传时，返回9999条数据
+	}
+	return p.PageSize
 }

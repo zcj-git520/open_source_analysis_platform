@@ -9,7 +9,6 @@ import (
 	"time"
 	pb "user/api/user/v1"
 	"user/internal/conf"
-	"user/internal/domain"
 	"user/internal/pkg"
 	"user/internal/pkg/auth"
 )
@@ -39,11 +38,6 @@ type UserRepo interface {
 	FindUserByName(ctx context.Context, name string) (*UserInfo, error)
 	FindUserByUid(ctx context.Context, uid int64) (*UserInfo, error)
 	UpdateUser(ctx context.Context, user *UserInfo) error
-	InsertOwner(ctx context.Context, owner *domain.Owner) (int64, error)
-	InsertRepo(ctx context.Context, repo *domain.RepoInfo) error
-	FindOwnerByName(ctx context.Context, name string) (*domain.Owner, error)
-	FindRepoByName(ctx context.Context, name string) (*domain.RepoInfo, error)
-	FindLanguage(ctx context.Context, name string) (*domain.Language, error)
 }
 
 type UserInfo struct {

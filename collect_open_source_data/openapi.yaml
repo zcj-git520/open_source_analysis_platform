@@ -1,0 +1,270 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: OpenSource API
+    version: 0.0.1
+paths:
+    /v1/language:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetLanguage
+            parameters:
+                - name: page.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page.pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page.total
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.LanguageReply'
+    /v1/owner:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetOwner
+            parameters:
+                - name: page.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page.pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page.total
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: type
+                  in: query
+                  schema:
+                    type: string
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.OwnerReply'
+    /v1/repo:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetRepo
+            parameters:
+                - name: page.page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page.pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: page.total
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: desc
+                  in: query
+                  schema:
+                    type: string
+                - name: languageId
+                  in: query
+                  schema:
+                    type: string
+                - name: ownerId
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.RepoReply'
+components:
+    schemas:
+        open_source.v1.LanguageInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                imageUrl:
+                    type: string
+                repoUrl:
+                    type: string
+                bio:
+                    type: string
+        open_source.v1.LanguageReply:
+            type: object
+            properties:
+                page:
+                    $ref: '#/components/schemas/open_source.v1.Page'
+                languages:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.LanguageInfo'
+        open_source.v1.OwnerInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                avatarUrl:
+                    type: string
+                type:
+                    type: string
+                login:
+                    type: string
+                htmlUrl:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                bio:
+                    type: string
+                publicRepos:
+                    type: string
+                publicGists:
+                    type: string
+                followers:
+                    type: string
+                following:
+                    type: string
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+        open_source.v1.OwnerReply:
+            type: object
+            properties:
+                page:
+                    $ref: '#/components/schemas/open_source.v1.Page'
+                owners:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.OwnerInfo'
+        open_source.v1.Page:
+            type: object
+            properties:
+                page:
+                    type: integer
+                    format: int32
+                pageSize:
+                    type: integer
+                    format: int32
+                total:
+                    type: integer
+                    format: int32
+        open_source.v1.RepoInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                fullName:
+                    type: string
+                image:
+                    type: string
+                ownerId:
+                    type: string
+                ownerName:
+                    type: string
+                private:
+                    type: boolean
+                desc:
+                    type: string
+                htmlUrl:
+                    type: string
+                homepage:
+                    type: string
+                cloneUrl:
+                    type: string
+                stargazersCount:
+                    type: string
+                watchersCount:
+                    type: string
+                language:
+                    type: string
+                languageId:
+                    type: string
+                forksCount:
+                    type: string
+                openIssuesCount:
+                    type: string
+                topics:
+                    type: array
+                    items:
+                        type: string
+                openIssues:
+                    type: string
+                watchers:
+                    type: string
+                defaultBranch:
+                    type: string
+                score:
+                    type: string
+                size:
+                    type: string
+                forks:
+                    type: string
+                createdAt:
+                    type: string
+                updatedAt:
+                    type: string
+        open_source.v1.RepoReply:
+            type: object
+            properties:
+                page:
+                    $ref: '#/components/schemas/open_source.v1.Page'
+                repos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.RepoInfo'
+tags:
+    - name: OpenSource

@@ -1,4 +1,4 @@
-INSERT INTO `osap_user`.`language` (
+INSERT INTO `language` (
     `name`,
     `image`,
     `score`,
@@ -31,7 +31,7 @@ INSERT INTO `osap_user`.`language` (
     'Java拥有庞大的生态系统，是许多大型企业和组织的首选语言。'
 ),
 (
-    'C/C++',
+    'C++',
     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/ISO_C%2B%2B_Logo.svg/1200px-ISO_C%2B%2B_Logo.svg.png',
     '4.5', -- 假设的TIOBE分数
     'C++是一种高效、灵活的编程语言，支持面向对象编程、泛型编程和过程化编程。',
@@ -55,12 +55,12 @@ INSERT INTO `osap_user`.`language` (
     'PHP由Rasmus Lerdorf在1994年创建，是许多动态网站和Web应用程序的后端语言。'
 ),
 (
-    'Swift',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Swift_logo.svg/1200px-Swift_logo.svg.png',
-    '3.5', -- 假设的TIOBE分数
-    'Swift是一种由苹果公司开发的编程语言，用于iOS、macOS、watchOS和tvOS应用开发。',
-    'https://github.com/apple/swift',
-    'Swift以其简洁、快速和安全的特性而受到开发者的喜爱，是苹果生态系统中的主要编程语言之一。'
+    'C',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/The_C_programming_language_logo.svg/1200px-The_C_programming_language_logo.svg.png',
+    '10.2', -- 假设的 TIOBE 分数，可根据实际情况调整
+    'C 语言是一种广泛使用的通用编程语言，具有高效、灵活和可移植性等特点。它是许多其他编程语言的基础，被广泛应用于系统软件、嵌入式系统、游戏开发等领域。',
+    'https://github.com/curl/curl', -- 这里只是一个 C 语言相关项目的仓库地址示例，可根据实际情况调整
+    'C 语言以其简洁的语法和强大的功能而闻名，是编程领域的经典语言之一。'
 ),
 (
     'Ruby',
@@ -71,21 +71,14 @@ INSERT INTO `osap_user`.`language` (
     'Ruby由松本行弘（Yukihiro Matsumoto）设计，是Web开发、脚本编写和快速原型设计的理想选择。'
 ),
 (
-    'Go',
+    'Golang',
     'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Go_Logo_Blue.svg/1200px-Go_Logo_Blue.svg.png',
     '2.5', -- 假设的TIOBE分数
     'Go（又称Golang）是一种由Google开发的静态类型、编译型编程语言，设计用于构建简单、可靠和高效的软件。',
     'https://github.com/golang/go',
     'Go语言以其简洁的语法、高效的并发支持和强大的标准库而受到开发者的青睐，广泛用于云计算、微服务等领域。'
 ),
-(
-    'Kotlin',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Kotlin_logo.svg/1200px-Kotlin_logo.svg.png',
-    '2.0', -- 假设的TIOBE分数
-    'Kotlin是一种静态类型编程语言，由JetBrains设计并开源，用于现代多平台应用。',
-    'https://github.com/JetBrains/kotlin',
-    'Kotlin与Java高度互操作，是Android应用开发的首选语言之一，也广泛用于服务器端和Web开发。'
-),
+
 (
     'Rust',
     'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Rust_programming_language_black_logo.svg/1200px-Rust_programming_language_black_logo.svg.png',
@@ -101,30 +94,4 @@ INSERT INTO `osap_user`.`language` (
     'TypeScript是JavaScript的一个超集，添加了可选的静态类型和基于类的面向对象编程。',
     'https://github.com/microsoft/TypeScript',
     'TypeScript由Microsoft开发，旨在解决JavaScript在大型应用中的可维护性和可扩展性问题，广泛应用于前端和Node.js开发。'
-),
-(
-    'Visual Basic .NET (VB.NET)',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Visual_Basic_.NET_Logo.svg/1200px-Visual_Basic_.NET_Logo.svg.png',
-    '1.5', -- 假设的流行度分数
-    'Visual Basic .NET（VB.NET）是一种面向对象的编程语言，是.NET框架的一部分。',
-    '（注意：VB.NET可能没有像其他语言那样明显的官方GitHub仓库，这里不提供URL）',
-    'VB.NET是Visual Basic的继承者，旨在与.NET框架一起使用，提供快速的应用程序开发（RAD）能力，尤其适合于Windows应用开发。'
-),
-(
-    'R',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/R_logo.svg/1200px-R_logo.svg.png',
-    '1.8', -- 假设的流行度分数
-    'R是一种用于统计计算和图形的编程语言和软件环境。',
-    'https://github.com/wch/r-source',
-    'R以其强大的统计分析和图形功能而受到数据科学家、统计学家和经济学家的喜爱，广泛用于学术研究、商业分析和数据挖掘。'
-),
-(
-    'Scala',
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Scala_logo.svg/1200px-Scala_logo.svg.png',
-    '1.2', -- 假设的流行度分数
-    'Scala是一种多范式编程语言，旨在以简洁、优雅和类型安全的方式表达常见的编程模式。',
-    'https://github.com/scala/scala',
-    'Scala运行在Java虚拟机（JVM）上，与Java高度互操作，被广泛应用于大数据处理、Web开发、机器学习等领域。'
 );
--- 你可以继续添加其他热门语言的信息
-;

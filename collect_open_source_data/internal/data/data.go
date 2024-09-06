@@ -1,11 +1,8 @@
 package data
 
 import (
-	"context"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-redis/redis/extra/redisotel"
-	"github.com/go-redis/redis/v8"
-	"github.com/google/wire"
+	"collect_open_source_data/internal/conf"
+	"collect_open_source_data/internal/domain"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -13,24 +10,25 @@ import (
 	slog "log"
 	"os"
 	"time"
-	"user/internal/conf"
+
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewUserRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewOpenSourceRepo)
 
 // Data .
 type Data struct {
-	db  *gorm.DB
-	rdb *redis.Client
+	db *gorm.DB
 }
 
 // NewData .
-func NewData(c *conf.Data, logger log.Logger, db *gorm.DB, rdb *redis.Client) (*Data, func(), error) {
+func NewData(c *conf.Data, db *gorm.DB, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	return &Data{db, rdb}, cleanup, nil
+	return &Data{db}, cleanup, nil
 }
 
 func NewDB(c *conf.Data) *gorm.DB {
@@ -57,22 +55,6 @@ func NewDB(c *conf.Data) *gorm.DB {
 		log.Errorf("failed opening connection to mysql: %v", err)
 		//panic("failed to connect database")
 	}
-	_ = db.AutoMigrate(&UserInfo{})
+	_ = db.AutoMigrate(&domain.RepoInfo{}, &domain.Language{}, &domain.Owner{})
 	return db
-}
-
-func NewRedis(c *conf.Data) *redis.Client {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:         c.Redis.Addr,
-		Password:     c.Redis.Password,
-		DB:           int(c.Redis.Db),
-		DialTimeout:  c.Redis.DialTimeout.AsDuration(),
-		WriteTimeout: c.Redis.WriteTimeout.AsDuration(),
-		ReadTimeout:  c.Redis.ReadTimeout.AsDuration(),
-	})
-	rdb.AddHook(redisotel.TracingHook{})
-	if err := rdb.Ping(context.Background()).Err(); err != nil {
-		panic(err)
-	}
-	return rdb
 }

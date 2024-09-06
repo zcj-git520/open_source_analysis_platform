@@ -1,0 +1,131 @@
+syntax = "proto3";
+
+package open_source.v1;
+
+import "validate/validate.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "collect_open_source_data/api/open_source/v1;v1";
+option java_multiple_files = true;
+option java_package = "open_source.v1";
+
+service OpenSource {
+	rpc GetLanguage (LanguageRequest) returns (LanguageReply){
+		option (google.api.http) = {
+			get: "/v1/language"
+		};
+	}
+	rpc GetOwner(OwnerRequest) returns (OwnerReply){
+		option (google.api.http) = {
+      get: "/v1/owner"
+    };
+  }
+	rpc GetRepo(RepoRequest) returns (RepoReply){
+		option (google.api.http) = {
+      get: "/v1/repo"
+    };
+	}
+}
+
+message RepoInfo {
+	int64     id = 1;
+	string    name = 2;               // 仓库名称
+	string    full_name = 3;     			// 仓库全称
+	string    image = 4;         			// 仓库图片
+	int64     owner_id = 5;               // 仓库所有者ID
+	string     owner_name = 6;               // 仓库所有者名称
+	bool      private = 7;            // 是否私有
+	string    desc = 8;            // 仓库描述
+	string    html_url = 9;      // 库主页 URL
+	string    homepage = 10;      // 仓库主页 URL
+	string    clone_url = 11;     // 克隆 URL
+	int64     stargazers_count = 12;       // 仓库星标数量
+	int64     watchers_count = 13;         // 仓库关注者数量
+	string    language = 14;            // 仓库语言ID
+	int64    language_id = 15;            // 仓库语言ID
+	int64     forks_count = 16;            // 仓库分支数量
+	int64     open_issues_count = 17;      // 仓库问题数量
+	repeated  string    topics = 18;        // 仓库主题
+	int64     open_issues = 19;            // 仓库问题数量
+	int64     watchers = 20;               // 仓库关注者数量
+	string    default_branch = 21;        // 默认分支
+	int64     score = 22;                  // 仓库评分
+	int64     size = 23;                   // 仓库大小
+	int64     forks = 24;                  // 仓库分支数量
+	string    created_at = 25;        // 创建时间
+	string    updated_at = 26;        // 更新时间
+}
+
+message RepoRequest {
+	Page page = 1;
+  string name = 2;
+  string desc = 3;
+  int64 language_id = 4;
+  int64 owner_id = 5;
+}
+
+message RepoListRequest {
+	Page page = 1;
+	repeated RepoInfo repos = 2;
+}
+
+message RepoReply {
+  Page page = 1;
+  repeated RepoInfo repos = 2;
+}
+
+message OwnerInfo {
+	int64 id = 1;
+	string avatar_url= 2; // 头像URL
+	string type= 3;       // 类型
+	string login= 4;      // 用户名
+	string html_url= 5;   // 用户主页URL
+	string name= 6;       // 用户名
+	string email= 7;      // 用户邮箱
+	string bio= 8;        // 用户简介
+	int64  public_repos= 9;        // 用户公开仓库数量
+	int64  public_gists= 10;        // 用户公开代码片段数量
+	int64  followers= 11;           // 用户粉丝数量
+	int64  following= 12;           // 用户关注的人数量
+	string created_at= 13;     // 创建时间
+	string updated_at= 14;     // 更新时间
+}
+
+message OwnerRequest {
+  Page page = 1;
+  string name = 2;
+	string type = 3;
+	string email = 4;
+}
+
+message OwnerReply {
+  Page page = 1;
+  repeated OwnerInfo owners = 2;
+}
+
+message LanguageInfo {
+	int64 id = 1;
+	string name = 2;
+	string description = 3;
+	string image_url = 4;
+	string repo_url = 5;
+	string bio = 6;
+}
+
+message Page {
+	int32 page = 1;
+  int32 page_size = 2;
+	int32 total = 3;
+}
+
+message LanguageRequest {
+	Page page = 1;
+	string name = 2;
+}
+
+message LanguageReply {
+	Page page = 1;
+	repeated LanguageInfo languages = 2;
+}
+
