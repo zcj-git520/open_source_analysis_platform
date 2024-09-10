@@ -15,7 +15,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/LoginRequest'
+                            $ref: '#/components/schemas/user.v1.LoginRequest'
                 required: true
             responses:
                 "200":
@@ -23,13 +23,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/LoginReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/user.v1.LoginReply'
     /v1/register:
         post:
             tags:
@@ -39,7 +33,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/RegisterRequest'
+                            $ref: '#/components/schemas/user.v1.RegisterRequest'
                 required: true
             responses:
                 "200":
@@ -47,13 +41,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/RegisterReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/user.v1.RegisterReply'
     /v1/user:
         get:
             tags:
@@ -65,13 +53,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/GetUserReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/user.v1.GetUserReply'
         put:
             tags:
                 - User
@@ -80,7 +62,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateUserRequest'
+                            $ref: '#/components/schemas/user.v1.UpdateUserRequest'
                 required: true
             responses:
                 "200":
@@ -88,13 +70,27 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/UpdateUserReply'
-                default:
-                    description: Default error response
+                                $ref: '#/components/schemas/user.v1.UpdateUserReply'
+        delete:
+            tags:
+                - User
+            operationId: User_DeleteUser
+            parameters:
+                - name: email
+                  in: query
+                  schema:
+                    type: string
+                - name: verificationCode
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/user.v1.DeleteUserReply'
     /v1/user/list:
         get:
             tags:
@@ -117,13 +113,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ListUserReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/user.v1.ListUserReply'
     /v1/verify:
         post:
             tags:
@@ -133,7 +123,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/VerifyRequest'
+                            $ref: '#/components/schemas/user.v1.VerifyRequest'
                 required: true
             responses:
                 "200":
@@ -141,16 +131,15 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/VerifyReply'
-                default:
-                    description: Default error response
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Status'
+                                $ref: '#/components/schemas/user.v1.VerifyReply'
 components:
     schemas:
-        GetUserReply:
+        user.v1.DeleteUserReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        user.v1.GetUserReply:
             type: object
             properties:
                 uid:
@@ -166,15 +155,7 @@ components:
                 gender:
                     type: integer
                     format: int32
-        GoogleProtobufAny:
-            type: object
-            properties:
-                '@type':
-                    type: string
-                    description: The type of the serialized message.
-            additionalProperties: true
-            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
-        ListUserReply:
+        user.v1.ListUserReply:
             type: object
             properties:
                 total:
@@ -183,28 +164,28 @@ components:
                 users:
                     type: array
                     items:
-                        $ref: '#/components/schemas/GetUserReply'
-        LoginReply:
+                        $ref: '#/components/schemas/user.v1.GetUserReply'
+        user.v1.LoginReply:
             type: object
             properties:
                 uid:
                     type: string
                 token:
                     type: string
-        LoginRequest:
+        user.v1.LoginRequest:
             type: object
             properties:
                 username:
                     type: string
                 password:
                     type: string
-        RegisterReply:
+        user.v1.RegisterReply:
             type: object
             properties:
                 uid:
                     type: string
             description: 用户信息返回
-        RegisterRequest:
+        user.v1.RegisterRequest:
             type: object
             properties:
                 nickname:
@@ -218,30 +199,14 @@ components:
                 verificationCode:
                     type: string
             description: 创建用户信息
-        Status:
-            type: object
-            properties:
-                code:
-                    type: integer
-                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
-                    format: int32
-                message:
-                    type: string
-                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
-                details:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/GoogleProtobufAny'
-                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
-            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UpdateUserReply:
+        user.v1.UpdateUserReply:
             type: object
             properties:
                 uid:
                     type: string
                 token:
                     type: string
-        UpdateUserRequest:
+        user.v1.UpdateUserRequest:
             type: object
             properties:
                 nickname:
@@ -258,12 +223,12 @@ components:
                 status:
                     type: integer
                     format: int32
-        VerifyReply:
+        user.v1.VerifyReply:
             type: object
             properties:
                 success:
                     type: boolean
-        VerifyRequest:
+        user.v1.VerifyRequest:
             type: object
             properties:
                 email:

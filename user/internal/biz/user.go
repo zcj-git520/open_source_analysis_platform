@@ -239,3 +239,31 @@ func (u *User) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUser
 		Gender:   int32(user.Gender),
 	}, nil
 }
+
+func (u *User) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserReply, error) {
+	// 判断验证码是否正确
+	code, err := u.repo.GetVerifyCodeCache(ctx, req.Email)
+	if err != nil {
+		return nil, fmt.Errorf("verification code empty")
+	}
+	if code != req.VerificationCode {
+		return nil, fmt.Errorf("verification code error")
+	}
+	_ = u.repo.DeleteVerifyCodeCache(ctx, req.Email)
+	// 获取用户是否存在
+	uid := auth.GetUid(ctx)
+	if uid == 0 {
+		u.log.Errorf("user not login: uid:%v", uid)
+		return nil, fmt.Errorf("user not login")
+	}
+	user, err := u.repo.FindUserByUid(ctx, uid)
+	if err != nil || user == nil || user.Uid == 0 {
+		return nil, fmt.Errorf("user not exists")
+	}
+	if err = u.repo.UpdateUser(ctx, &UserInfo{
+		Status: -1,
+	}); err != nil {
+		return nil, fmt.Errorf("delete user error:%v", err)
+	}
+	return &pb.DeleteUserReply{Success: true}, nil
+}
