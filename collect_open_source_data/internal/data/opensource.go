@@ -24,9 +24,9 @@ func (o *openSourceInfoRepo) InsertOwner(ctx context.Context, owner *domain.Owne
 	return owner.ID, info.Error
 }
 
-func (o *openSourceInfoRepo) FindOwnerByName(ctx context.Context, name string) (*domain.Owner, error) {
+func (o *openSourceInfoRepo) FindOwnerByHtmlUrl(ctx context.Context, htmlUrl string) (*domain.Owner, error) {
 	ownerInfo := &domain.Owner{}
-	if err := o.data.db.Where("name = ?", name).First(ownerInfo).Error; err != nil {
+	if err := o.data.db.Where("html_url = ?", htmlUrl).First(ownerInfo).Error; err != nil {
 		return nil, err
 	}
 	if ownerInfo.ID == 0 { // 没有找到
@@ -50,7 +50,7 @@ func (o *openSourceInfoRepo) FindLanguage(ctx context.Context, name string, id i
 		tx = tx.Where("id = ?", id)
 	}
 	if name != "" {
-		tx = tx.Where("`name` LIKE ? ", "%"+name+"%")
+		tx = tx.Where("`name` =  ? ", name)
 	}
 	tx.Find(&language).Count(&page.Total)
 	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&language).Error

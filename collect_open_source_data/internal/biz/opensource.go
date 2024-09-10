@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"golang.org/x/net/html"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -22,7 +24,7 @@ const (
 type OpenSourceRepo interface {
 	InsertOwner(ctx context.Context, owner *domain.Owner) (int64, error)
 	InsertRepo(ctx context.Context, repo *domain.RepoInfo) error
-	FindOwnerByName(ctx context.Context, name string) (*domain.Owner, error)
+	FindOwnerByHtmlUrl(ctx context.Context, htmlUrl string) (*domain.Owner, error)
 	FindRepoByName(ctx context.Context, name string) (*domain.RepoInfo, error)
 	FindLanguage(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.Language, error)
 	InsertLanguage(ctx context.Context) ([]*domain.Language, error)
@@ -65,7 +67,7 @@ func (r *OpenSourceInfo) getResults(search string, headers http.Header, page int
 	queryParams := url.Values{}
 	queryParams.Add("q", fmt.Sprintf("%s stars:>=%d", search, stars))
 	queryParams.Add("page", fmt.Sprintf("%d", page))
-	queryParams.Add("per_page", "300")
+	queryParams.Add("per_page", "100")
 	queryParams.Add("sort", "stars")
 	queryParams.Add("order", "desc")
 	body, err := r.request("GET", fmt.Sprintf("%s?%s", BaseGithubURL, queryParams.Encode()), headers, nil)
@@ -85,6 +87,9 @@ func (r *OpenSourceInfo) getOwnerInfo(ctx context.Context, url string, headers h
 	result := &RepoUser{}
 	if err = json.Unmarshal(body, &result); err != nil || result == nil {
 		return nil, err
+	}
+	if result.Name == "" {
+		result.Name = strings.ReplaceAll(result.HtmlURL, "https://github.com/", "")
 	}
 	return &domain.Owner{
 		AvatarURL:   result.AvatarURL,
@@ -119,7 +124,7 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 			continue
 		} else {
 			// 查询owner是否存在
-			if info, err := r.repo.FindOwnerByName(ctx, owner.Name); err != nil || info == nil {
+			if info, err := r.repo.FindOwnerByHtmlUrl(ctx, owner.HtmlURL); err != nil || info == nil {
 				// 不存在则创建
 				if ownerId, err = r.repo.InsertOwner(ctx, owner); err != nil {
 					r.log.Errorf("create owner error: %v", err)
@@ -135,14 +140,22 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 			// 不存在则创建
 			// 查找语言id
 			var langId int64
-			if langInfo, err := r.repo.FindLanguage(ctx, item.Language, 0, &domain.Page{}); err == nil && len(langInfo) > 0 {
+			//var image string
+			if langInfo, err := r.repo.FindLanguage(ctx, item.Language, 0, &domain.Page{
+				PageNum:  1,
+				PageSize: 1,
+			}); err == nil && len(langInfo) > 0 {
 				langId = langInfo[0].ID
+			}
+			repoImg, _ := r.getRepoImage(ctx, item.HtmlURL)
+			if repoImg == "" {
+				repoImg = owner.AvatarURL
 			}
 			topicData, _ := json.Marshal(item.Topics)
 			if err = r.repo.InsertRepo(ctx, &domain.RepoInfo{
-				Name:     item.Name,
-				FullName: item.FullName,
-				//Image:           owner.Image,
+				Name:            item.Name,
+				FullName:        item.FullName,
+				Image:           repoImg,
 				OwnerID:         ownerId,
 				Private:         item.Private,
 				Desc:            item.Description,
@@ -173,6 +186,54 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 	return nil
 }
 
+func (r *OpenSourceInfo) extractImageURLs(htmlContent string) []string {
+	imageUrls := make([]string, 0)
+	doc, err := html.Parse(strings.NewReader(htmlContent))
+	if err != nil {
+		return imageUrls
+	}
+
+	var f func(*html.Node)
+	f = func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "img" {
+			for _, attr := range n.Attr {
+				if attr.Key == "src" {
+					imageUrls = append(imageUrls, attr.Val)
+					break
+				}
+			}
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			f(c)
+		}
+	}
+	f(doc)
+
+	return imageUrls
+}
+
+func (r *OpenSourceInfo) isImageURL(url string) bool {
+	return strings.HasSuffix(url, ".png") || strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg")
+}
+
+func (r *OpenSourceInfo) getRepoImage(ctx context.Context, repoName string) (string, error) {
+	htmlContent, err := r.request("GET", repoName, nil, nil)
+	if err != nil {
+		return "", err
+	}
+
+	imageUrls := r.extractImageURLs(string(htmlContent))
+	for _, itemUrl := range imageUrls {
+		if r.isImageURL(itemUrl) {
+			if !strings.HasPrefix(itemUrl, "http") {
+				itemUrl = "https://github.com" + itemUrl
+			}
+			return itemUrl, nil
+		}
+	}
+	return "", nil
+}
+
 func (r *OpenSourceInfo) Collect() {
 	r.Page++
 	fmt.Println("========================================:  ", r.Page)
@@ -184,7 +245,6 @@ func (r *OpenSourceInfo) Collect() {
 			"Accept":        []string{"application/json"},
 		}, r.Page, 10000); err != nil {
 			r.log.Errorf("parse result error: %v", err)
-			fmt.Println("parse result error: ", err)
 			continue
 		}
 	}
@@ -271,7 +331,10 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 	for _, item := range info {
 		ownerName := ""
 		language := ""
-		p := &domain.Page{}
+		p := &domain.Page{
+			PageNum:  1,
+			PageSize: 1,
+		}
 		if owner, _ := r.repo.FindOwner(ctx, "", "", "", item.OwnerID, p); len(owner) > 0 {
 			ownerName = owner[0].Name
 		}
