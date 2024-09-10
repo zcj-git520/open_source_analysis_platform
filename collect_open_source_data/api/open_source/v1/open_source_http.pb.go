@@ -33,7 +33,7 @@ func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/v1/language", _OpenSource_GetLanguage0_HTTP_Handler(srv))
 	r.GET("/v1/owner", _OpenSource_GetOwner0_HTTP_Handler(srv))
-	r.GET("/v1/repo", _OpenSource_GetRepo0_HTTP_Handler(srv))
+	r.POST("/v1/repo", _OpenSource_GetRepo0_HTTP_Handler(srv))
 }
 
 func _OpenSource_GetLanguage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
@@ -77,6 +77,9 @@ func _OpenSource_GetOwner0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.
 func _OpenSource_GetRepo0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in RepoRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -136,10 +139,10 @@ func (c *OpenSourceHTTPClientImpl) GetOwner(ctx context.Context, in *OwnerReques
 func (c *OpenSourceHTTPClientImpl) GetRepo(ctx context.Context, in *RepoRequest, opts ...http.CallOption) (*RepoReply, error) {
 	var out RepoReply
 	pattern := "/v1/repo"
-	path := binding.EncodeURL(pattern, in, true)
+	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOpenSourceGetRepo))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

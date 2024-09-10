@@ -184,6 +184,214 @@ var _ interface {
 	ErrorName() string
 } = RepoInfoValidationError{}
 
+// Validate checks the field values on QueryFilter with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *QueryFilter) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on QueryFilter with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in QueryFilterMultiError, or
+// nil if none found.
+func (m *QueryFilter) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *QueryFilter) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TargetValue
+
+	// no validation rules for Op
+
+	// no validation rules for Field
+
+	if len(errors) > 0 {
+		return QueryFilterMultiError(errors)
+	}
+
+	return nil
+}
+
+// QueryFilterMultiError is an error wrapping multiple validation errors
+// returned by QueryFilter.ValidateAll() if the designated constraints aren't met.
+type QueryFilterMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m QueryFilterMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m QueryFilterMultiError) AllErrors() []error { return m }
+
+// QueryFilterValidationError is the validation error returned by
+// QueryFilter.Validate if the designated constraints aren't met.
+type QueryFilterValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e QueryFilterValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e QueryFilterValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e QueryFilterValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e QueryFilterValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e QueryFilterValidationError) ErrorName() string { return "QueryFilterValidationError" }
+
+// Error satisfies the builtin error interface
+func (e QueryFilterValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sQueryFilter.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = QueryFilterValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = QueryFilterValidationError{}
+
+// Validate checks the field values on SortOrder with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SortOrder) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SortOrder with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SortOrderMultiError, or nil
+// if none found.
+func (m *SortOrder) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SortOrder) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Order
+
+	// no validation rules for Field
+
+	if len(errors) > 0 {
+		return SortOrderMultiError(errors)
+	}
+
+	return nil
+}
+
+// SortOrderMultiError is an error wrapping multiple validation errors returned
+// by SortOrder.ValidateAll() if the designated constraints aren't met.
+type SortOrderMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SortOrderMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SortOrderMultiError) AllErrors() []error { return m }
+
+// SortOrderValidationError is the validation error returned by
+// SortOrder.Validate if the designated constraints aren't met.
+type SortOrderValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SortOrderValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SortOrderValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SortOrderValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SortOrderValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SortOrderValidationError) ErrorName() string { return "SortOrderValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SortOrderValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSortOrder.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SortOrderValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SortOrderValidationError{}
+
 // Validate checks the field values on RepoRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -242,6 +450,71 @@ func (m *RepoRequest) validate(all bool) error {
 	// no validation rules for LanguageId
 
 	// no validation rules for OwnerId
+
+	// no validation rules for ID
+
+	for idx, item := range m.GetFilters() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RepoRequestValidationError{
+						field:  fmt.Sprintf("Filters[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RepoRequestValidationError{
+						field:  fmt.Sprintf("Filters[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RepoRequestValidationError{
+					field:  fmt.Sprintf("Filters[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if all {
+		switch v := interface{}(m.GetSort()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RepoRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RepoRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RepoRequestValidationError{
+				field:  "Sort",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return RepoRequestMultiError(errors)

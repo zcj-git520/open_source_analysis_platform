@@ -79,42 +79,16 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.OwnerReply'
     /v1/repo:
-        get:
+        post:
             tags:
                 - OpenSource
             operationId: OpenSource_GetRepo
-            parameters:
-                - name: page.page
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: page.pageSize
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: page.total
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: name
-                  in: query
-                  schema:
-                    type: string
-                - name: desc
-                  in: query
-                  schema:
-                    type: string
-                - name: languageId
-                  in: query
-                  schema:
-                    type: string
-                - name: ownerId
-                  in: query
-                  schema:
-                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/open_source.v1.RepoRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -200,6 +174,17 @@ components:
                 total:
                     type: integer
                     format: int32
+        open_source.v1.QueryFilter:
+            type: object
+            properties:
+                targetValue:
+                    type: integer
+                    format: int32
+                op:
+                    type: integer
+                    format: enum
+                field:
+                    type: string
         open_source.v1.RepoInfo:
             type: object
             properties:
@@ -266,5 +251,34 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/open_source.v1.RepoInfo'
+        open_source.v1.RepoRequest:
+            type: object
+            properties:
+                page:
+                    $ref: '#/components/schemas/open_source.v1.Page'
+                name:
+                    type: string
+                desc:
+                    type: string
+                languageId:
+                    type: string
+                ownerId:
+                    type: string
+                ID:
+                    type: string
+                filters:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.QueryFilter'
+                sort:
+                    $ref: '#/components/schemas/open_source.v1.SortOrder'
+        open_source.v1.SortOrder:
+            type: object
+            properties:
+                order:
+                    type: integer
+                    format: enum
+                field:
+                    type: string
 tags:
     - name: OpenSource

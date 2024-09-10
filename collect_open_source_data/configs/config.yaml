@@ -10,6 +10,8 @@ data:
     driver: mysql
     source: root:123456@tcp(127.0.0.1:3306)/osap_open_source?parseTime=True&loc=Local
   redis:
-    addr: 127.0.0.1:6379
+    addr: 192.168.50.109:16379
+    password: "Shds@402"
+    db: 0
     read_timeout: 0.2s
     write_timeout: 0.2s

@@ -3,6 +3,9 @@ package data
 import (
 	"collect_open_source_data/internal/conf"
 	"collect_open_source_data/internal/domain"
+	"context"
+	"github.com/go-redis/redis/extra/redisotel"
+	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -16,19 +19,20 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewOpenSourceRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewOpenSourceRepo)
 
 // Data .
 type Data struct {
-	db *gorm.DB
+	db  *gorm.DB
+	rdb *redis.Client
 }
 
 // NewData .
-func NewData(c *conf.Data, db *gorm.DB, logger log.Logger) (*Data, func(), error) {
+func NewData(c *conf.Data, db *gorm.DB, rdb *redis.Client, logger log.Logger) (*Data, func(), error) {
 	cleanup := func() {
 		log.NewHelper(logger).Info("closing the data resources")
 	}
-	return &Data{db}, cleanup, nil
+	return &Data{db, rdb}, cleanup, nil
 }
 
 func NewDB(c *conf.Data) *gorm.DB {
@@ -57,4 +61,20 @@ func NewDB(c *conf.Data) *gorm.DB {
 	}
 	_ = db.AutoMigrate(&domain.RepoInfo{}, &domain.Language{}, &domain.Owner{})
 	return db
+}
+
+func NewRedis(c *conf.Data) *redis.Client {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:         c.Redis.Addr,
+		Password:     c.Redis.Password,
+		DB:           int(c.Redis.Db),
+		DialTimeout:  c.Redis.DialTimeout.AsDuration(),
+		WriteTimeout: c.Redis.WriteTimeout.AsDuration(),
+		ReadTimeout:  c.Redis.ReadTimeout.AsDuration(),
+	})
+	rdb.AddHook(redisotel.TracingHook{})
+	if err := rdb.Ping(context.Background()).Err(); err != nil {
+		panic(err)
+	}
+	return rdb
 }

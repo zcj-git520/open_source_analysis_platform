@@ -1,10 +1,15 @@
 package data
 
 import (
+	pb "collect_open_source_data/api/open_source/v1"
 	"collect_open_source_data/internal/biz"
 	"collect_open_source_data/internal/domain"
 	"context"
+	"encoding/json"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
+	"time"
 )
 
 type openSourceInfoRepo struct {
@@ -89,23 +94,107 @@ func (o *openSourceInfoRepo) FindOwner(ctx context.Context, name, ownerType, ema
 	return ownerInfo, err
 }
 
-func (o *openSourceInfoRepo) FindRepo(ctx context.Context, name, desc string, languageId, ownerId int64, page *domain.Page) ([]*domain.RepoInfo, error) {
+func (o *openSourceInfoRepo) filter(ctx context.Context, tx *gorm.DB, field string, filter *pb.QueryFilter) *gorm.DB {
+	queryFilter := fmt.Sprintf("%s", field)
+	switch filter.Op {
+	case pb.QueryFilter_GT:
+		tx = tx.Where(queryFilter+" > ?", filter.TargetValue)
+	case pb.QueryFilter_LT:
+		tx = tx.Where(queryFilter+" < ?", filter.TargetValue)
+	case pb.QueryFilter_GTE:
+		tx = tx.Where(queryFilter+" >= ?", filter.TargetValue)
+	case pb.QueryFilter_LTE:
+		tx = tx.Where(queryFilter+" <= ?", filter.TargetValue)
+	}
+	return tx
+}
+
+func (o *openSourceInfoRepo) FindRepo(ctx context.Context, req *pb.RepoRequest, page *domain.Page) ([]*domain.RepoInfo, error) {
 	var repoInfo []*domain.RepoInfo
 	tx := o.data.db
-	if name != "" {
-		tx = tx.Where("`full_name` LIKE ? ", "%"+name+"%")
+	if req.ID > 0 {
+		tx = tx.Where("id = ?", req.ID)
 	}
-	if desc != "" {
-		tx = tx.Where("`desc` LIKE ?", "%"+desc+"%")
+	if req.Name != "" {
+		tx = tx.Where("`full_name` LIKE ? ", "%"+req.Name+"%")
 	}
-	if languageId > 0 {
-		tx = tx.Where("language_id = ?", languageId)
+	if req.Desc != "" {
+		tx = tx.Where("`desc` LIKE ?", "%"+req.Desc+"%")
 	}
-	if ownerId > 0 {
-		tx = tx.Where("owner_id = ?", ownerId)
+	if req.LanguageId > 0 {
+		tx = tx.Where("language_id = ?", req.LanguageId)
+	}
+	if req.OwnerId > 0 {
+		tx = tx.Where("owner_id = ?", req.OwnerId)
+	}
+	if len(req.Filters) > 0 {
+		for _, filter := range req.Filters {
+			switch filter.Field {
+			case "stargazers_count":
+				tx = o.filter(ctx, tx, "stargazers_count", filter)
+			case "watchers_count":
+				tx = o.filter(ctx, tx, "watchers_count", filter)
+			case "forks_count":
+				tx = o.filter(ctx, tx, "forks_count", filter)
+			case "open_issues_count":
+				tx = o.filter(ctx, tx, "open_issues_count", filter)
+			case "open_issues":
+				tx = o.filter(ctx, tx, "open_issues", filter)
+			case "watchers":
+				tx = o.filter(ctx, tx, "watchers", filter)
+			}
+		}
 	}
 	tx.Find(&repoInfo).Count(&page.Total)
-	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&repoInfo).Error
+	// 排序
+	if req.Sort != nil {
+		tx = tx.Order(fmt.Sprintf("%s %s", req.Sort.Field, req.Sort.Order))
+	}
+	tx.Limit(page.Limit()).Offset(page.Offset())
 
+	err := tx.Find(&repoInfo).Error
 	return repoInfo, err
+}
+
+func (o *openSourceInfoRepo) UpdateRepo(ctx context.Context, repo *domain.RepoInfo) error {
+	if repo == nil {
+		return fmt.Errorf("repo is nil")
+	}
+	repo.UpdatedAt = time.Now()
+	return o.data.db.Model(&domain.RepoInfo{}).Where("id = ?", repo.ID).Updates(repo).Error
+}
+
+func (o *openSourceInfoRepo) FindLanguageByCache(ctx context.Context, languageId int64) (*domain.Language, error) {
+	language := &domain.Language{}
+	data, err := o.data.rdb.Get(ctx, fmt.Sprintf("opensource_languageId_%d", languageId)).Result()
+	// 数据不存在，就查询数据库，并缓存到redis
+	if err != nil {
+		if err = o.data.db.Where("id = ?", languageId).First(language).Error; err != nil {
+			return nil, err
+		}
+		cacheData, _ := json.Marshal(language)
+		o.data.rdb.Set(ctx, fmt.Sprintf("opensource_languageId_%d", languageId), string(cacheData), 10*time.Minute)
+		return language, nil
+	}
+	if err = json.Unmarshal([]byte(data), language); err != nil {
+		return nil, err
+	}
+	return language, nil
+}
+
+func (o *openSourceInfoRepo) FindOwnerByCache(ctx context.Context, Id int64) (*domain.Owner, error) {
+	var ownerInfo *domain.Owner
+	data, err := o.data.rdb.Get(ctx, fmt.Sprintf("opensource_ownerid_%d", Id)).Result()
+	if err != nil {
+		if err = o.data.db.Where("id = ?", Id).First(&ownerInfo).Error; err != nil {
+			return nil, err
+		}
+		cacheData, _ := json.Marshal(ownerInfo)
+		o.data.rdb.Set(ctx, fmt.Sprintf("opensource_ownerid_%d", Id), string(cacheData), 10*time.Minute)
+		return ownerInfo, nil
+	}
+	if err = json.Unmarshal([]byte(data), &ownerInfo); err != nil {
+		return nil, err
+	}
+	return ownerInfo, err
 }

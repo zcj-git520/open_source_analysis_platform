@@ -23,7 +23,8 @@ service OpenSource {
   }
 	rpc GetRepo(RepoRequest) returns (RepoReply){
 		option (google.api.http) = {
-      get: "/v1/repo"
+      post: "/v1/repo"
+			body: "*"
     };
 	}
 }
@@ -57,12 +58,36 @@ message RepoInfo {
 	string    updated_at = 26;        // 更新时间
 }
 
+message QueryFilter {
+	int32 target_value = 1;
+	enum Operator {
+		GT = 0; // Greater Than
+		GTE = 1; // Greater Than or Equal
+		LT = 2; // Less Than
+		LTE = 3; // Less Than or Equal
+	}
+	Operator op = 2;
+	string field = 3;
+}
+
+message SortOrder{
+	enum Order {
+    ASC = 0;
+    DESC = 1;
+  }
+  Order order = 1;
+  string field = 2;
+}
+
 message RepoRequest {
 	Page page = 1;
   string name = 2;
   string desc = 3;
   int64 language_id = 4;
   int64 owner_id = 5;
+	int64  ID = 6;
+	repeated QueryFilter filters = 7;
+	SortOrder sort = 8;
 }
 
 message RepoListRequest {

@@ -29,7 +29,10 @@ type OpenSourceRepo interface {
 	FindLanguage(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.Language, error)
 	InsertLanguage(ctx context.Context) ([]*domain.Language, error)
 	FindOwner(ctx context.Context, name, ownerType, email string, Id int64, page *domain.Page) ([]*domain.Owner, error)
-	FindRepo(ctx context.Context, name, desc string, languageId, ownerId int64, page *domain.Page) ([]*domain.RepoInfo, error)
+	FindRepo(ctx context.Context, req *pb.RepoRequest, page *domain.Page) ([]*domain.RepoInfo, error)
+	UpdateRepo(ctx context.Context, repo *domain.RepoInfo) error
+	FindLanguageByCache(ctx context.Context, languageId int64) (*domain.Language, error)
+	FindOwnerByCache(ctx context.Context, Id int64) (*domain.Owner, error)
 }
 
 type OpenSourceInfo struct {
@@ -136,11 +139,11 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 		}
 
 		// 查询repo是否存在
-		if info, err := r.repo.FindRepoByName(ctx, item.Name); err != nil || info == nil {
+		info, err := r.repo.FindRepoByName(ctx, item.Name)
+		if err != nil || info == nil {
 			// 不存在则创建
 			// 查找语言id
 			var langId int64
-			//var image string
 			if langInfo, err := r.repo.FindLanguage(ctx, item.Language, 0, &domain.Page{
 				PageNum:  1,
 				PageSize: 1,
@@ -180,6 +183,43 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 				r.log.Errorf("create repo error: %v", err)
 				return err
 			}
+		} else {
+			// 存在就更新
+			updateRepo := &domain.RepoInfo{}
+			if int64(item.StargazersCount) != info.StargazersCount {
+				updateRepo.StargazersCount = int64(item.StargazersCount)
+			}
+			if int64(item.WatchersCount) != info.WatchersCount {
+				updateRepo.WatchersCount = int64(item.WatchersCount)
+			}
+			if int64(item.ForksCount) != info.ForksCount {
+				updateRepo.ForksCount = int64(item.ForksCount)
+			}
+			if int64(item.OpenIssuesCount) != info.OpenIssuesCount {
+				updateRepo.OpenIssuesCount = int64(item.OpenIssuesCount)
+			}
+			if int64(item.Forks) != info.Forks {
+				updateRepo.Forks = int64(item.Forks)
+			}
+			if int64(item.OpenIssues) != info.OpenIssues {
+				updateRepo.OpenIssues = int64(item.OpenIssues)
+			}
+			if int64(item.Watchers) != info.Watchers {
+				updateRepo.Watchers = int64(item.Watchers)
+			}
+			if item.DefaultBranch != info.DefaultBranch {
+				updateRepo.DefaultBranch = item.DefaultBranch
+			}
+			if int64(item.Score) != info.Score {
+				updateRepo.Score = int64(item.Score)
+			}
+			if updateRepo != nil {
+				if err = r.repo.UpdateRepo(ctx, updateRepo); err != nil {
+					r.log.Errorf("update repo error: %v", err)
+					return err
+				}
+			}
+
 		}
 
 	}
@@ -322,7 +362,7 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 		PageSize: int(req.Page.PageSize),
 		Total:    int64(req.Page.Total),
 	}
-	info, err := r.repo.FindRepo(ctx, req.Name, req.Desc, req.LanguageId, req.OwnerId, page)
+	info, err := r.repo.FindRepo(ctx, req, page)
 	if err != nil {
 		return nil, err
 	}
@@ -331,15 +371,11 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 	for _, item := range info {
 		ownerName := ""
 		language := ""
-		p := &domain.Page{
-			PageNum:  1,
-			PageSize: 1,
+		if owner, _ := r.repo.FindOwnerByCache(ctx, item.OwnerID); owner != nil {
+			ownerName = owner.Name
 		}
-		if owner, _ := r.repo.FindOwner(ctx, "", "", "", item.OwnerID, p); len(owner) > 0 {
-			ownerName = owner[0].Name
-		}
-		if langeInfo, _ := r.repo.FindLanguage(ctx, "", item.LanguageId, p); len(langeInfo) > 0 {
-			language = langeInfo[0].Name
+		if langeInfo, _ := r.repo.FindLanguageByCache(ctx, item.LanguageId); langeInfo != nil {
+			language = langeInfo.Name
 		}
 		var topic []string
 		if item.Topics != "" {
