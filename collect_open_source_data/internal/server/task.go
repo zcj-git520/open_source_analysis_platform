@@ -22,14 +22,14 @@ func NewTaskServer(info *biz.OpenSourceInfo, logger log.Logger) *TaskServer {
 }
 
 func (t *TaskServer) Start(ctx context.Context) error {
-	//if _, err := t.timerJob.AddJobWithHour(1, t.openS.Collect); err != nil {
-	//	t.log.Errorf("add job failed: %v", err)
-	//	return err
-	//}
-	//t.timerJob.Start()
+	if _, err := t.timerJob.AddJobWithHour(1, t.openS.Collect); err != nil {
+		t.log.Errorf("add job failed: %v", err)
+		return err
+	}
+	t.timerJob.Start()
 	return nil
 }
 func (t *TaskServer) Stop(ctx context.Context) error {
-	//t.timerJob.Stop()
+	t.timerJob.Stop()
 	return nil
 }

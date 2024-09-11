@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"google.golang.org/protobuf/types/known/emptypb"
 	pb "user/api/user/v1"
 	"user/internal/biz"
 )
@@ -38,4 +39,8 @@ func (s *UserService) ListUser(ctx context.Context, req *pb.ListUserRequest) (*p
 
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserReply, error) {
 	return s.uc.DeleteUser(ctx, req)
+}
+
+func (s UserService) RefreshToken(ctx context.Context, req *emptypb.Empty) (*pb.RefreshTokenReply, error) {
+	return s.uc.RefreshToken(ctx)
 }

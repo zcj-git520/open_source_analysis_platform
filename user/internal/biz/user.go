@@ -44,7 +44,8 @@ type UserInfo struct {
 	ID        int64     `json:"id"`
 	Uid       int64     `json:"uid"`
 	Status    int       `json:"status"`
-	Nickname  string    `json:"username"`
+	Username  string    `json:"username"`
+	Nickname  string    `json:"nickname"`
 	Password  string    `json:"password"`
 	Email     string    `json:"email"`
 	Avatar    string    `json:"avatar"`
@@ -65,12 +66,13 @@ func NewUser(repo UserRepo, logger log.Logger, ac *conf.Auth, ec *conf.Email) *U
 	return &User{repo: repo, ac: ac, ec: ec, log: log.NewHelper(logger)}
 }
 
-func (u *User) createToken(ctx context.Context, uid int64) (string, error) {
+func (u *User) createToken(ctx context.Context, uid int64) (string, string, error) {
 	user, err := u.repo.FindUserByUid(ctx, uid)
 	// 用户已存在
 	if err != nil || user == nil || user.Uid == 0 {
-		return "", fmt.Errorf("user not found")
+		return "", "", fmt.Errorf("user not found")
 	}
+	expr := time.Now().Add(24 * time.Hour)
 	token, err := auth.CreateToken(auth.Claims{
 		Uid:      user.Uid,
 		Nickname: user.Nickname,
@@ -81,15 +83,15 @@ func (u *User) createToken(ctx context.Context, uid int64) (string, error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    Issuer,
 			Subject:   Audience,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(expr),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
 	}, u.ac.JwtKey)
 	if err != nil {
-		return "", fmt.Errorf("token create error")
+		return "", "", fmt.Errorf("token create error")
 	}
-	return token, nil
+	return token, expr.Format("2006/01/02 15:04:05"), nil
 }
 
 func (u *User) sendVerificationCodeByEmail(ctx context.Context, to string) error {
@@ -149,13 +151,13 @@ func (u *User) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Regis
 	if err != nil {
 		return nil, fmt.Errorf("password hash error")
 	}
-	uid, err := u.repo.InsertUser(ctx, &UserInfo{
-		Nickname: req.Nickname,
+	_, err = u.repo.InsertUser(ctx, &UserInfo{
+		Username: req.Username,
 		Password: pwd,
 		Email:    req.Email,
 	})
 	return &pb.RegisterReply{
-		Uid: uid,
+		Success: true,
 	}, err
 
 }
@@ -169,13 +171,25 @@ func (u *User) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply,
 	if !pkg.CheckPassword(user.Password, req.Password) {
 		return nil, fmt.Errorf("password error")
 	}
-	token, err := u.createToken(ctx, user.Uid)
+	token, expStr, err := u.createToken(ctx, user.Uid)
 	if err != nil {
 		return nil, fmt.Errorf("create token error")
 	}
 	return &pb.LoginReply{
-		Token: token,
-		Uid:   user.Uid,
+		Data: &pb.LoginReply_Data{
+			Uid:          user.Uid,
+			AccessToken:  token,
+			Avatar:       user.Avatar,
+			Nickname:     user.Nickname,
+			Username:     user.Username,
+			RefreshToken: token,
+			Expires:      expStr,
+			Phone:        user.Phone,
+			Email:        user.Email,
+			Gender:       int32(user.Gender),
+		},
+
+		Success: true,
 	}, nil
 }
 
@@ -210,13 +224,24 @@ func (u *User) Update(ctx context.Context, req *pb.UpdateUserRequest) (*pb.Updat
 	if err = u.repo.UpdateUser(ctx, userInfo); err != nil {
 		return &pb.UpdateUserReply{}, fmt.Errorf("update user error:%v", err)
 	}
-	token, err := u.createToken(ctx, user.Uid)
+	token, expStr, err := u.createToken(ctx, user.Uid)
 	if err != nil {
 		return nil, fmt.Errorf("create token error")
 	}
 	return &pb.UpdateUserReply{
-		Token: token,
-		Uid:   user.Uid,
+		Data: &pb.UpdateUserReply_Data{
+			Uid:          user.Uid,
+			AccessToken:  token,
+			Avatar:       user.Avatar,
+			Nickname:     user.Nickname,
+			Username:     user.Username,
+			RefreshToken: token,
+			Expires:      expStr,
+			Phone:        user.Phone,
+			Email:        user.Email,
+			Gender:       int32(user.Gender),
+		},
+		Success: true,
 	}, nil
 }
 
@@ -231,12 +256,16 @@ func (u *User) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUser
 		return nil, fmt.Errorf("user not exists")
 	}
 	return &pb.GetUserReply{
-		Uid:      user.Uid,
-		Username: user.Nickname,
-		Email:    user.Email,
-		Phone:    user.Phone,
-		Avatar:   user.Avatar,
-		Gender:   int32(user.Gender),
+		Data: &pb.GetUserReply_Data{
+			Uid:      user.Uid,
+			Username: user.Username,
+			Email:    user.Email,
+			Phone:    user.Phone,
+			Avatar:   user.Avatar,
+			Gender:   int32(user.Gender),
+			Nickname: user.Nickname,
+		},
+		Success: true,
 	}, nil
 }
 
@@ -266,4 +295,27 @@ func (u *User) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.D
 		return nil, fmt.Errorf("delete user error:%v", err)
 	}
 	return &pb.DeleteUserReply{Success: true}, nil
+}
+
+func (u *User) RefreshToken(ctx context.Context) (*pb.RefreshTokenReply, error) {
+	// 根据用户uid，获取用户信息
+	uid := auth.GetUid(ctx)
+	if uid == 0 {
+		u.log.Errorf("user not login: uid:%v", uid)
+		return nil, fmt.Errorf("user not login")
+	}
+	// 查询uid是否存在
+	user, err := u.repo.FindUserByUid(ctx, uid)
+	if err != nil || user == nil || user.Uid == 0 {
+		return nil, fmt.Errorf("user not exists")
+	}
+	token, expStr, err := u.createToken(ctx, user.Uid)
+	return &pb.RefreshTokenReply{
+		Data: &pb.RefreshTokenReply_Data{
+			AccessToken:  token,
+			RefreshToken: token,
+			Expires:      expStr,
+		},
+		Success: true,
+	}, nil
 }

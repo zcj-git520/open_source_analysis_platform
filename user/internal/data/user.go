@@ -13,10 +13,12 @@ type UserInfo struct {
 	ID        int64     `gorm:"primarykey;type:int" json:"id"`
 	Uid       int64     `gorm:"type:int" json:"uid"`
 	Phone     string    `gorm:"type:varchar(20)" json:"phone"`
-	Nickname  string    `gorm:"type:varchar(50)" json:"username"`
+	Nickname  string    `gorm:"type:varchar(50)" json:"nickname"`
+	Username  string    `gorm:"type:varchar(50)" json:"username"`
 	Password  string    `gorm:"type:varchar(255)" json:"password"`
 	Email     string    `gorm:"type:varchar(50)" json:"email"`
 	Avatar    string    `gorm:"type:varchar(255)" json:"avatar"`
+	Role      []string  `gorm:"type:varchar(255)" json:"role"`
 	Gender    int       `gorm:"type:TINYINT" json:"gender"`
 	Status    int       `gorm:"type:TINYINT" json:"status"`
 	CreatedAt time.Time `gorm:"column:created_at;type:datetime" json:"created_at"`
@@ -45,6 +47,7 @@ func (u *userRepo) changeType(ctx context.Context, user *UserInfo) *biz.UserInfo
 		Uid:       user.Uid,
 		Status:    user.Status,
 		Nickname:  user.Nickname,
+		Username:  user.Username,
 		Password:  user.Password,
 		Email:     user.Email,
 		Avatar:    user.Avatar,
@@ -64,7 +67,7 @@ func (u *userRepo) FindUserByEmail(ctx context.Context, email string) (*biz.User
 
 func (u *userRepo) FindUserByName(ctx context.Context, name string) (*biz.UserInfo, error) {
 	user := &UserInfo{}
-	if err := u.data.db.Where("nickname = ? and status = 0", name).Find(user).Error; err != nil {
+	if err := u.data.db.Where("username = ? and status = 0", name).Find(user).Error; err != nil {
 		return nil, err
 	}
 	return u.changeType(ctx, user), nil
@@ -96,6 +99,7 @@ func (u *userRepo) InsertUser(ctx context.Context, user *biz.UserInfo) (int64, e
 		Uid:       uid,
 		Status:    0,
 		Nickname:  user.Nickname,
+		Username:  user.Username,
 		Password:  user.Password,
 		Email:     user.Email,
 		Avatar:    user.Avatar,

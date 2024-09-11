@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,6 +24,7 @@ const OperationUserDeleteUser = "/user.v1.User/DeleteUser"
 const OperationUserGetUser = "/user.v1.User/GetUser"
 const OperationUserListUser = "/user.v1.User/ListUser"
 const OperationUserLogin = "/user.v1.User/Login"
+const OperationUserRefreshToken = "/user.v1.User/RefreshToken"
 const OperationUserRegister = "/user.v1.User/Register"
 const OperationUserUpdateUser = "/user.v1.User/UpdateUser"
 const OperationUserVerify = "/user.v1.User/Verify"
@@ -32,6 +34,7 @@ type UserHTTPServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
+	RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenReply, error)
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserReply, error)
 	Verify(context.Context, *VerifyRequest) (*VerifyReply, error)
@@ -46,6 +49,7 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r.GET("/v1/user", _User_GetUser0_HTTP_Handler(srv))
 	r.GET("/v1/user/list", _User_ListUser0_HTTP_Handler(srv))
 	r.DELETE("/v1/user", _User_DeleteUser0_HTTP_Handler(srv))
+	r.GET("/v1/refresh_token", _User_RefreshToken0_HTTP_Handler(srv))
 }
 
 func _User_Verify0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -193,11 +197,31 @@ func _User_DeleteUser0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) e
 	}
 }
 
+func _User_RefreshToken0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserRefreshToken)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RefreshToken(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RefreshTokenReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserHTTPClient interface {
 	DeleteUser(ctx context.Context, req *DeleteUserRequest, opts ...http.CallOption) (rsp *DeleteUserReply, err error)
 	GetUser(ctx context.Context, req *GetUserRequest, opts ...http.CallOption) (rsp *GetUserReply, err error)
 	ListUser(ctx context.Context, req *ListUserRequest, opts ...http.CallOption) (rsp *ListUserReply, err error)
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
+	RefreshToken(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *RefreshTokenReply, err error)
 	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	UpdateUser(ctx context.Context, req *UpdateUserRequest, opts ...http.CallOption) (rsp *UpdateUserReply, err error)
 	Verify(ctx context.Context, req *VerifyRequest, opts ...http.CallOption) (rsp *VerifyReply, err error)
@@ -257,6 +281,19 @@ func (c *UserHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts .
 	opts = append(opts, http.Operation(OperationUserLogin))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *UserHTTPClientImpl) RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*RefreshTokenReply, error) {
+	var out RefreshTokenReply
+	pattern := "/v1/refresh_token"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationUserRefreshToken))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

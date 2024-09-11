@@ -283,7 +283,7 @@ func (r *OpenSourceInfo) Collect() {
 		if err := r.ParseResult(context.TODO(), "language:"+item, http.Header{
 			"Authorization": []string{"token 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"},
 			"Accept":        []string{"application/json"},
-		}, r.Page, 10000); err != nil {
+		}, r.Page, 1000); err != nil {
 			r.log.Errorf("parse result error: %v", err)
 			continue
 		}

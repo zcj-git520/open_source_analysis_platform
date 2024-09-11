@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,13 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	User_Verify_FullMethodName     = "/user.v1.User/Verify"
-	User_Register_FullMethodName   = "/user.v1.User/Register"
-	User_Login_FullMethodName      = "/user.v1.User/Login"
-	User_UpdateUser_FullMethodName = "/user.v1.User/UpdateUser"
-	User_GetUser_FullMethodName    = "/user.v1.User/GetUser"
-	User_ListUser_FullMethodName   = "/user.v1.User/ListUser"
-	User_DeleteUser_FullMethodName = "/user.v1.User/DeleteUser"
+	User_Verify_FullMethodName       = "/user.v1.User/Verify"
+	User_Register_FullMethodName     = "/user.v1.User/Register"
+	User_Login_FullMethodName        = "/user.v1.User/Login"
+	User_UpdateUser_FullMethodName   = "/user.v1.User/UpdateUser"
+	User_GetUser_FullMethodName      = "/user.v1.User/GetUser"
+	User_ListUser_FullMethodName     = "/user.v1.User/ListUser"
+	User_DeleteUser_FullMethodName   = "/user.v1.User/DeleteUser"
+	User_RefreshToken_FullMethodName = "/user.v1.User/RefreshToken"
 )
 
 // UserClient is the client API for User service.
@@ -39,6 +41,7 @@ type UserClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserReply, error)
 	ListUser(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserReply, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserReply, error)
+	RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenReply, error)
 }
 
 type userClient struct {
@@ -119,6 +122,16 @@ func (c *userClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts
 	return out, nil
 }
 
+func (c *userClient) RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefreshTokenReply)
+	err := c.cc.Invoke(ctx, User_RefreshToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServer is the server API for User service.
 // All implementations must embed UnimplementedUserServer
 // for forward compatibility.
@@ -130,6 +143,7 @@ type UserServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserReply, error)
 	ListUser(context.Context, *ListUserRequest) (*ListUserReply, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error)
+	RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenReply, error)
 	mustEmbedUnimplementedUserServer()
 }
 
@@ -160,6 +174,9 @@ func (UnimplementedUserServer) ListUser(context.Context, *ListUserRequest) (*Lis
 }
 func (UnimplementedUserServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedUserServer) RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
 func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 func (UnimplementedUserServer) testEmbeddedByValue()              {}
@@ -308,6 +325,24 @@ func _User_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _User_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServer).RefreshToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: User_RefreshToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServer).RefreshToken(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -342,6 +377,10 @@ var User_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _User_DeleteUser_Handler,
+		},
+		{
+			MethodName: "RefreshToken",
+			Handler:    _User_RefreshToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
