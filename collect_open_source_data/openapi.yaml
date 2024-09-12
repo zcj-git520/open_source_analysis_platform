@@ -14,21 +14,25 @@ paths:
             parameters:
                 - name: page.page
                   in: query
+                  description: 当前页码
                   schema:
                     type: integer
                     format: int32
                 - name: page.pageSize
                   in: query
+                  description: 每页数量
                   schema:
                     type: integer
                     format: int32
                 - name: page.total
                   in: query
+                  description: 总数
                   schema:
                     type: integer
                     format: int32
                 - name: name
                   in: query
+                  description: 语言名称
                   schema:
                     type: string
             responses:
@@ -37,7 +41,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/open_source.v1.LanguageReply'
+                                $ref: '#/components/schemas/LanguageReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /v1/owner:
         get:
             tags:
@@ -46,29 +56,35 @@ paths:
             parameters:
                 - name: page.page
                   in: query
+                  description: 当前页码
                   schema:
                     type: integer
                     format: int32
                 - name: page.pageSize
                   in: query
+                  description: 每页数量
                   schema:
                     type: integer
                     format: int32
                 - name: page.total
                   in: query
+                  description: 总数
                   schema:
                     type: integer
                     format: int32
                 - name: name
                   in: query
+                  description: 用户名
                   schema:
                     type: string
                 - name: type
                   in: query
+                  description: 类型：User / Organization
                   schema:
                     type: string
                 - name: email
                   in: query
+                  description: 用户邮箱
                   schema:
                     type: string
             responses:
@@ -77,7 +93,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/open_source.v1.OwnerReply'
+                                $ref: '#/components/schemas/OwnerReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /v1/repo:
         post:
             tags:
@@ -87,7 +109,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/open_source.v1.RepoRequest'
+                            $ref: '#/components/schemas/RepoRequest'
                 required: true
             responses:
                 "200":
@@ -95,190 +117,327 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/open_source.v1.RepoReply'
+                                $ref: '#/components/schemas/RepoReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
 components:
     schemas:
-        open_source.v1.LanguageInfo:
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        LanguageInfo:
             type: object
             properties:
                 id:
                     type: string
+                    description: 语言id
                 name:
                     type: string
+                    description: 语言名称
                 description:
                     type: string
+                    description: 语言描述
                 imageUrl:
                     type: string
+                    description: 语言连接
                 repoUrl:
                     type: string
+                    description: 语言仓库地址
                 bio:
                     type: string
-        open_source.v1.LanguageReply:
+                    description: 语言简介
+        LanguageReply:
+            type: object
+            properties:
+                data:
+                    allOf:
+                        - $ref: '#/components/schemas/LanguageReply_Data'
+                    description: 数据
+                success:
+                    type: boolean
+                    description: 是否成功
+        LanguageReply_Data:
             type: object
             properties:
                 page:
-                    $ref: '#/components/schemas/open_source.v1.Page'
+                    allOf:
+                        - $ref: '#/components/schemas/Page'
+                    description: 分页信息
                 languages:
                     type: array
                     items:
-                        $ref: '#/components/schemas/open_source.v1.LanguageInfo'
-        open_source.v1.OwnerInfo:
+                        $ref: '#/components/schemas/LanguageInfo'
+                    description: 语言信息
+        OwnerInfo:
             type: object
             properties:
                 id:
                     type: string
+                    description: id
                 avatarUrl:
                     type: string
+                    description: 头像URL
                 type:
                     type: string
+                    description: 用户类型：User / Organization
                 login:
                     type: string
+                    description: 用户登录名
                 htmlUrl:
                     type: string
+                    description: 用户主页URL
                 name:
                     type: string
+                    description: 用户名
                 email:
                     type: string
+                    description: 用户邮箱
                 bio:
                     type: string
+                    description: 用户简介
                 publicRepos:
                     type: string
+                    description: 用户仓库数量
                 publicGists:
                     type: string
+                    description: 用户公开代码片段数量
                 followers:
                     type: string
+                    description: 用户粉丝数量
                 following:
                     type: string
+                    description: 用户关注的人数量
                 createdAt:
                     type: string
+                    description: 用户注册时间
                 updatedAt:
                     type: string
-        open_source.v1.OwnerReply:
+                    description: 用户更新时间
+        OwnerReply:
+            type: object
+            properties:
+                data:
+                    allOf:
+                        - $ref: '#/components/schemas/OwnerReply_Data'
+                    description: 数据
+                success:
+                    type: boolean
+                    description: 是否成功
+        OwnerReply_Data:
             type: object
             properties:
                 page:
-                    $ref: '#/components/schemas/open_source.v1.Page'
+                    allOf:
+                        - $ref: '#/components/schemas/Page'
+                    description: 分页信息
                 owners:
                     type: array
                     items:
-                        $ref: '#/components/schemas/open_source.v1.OwnerInfo'
-        open_source.v1.Page:
+                        $ref: '#/components/schemas/OwnerInfo'
+                    description: 开源仓库信息
+        Page:
             type: object
             properties:
                 page:
                     type: integer
+                    description: 当前页码
                     format: int32
                 pageSize:
                     type: integer
+                    description: 每页数量
                     format: int32
                 total:
                     type: integer
+                    description: 总数
                     format: int32
-        open_source.v1.QueryFilter:
+            description: 分页
+        QueryFilter:
             type: object
             properties:
                 targetValue:
                     type: integer
+                    description: 筛选值
                     format: int32
                 op:
                     type: integer
+                    description: 操作符
                     format: enum
                 field:
                     type: string
-        open_source.v1.RepoInfo:
+                    description: 筛选字段
+            description: 查询条件
+        RepoInfo:
             type: object
             properties:
                 id:
                     type: string
+                    description: 仓库id
                 name:
                     type: string
+                    description: 仓库名称
                 fullName:
                     type: string
+                    description: 仓库全称
                 image:
                     type: string
+                    description: 仓库图片
                 ownerId:
                     type: string
+                    description: 仓库所有者ID
                 ownerName:
                     type: string
+                    description: 仓库所有者名称
                 private:
                     type: boolean
+                    description: 是否私有
                 desc:
                     type: string
+                    description: 仓库描述
                 htmlUrl:
                     type: string
+                    description: 库主页 URL
                 homepage:
                     type: string
+                    description: 仓库主页 URL
                 cloneUrl:
                     type: string
+                    description: 克隆 URL
                 stargazersCount:
                     type: string
+                    description: 仓库星标数量
                 watchersCount:
                     type: string
+                    description: 仓库关注者数量
                 language:
                     type: string
+                    description: 仓库语言名称
                 languageId:
                     type: string
+                    description: 仓库语言ID
                 forksCount:
                     type: string
+                    description: 仓库分支数量
                 openIssuesCount:
                     type: string
+                    description: 仓库问题数量
                 topics:
                     type: array
                     items:
                         type: string
+                    description: 仓库主题
                 openIssues:
                     type: string
+                    description: 仓库问题数量
                 watchers:
                     type: string
+                    description: 仓库关注者数量
                 defaultBranch:
                     type: string
+                    description: 仓库默认分支
                 score:
                     type: string
+                    description: 仓库评分
                 size:
                     type: string
+                    description: 仓库大小
                 forks:
                     type: string
+                    description: 仓库分支数量
                 createdAt:
                     type: string
+                    description: 仓库创建时间
                 updatedAt:
                     type: string
-        open_source.v1.RepoReply:
+                    description: 更新时间
+        RepoReply:
+            type: object
+            properties:
+                data:
+                    allOf:
+                        - $ref: '#/components/schemas/RepoReply_Data'
+                    description: 数据
+                success:
+                    type: boolean
+                    description: 是否成功
+        RepoReply_Data:
             type: object
             properties:
                 page:
-                    $ref: '#/components/schemas/open_source.v1.Page'
+                    allOf:
+                        - $ref: '#/components/schemas/Page'
+                    description: 分页信息
                 repos:
                     type: array
                     items:
-                        $ref: '#/components/schemas/open_source.v1.RepoInfo'
-        open_source.v1.RepoRequest:
+                        $ref: '#/components/schemas/RepoInfo'
+                    description: 开源仓库信息
+            description: 数据
+        RepoRequest:
             type: object
             properties:
                 page:
-                    $ref: '#/components/schemas/open_source.v1.Page'
+                    allOf:
+                        - $ref: '#/components/schemas/Page'
+                    description: 分页
                 name:
                     type: string
+                    description: 创库名
                 desc:
                     type: string
+                    description: 仓库描述
                 languageId:
                     type: string
+                    description: 仓库语言ID
                 ownerId:
                     type: string
+                    description: 仓库所有者ID
                 ID:
                     type: string
+                    description: 仓库id
                 filters:
                     type: array
                     items:
-                        $ref: '#/components/schemas/open_source.v1.QueryFilter'
+                        $ref: '#/components/schemas/QueryFilter'
+                    description: 筛选条件
                 sort:
-                    $ref: '#/components/schemas/open_source.v1.SortOrder'
-        open_source.v1.SortOrder:
+                    allOf:
+                        - $ref: '#/components/schemas/SortOrder'
+                    description: 排序条件
+        SortOrder:
             type: object
             properties:
                 order:
                     type: integer
+                    description: 排序方式
                     format: enum
                 field:
                     type: string
+                    description: 排序字段
+            description: 排序条件
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
 tags:
     - name: OpenSource

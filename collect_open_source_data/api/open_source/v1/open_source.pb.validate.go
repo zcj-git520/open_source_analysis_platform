@@ -593,169 +593,6 @@ var _ interface {
 	ErrorName() string
 } = RepoRequestValidationError{}
 
-// Validate checks the field values on RepoListRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *RepoListRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RepoListRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RepoListRequestMultiError, or nil if none found.
-func (m *RepoListRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RepoListRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RepoListRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RepoListRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RepoListRequestValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	for idx, item := range m.GetRepos() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RepoListRequestValidationError{
-						field:  fmt.Sprintf("Repos[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, RepoListRequestValidationError{
-						field:  fmt.Sprintf("Repos[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return RepoListRequestValidationError{
-					field:  fmt.Sprintf("Repos[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return RepoListRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// RepoListRequestMultiError is an error wrapping multiple validation errors
-// returned by RepoListRequest.ValidateAll() if the designated constraints
-// aren't met.
-type RepoListRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RepoListRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RepoListRequestMultiError) AllErrors() []error { return m }
-
-// RepoListRequestValidationError is the validation error returned by
-// RepoListRequest.Validate if the designated constraints aren't met.
-type RepoListRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RepoListRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RepoListRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RepoListRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RepoListRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RepoListRequestValidationError) ErrorName() string { return "RepoListRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e RepoListRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRepoListRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RepoListRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RepoListRequestValidationError{}
-
 // Validate checks the field values on RepoReply with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -779,11 +616,11 @@ func (m *RepoReply) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetPage()).(type) {
+		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, RepoReplyValidationError{
-					field:  "Page",
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -791,55 +628,23 @@ func (m *RepoReply) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, RepoReplyValidationError{
-					field:  "Page",
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return RepoReplyValidationError{
-				field:  "Page",
+				field:  "Data",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
 
-	for idx, item := range m.GetRepos() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RepoReplyValidationError{
-						field:  fmt.Sprintf("Repos[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, RepoReplyValidationError{
-						field:  fmt.Sprintf("Repos[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return RepoReplyValidationError{
-					field:  fmt.Sprintf("Repos[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return RepoReplyMultiError(errors)
@@ -1202,11 +1007,11 @@ func (m *OwnerReply) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetPage()).(type) {
+		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, OwnerReplyValidationError{
-					field:  "Page",
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1214,55 +1019,23 @@ func (m *OwnerReply) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, OwnerReplyValidationError{
-					field:  "Page",
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return OwnerReplyValidationError{
-				field:  "Page",
+				field:  "Data",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
 
-	for idx, item := range m.GetOwners() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, OwnerReplyValidationError{
-						field:  fmt.Sprintf("Owners[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, OwnerReplyValidationError{
-						field:  fmt.Sprintf("Owners[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return OwnerReplyValidationError{
-					field:  fmt.Sprintf("Owners[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return OwnerReplyMultiError(errors)
@@ -1710,11 +1483,11 @@ func (m *LanguageReply) validate(all bool) error {
 	var errors []error
 
 	if all {
-		switch v := interface{}(m.GetPage()).(type) {
+		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, LanguageReplyValidationError{
-					field:  "Page",
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1722,55 +1495,23 @@ func (m *LanguageReply) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, LanguageReplyValidationError{
-					field:  "Page",
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return LanguageReplyValidationError{
-				field:  "Page",
+				field:  "Data",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
 
-	for idx, item := range m.GetLanguages() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, LanguageReplyValidationError{
-						field:  fmt.Sprintf("Languages[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, LanguageReplyValidationError{
-						field:  fmt.Sprintf("Languages[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return LanguageReplyValidationError{
-					field:  fmt.Sprintf("Languages[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return LanguageReplyMultiError(errors)
@@ -1849,3 +1590,494 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LanguageReplyValidationError{}
+
+// Validate checks the field values on RepoReply_Data with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RepoReply_Data) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoReply_Data with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RepoReply_DataMultiError,
+// or nil if none found.
+func (m *RepoReply_Data) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoReply_Data) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RepoReply_DataValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RepoReply_DataValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RepoReply_DataValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetRepos() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RepoReply_DataValidationError{
+						field:  fmt.Sprintf("Repos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RepoReply_DataValidationError{
+						field:  fmt.Sprintf("Repos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RepoReply_DataValidationError{
+					field:  fmt.Sprintf("Repos[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RepoReply_DataMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoReply_DataMultiError is an error wrapping multiple validation errors
+// returned by RepoReply_Data.ValidateAll() if the designated constraints
+// aren't met.
+type RepoReply_DataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoReply_DataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoReply_DataMultiError) AllErrors() []error { return m }
+
+// RepoReply_DataValidationError is the validation error returned by
+// RepoReply_Data.Validate if the designated constraints aren't met.
+type RepoReply_DataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoReply_DataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoReply_DataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoReply_DataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoReply_DataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoReply_DataValidationError) ErrorName() string { return "RepoReply_DataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RepoReply_DataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoReply_Data.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoReply_DataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoReply_DataValidationError{}
+
+// Validate checks the field values on OwnerReply_Data with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *OwnerReply_Data) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OwnerReply_Data with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OwnerReply_DataMultiError, or nil if none found.
+func (m *OwnerReply_Data) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OwnerReply_Data) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, OwnerReply_DataValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, OwnerReply_DataValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return OwnerReply_DataValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetOwners() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, OwnerReply_DataValidationError{
+						field:  fmt.Sprintf("Owners[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, OwnerReply_DataValidationError{
+						field:  fmt.Sprintf("Owners[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return OwnerReply_DataValidationError{
+					field:  fmt.Sprintf("Owners[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return OwnerReply_DataMultiError(errors)
+	}
+
+	return nil
+}
+
+// OwnerReply_DataMultiError is an error wrapping multiple validation errors
+// returned by OwnerReply_Data.ValidateAll() if the designated constraints
+// aren't met.
+type OwnerReply_DataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OwnerReply_DataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OwnerReply_DataMultiError) AllErrors() []error { return m }
+
+// OwnerReply_DataValidationError is the validation error returned by
+// OwnerReply_Data.Validate if the designated constraints aren't met.
+type OwnerReply_DataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OwnerReply_DataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OwnerReply_DataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OwnerReply_DataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OwnerReply_DataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OwnerReply_DataValidationError) ErrorName() string { return "OwnerReply_DataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e OwnerReply_DataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOwnerReply_Data.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OwnerReply_DataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OwnerReply_DataValidationError{}
+
+// Validate checks the field values on LanguageReply_Data with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *LanguageReply_Data) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LanguageReply_Data with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LanguageReply_DataMultiError, or nil if none found.
+func (m *LanguageReply_Data) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LanguageReply_Data) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LanguageReply_DataValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LanguageReply_DataValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LanguageReply_DataValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetLanguages() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LanguageReply_DataValidationError{
+						field:  fmt.Sprintf("Languages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LanguageReply_DataValidationError{
+						field:  fmt.Sprintf("Languages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LanguageReply_DataValidationError{
+					field:  fmt.Sprintf("Languages[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return LanguageReply_DataMultiError(errors)
+	}
+
+	return nil
+}
+
+// LanguageReply_DataMultiError is an error wrapping multiple validation errors
+// returned by LanguageReply_Data.ValidateAll() if the designated constraints
+// aren't met.
+type LanguageReply_DataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LanguageReply_DataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LanguageReply_DataMultiError) AllErrors() []error { return m }
+
+// LanguageReply_DataValidationError is the validation error returned by
+// LanguageReply_Data.Validate if the designated constraints aren't met.
+type LanguageReply_DataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LanguageReply_DataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LanguageReply_DataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LanguageReply_DataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LanguageReply_DataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LanguageReply_DataValidationError) ErrorName() string {
+	return "LanguageReply_DataValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e LanguageReply_DataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLanguageReply_Data.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LanguageReply_DataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LanguageReply_DataValidationError{}

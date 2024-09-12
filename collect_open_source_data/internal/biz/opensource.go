@@ -33,6 +33,7 @@ type OpenSourceRepo interface {
 	UpdateRepo(ctx context.Context, repo *domain.RepoInfo) error
 	FindLanguageByCache(ctx context.Context, languageId int64) (*domain.Language, error)
 	FindOwnerByCache(ctx context.Context, Id int64) (*domain.Owner, error)
+	UpdateOwner(ctx context.Context, owner *domain.Owner) error
 }
 
 type OpenSourceInfo struct {
@@ -127,14 +128,45 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 			continue
 		} else {
 			// 查询owner是否存在
-			if info, err := r.repo.FindOwnerByHtmlUrl(ctx, owner.HtmlURL); err != nil || info == nil {
+			ownerInfo, err := r.repo.FindOwnerByHtmlUrl(ctx, owner.HtmlURL)
+			if err != nil || ownerInfo == nil {
 				// 不存在则创建
 				if ownerId, err = r.repo.InsertOwner(ctx, owner); err != nil {
 					r.log.Errorf("create owner error: %v", err)
 					continue
 				}
 			} else {
-				ownerId = info.ID
+				ownerId = ownerInfo.ID
+				// 更新owner信息
+				update := &domain.Owner{}
+				if ownerInfo.AvatarURL != owner.AvatarURL {
+					update.AvatarURL = owner.AvatarURL
+				}
+				if ownerInfo.Bio != owner.Bio {
+					update.Bio = owner.Bio
+				}
+				if ownerInfo.Email != owner.Email {
+					update.Email = owner.Email
+				}
+				if ownerInfo.Followers != owner.Followers {
+					update.Followers = owner.Followers
+				}
+				if ownerInfo.Following != owner.Following {
+					update.Following = owner.Following
+				}
+				if ownerInfo.PublicGists != owner.PublicGists {
+					update.PublicGists = owner.PublicGists
+				}
+				if ownerInfo.PublicRepos != owner.PublicRepos {
+					update.PublicRepos = owner.PublicRepos
+				}
+				if update != nil {
+					update.ID = ownerInfo.ID
+					if err = r.repo.UpdateOwner(ctx, update); err != nil {
+						r.log.Errorf("update owner error: %v", err)
+						return err
+					}
+				}
 			}
 		}
 
@@ -214,6 +246,7 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 				updateRepo.Score = int64(item.Score)
 			}
 			if updateRepo != nil {
+				updateRepo.ID = info.ID
 				if err = r.repo.UpdateRepo(ctx, updateRepo); err != nil {
 					r.log.Errorf("update repo error: %v", err)
 					return err
@@ -314,8 +347,11 @@ func (r *OpenSourceInfo) GetLanguage(ctx context.Context, req *pb.LanguageReques
 	}
 	req.Page.Total = int32(page.Total)
 	return &pb.LanguageReply{
-		Page:      req.Page,
-		Languages: data,
+		Data: &pb.LanguageReply_Data{
+			Page:      req.Page,
+			Languages: data,
+		},
+		Success: true,
 	}, nil
 
 }
@@ -351,8 +387,11 @@ func (r *OpenSourceInfo) GetOwner(ctx context.Context, req *pb.OwnerRequest) (*p
 	}
 	req.Page.Total = int32(page.Total)
 	return &pb.OwnerReply{
-		Page:   req.Page,
-		Owners: data,
+		Data: &pb.OwnerReply_Data{
+			Page:   req.Page,
+			Owners: data,
+		},
+		Success: true,
 	}, nil
 }
 
@@ -412,8 +451,11 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 	}
 	req.Page.Total = int32(page.Total)
 	return &pb.RepoReply{
-		Page:  req.Page,
-		Repos: data,
+		Data: &pb.RepoReply_Data{
+			Page:  req.Page,
+			Repos: data,
+		},
+		Success: true,
 	}, nil
 
 }

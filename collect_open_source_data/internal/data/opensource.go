@@ -164,6 +164,14 @@ func (o *openSourceInfoRepo) UpdateRepo(ctx context.Context, repo *domain.RepoIn
 	return o.data.db.Model(&domain.RepoInfo{}).Where("id = ?", repo.ID).Updates(repo).Error
 }
 
+func (o *openSourceInfoRepo) UpdateOwner(ctx context.Context, owner *domain.Owner) error {
+	if owner == nil {
+		return fmt.Errorf("owner is nil")
+	}
+	owner.UpdatedAt = time.Now()
+	return o.data.db.Model(&domain.Owner{}).Where("id = ?", owner.ID).Updates(owner).Error
+}
+
 func (o *openSourceInfoRepo) FindLanguageByCache(ctx context.Context, languageId int64) (*domain.Language, error) {
 	language := &domain.Language{}
 	data, err := o.data.rdb.Get(ctx, fmt.Sprintf("opensource_languageId_%d", languageId)).Result()

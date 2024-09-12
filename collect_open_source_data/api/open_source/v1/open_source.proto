@@ -30,127 +30,225 @@ service OpenSource {
 }
 
 message RepoInfo {
+	// 仓库id
 	int64     id = 1;
-	string    name = 2;               // 仓库名称
-	string    full_name = 3;     			// 仓库全称
-	string    image = 4;         			// 仓库图片
-	int64     owner_id = 5;               // 仓库所有者ID
-	string     owner_name = 6;               // 仓库所有者名称
-	bool      private = 7;            // 是否私有
-	string    desc = 8;            // 仓库描述
-	string    html_url = 9;      // 库主页 URL
-	string    homepage = 10;      // 仓库主页 URL
-	string    clone_url = 11;     // 克隆 URL
-	int64     stargazers_count = 12;       // 仓库星标数量
-	int64     watchers_count = 13;         // 仓库关注者数量
-	string    language = 14;            // 仓库语言ID
-	int64    language_id = 15;            // 仓库语言ID
-	int64     forks_count = 16;            // 仓库分支数量
-	int64     open_issues_count = 17;      // 仓库问题数量
-	repeated  string    topics = 18;        // 仓库主题
-	int64     open_issues = 19;            // 仓库问题数量
-	int64     watchers = 20;               // 仓库关注者数量
-	string    default_branch = 21;        // 默认分支
-	int64     score = 22;                  // 仓库评分
-	int64     size = 23;                   // 仓库大小
-	int64     forks = 24;                  // 仓库分支数量
-	string    created_at = 25;        // 创建时间
-	string    updated_at = 26;        // 更新时间
+	// 仓库名称
+	string    name = 2;
+	// 仓库全称
+	string    full_name = 3;
+	// 仓库图片
+	string    image = 4;
+	// 仓库所有者ID
+	int64     owner_id = 5;
+	// 仓库所有者名称
+	string     owner_name = 6;
+	// 是否私有
+	bool      private = 7;
+	// 仓库描述
+	string    desc = 8;
+	// 库主页 URL
+	string    html_url = 9;
+	// 仓库主页 URL
+	string    homepage = 10;
+	// 克隆 URL
+	string    clone_url = 11;
+	// 仓库星标数量
+	int64     stargazers_count = 12;
+	// 仓库关注者数量
+	int64     watchers_count = 13;
+	// 仓库语言名称
+	string    language = 14;
+	// 仓库语言ID
+	int64    language_id = 15;
+	// 仓库分支数量
+	int64     forks_count = 16;
+	// 仓库问题数量
+	int64     open_issues_count = 17;
+	// 仓库主题
+	repeated  string    topics = 18;
+	// 仓库问题数量
+	int64     open_issues = 19;
+	// 仓库关注者数量
+	int64     watchers = 20;
+	// 仓库默认分支
+	string    default_branch = 21;
+	// 仓库评分
+	int64     score = 22;
+	// 仓库大小
+	int64     size = 23;
+	// 仓库分支数量
+	int64     forks = 24;
+	// 仓库创建时间
+	string    created_at = 25;
+	// 更新时间
+	string    updated_at = 26;
 }
 
+// 查询条件
 message QueryFilter {
+	// 筛选值
 	int32 target_value = 1;
 	enum Operator {
-		GT = 0; // Greater Than
-		GTE = 1; // Greater Than or Equal
-		LT = 2; // Less Than
-		LTE = 3; // Less Than or Equal
+		// 等于
+		GT = 0;
+		// 大于等于
+		GTE = 1;
+		// 小于
+		LT = 2;
+		// 小于等于
+		LTE = 3;
 	}
+	// 操作符
 	Operator op = 2;
+	// 筛选字段
 	string field = 3;
 }
 
+// 排序条件
 message SortOrder{
+	// 排序方式
 	enum Order {
+		// 升序
     ASC = 0;
+		// 降序
     DESC = 1;
   }
+	// 排序方式
   Order order = 1;
+	// 排序字段
   string field = 2;
 }
 
 message RepoRequest {
+	// 分页
 	Page page = 1;
+	// 创库名
   string name = 2;
+	// 仓库描述
   string desc = 3;
+	// 仓库语言ID
   int64 language_id = 4;
+	// 仓库所有者ID
   int64 owner_id = 5;
+	// 仓库id
 	int64  ID = 6;
+	// 筛选条件
 	repeated QueryFilter filters = 7;
+	// 排序条件
 	SortOrder sort = 8;
 }
 
-message RepoListRequest {
-	Page page = 1;
-	repeated RepoInfo repos = 2;
-}
-
 message RepoReply {
-  Page page = 1;
-  repeated RepoInfo repos = 2;
+	// 数据
+	message Data {
+		// 分页信息
+		Page page = 1;
+		// 开源仓库信息
+		repeated RepoInfo repos = 2;
+	}
+	// 数据
+	Data data = 1;
+	// 是否成功
+	bool success = 2;
 }
 
 message OwnerInfo {
+	// id
 	int64 id = 1;
-	string avatar_url= 2; // 头像URL
-	string type= 3;       // 类型
-	string login= 4;      // 用户名
-	string html_url= 5;   // 用户主页URL
-	string name= 6;       // 用户名
-	string email= 7;      // 用户邮箱
-	string bio= 8;        // 用户简介
-	int64  public_repos= 9;        // 用户公开仓库数量
-	int64  public_gists= 10;        // 用户公开代码片段数量
-	int64  followers= 11;           // 用户粉丝数量
-	int64  following= 12;           // 用户关注的人数量
-	string created_at= 13;     // 创建时间
+	// 头像URL
+	string avatar_url= 2;
+	// 用户类型：User / Organization
+	string type= 3;
+	// 用户登录名
+	string login= 4;
+	// 用户主页URL
+	string html_url= 5;
+	// 用户名
+	string name= 6;
+	// 用户邮箱
+	string email= 7;
+	// 用户简介
+	string bio= 8;
+	// 用户仓库数量
+	int64  public_repos= 9;
+	// 用户公开代码片段数量
+	int64  public_gists= 10;
+	// 用户粉丝数量
+	int64  followers= 11;
+	// 用户关注的人数量
+	int64  following= 12;
+	//用户注册时间
+	string created_at= 13;
+	// 用户更新时间
 	string updated_at= 14;     // 更新时间
 }
 
 message OwnerRequest {
+	// 分页
   Page page = 1;
+	// 用户名
   string name = 2;
+	// 类型：User / Organization
 	string type = 3;
+	// 用户邮箱
 	string email = 4;
 }
 
 message OwnerReply {
-  Page page = 1;
-  repeated OwnerInfo owners = 2;
+	message Data {
+		// 分页信息
+		Page page = 1;
+		// 开源仓库信息
+		repeated OwnerInfo owners = 2;
+	}
+	// 数据
+	Data data = 1;
+	// 是否成功
+	bool success = 2;
 }
 
 message LanguageInfo {
+	// 语言id
 	int64 id = 1;
+	// 语言名称
 	string name = 2;
+	// 语言描述
 	string description = 3;
+	// 语言连接
 	string image_url = 4;
+	// 语言仓库地址
 	string repo_url = 5;
+	// 语言简介
 	string bio = 6;
 }
 
+// 分页
 message Page {
+	// 当前页码
 	int32 page = 1;
+	// 每页数量
   int32 page_size = 2;
+	// 总数
 	int32 total = 3;
 }
 
 message LanguageRequest {
+	// 分页
 	Page page = 1;
+	// 语言名称
 	string name = 2;
 }
 
 message LanguageReply {
-	Page page = 1;
-	repeated LanguageInfo languages = 2;
+	message Data {
+		// 分页信息
+		Page page = 1;
+		// 语言信息
+		repeated LanguageInfo languages = 2;
+	}
+	// 数据
+	Data data = 1;
+	// 是否成功
+	bool success = 2;
 }
 
