@@ -529,17 +529,7 @@ func (m *RegisterRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetPhone()) != 11 {
-		err := RegisterRequestValidationError{
-			field:  "Phone",
-			reason: "value length must be 11 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
-	}
+	// no validation rules for Phone
 
 	if utf8.RuneCountInString(m.GetVerificationCode()) != 6 {
 		err := RegisterRequestValidationError{
@@ -1017,6 +1007,8 @@ func (m *UpdateUserRequest) validate(all bool) error {
 	// no validation rules for Phone
 
 	// no validation rules for Status
+
+	// no validation rules for Desc
 
 	if len(errors) > 0 {
 		return UpdateUserRequestMultiError(errors)
@@ -1874,6 +1866,8 @@ func (m *LoginReply_Data) validate(all bool) error {
 
 	// no validation rules for Gender
 
+	// no validation rules for Desc
+
 	if len(errors) > 0 {
 		return LoginReply_DataMultiError(errors)
 	}
@@ -1994,6 +1988,8 @@ func (m *UpdateUserReply_Data) validate(all bool) error {
 
 	// no validation rules for Gender
 
+	// no validation rules for Desc
+
 	if len(errors) > 0 {
 		return UpdateUserReply_DataMultiError(errors)
 	}
@@ -2109,6 +2105,8 @@ func (m *GetUserReply_Data) validate(all bool) error {
 	// no validation rules for Avatar
 
 	// no validation rules for Gender
+
+	// no validation rules for Desc
 
 	if len(errors) > 0 {
 		return GetUserReply_DataMultiError(errors)

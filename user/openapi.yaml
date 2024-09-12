@@ -189,6 +189,9 @@ components:
                     type: integer
                     description: 性别 0:保密 1:男 2:女
                     format: int32
+                desc:
+                    type: string
+                    description: 描述
         user.v1.ListUserReply:
             type: object
             properties:
@@ -244,6 +247,9 @@ components:
                     type: integer
                     description: 性别 0:保密 1:男 2:女
                     format: int32
+                desc:
+                    type: string
+                    description: 描述
         user.v1.LoginRequest:
             type: object
             properties:
@@ -346,6 +352,8 @@ components:
                     type: integer
                     description: 性别 0:保密 1:男 2:女
                     format: int32
+                desc:
+                    type: string
         user.v1.UpdateUserRequest:
             type: object
             properties:
@@ -369,6 +377,9 @@ components:
                     type: integer
                     description: 更新的状态 -1 注销（后台）
                     format: int32
+                desc:
+                    type: string
+                    description: 描述
             description: 更新用户信息
         user.v1.VerifyReply:
             type: object

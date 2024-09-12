@@ -44,6 +44,7 @@ type UserInfo struct {
 	ID        int64     `json:"id"`
 	Uid       int64     `json:"uid"`
 	Status    int       `json:"status"`
+	Desc      string    `json:"desc"`
 	Username  string    `json:"username"`
 	Nickname  string    `json:"nickname"`
 	Password  string    `json:"password"`
@@ -187,6 +188,7 @@ func (u *User) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply,
 			Phone:        user.Phone,
 			Email:        user.Email,
 			Gender:       int32(user.Gender),
+			Desc:         user.Desc,
 		},
 
 		Success: true,
@@ -207,6 +209,7 @@ func (u *User) Update(ctx context.Context, req *pb.UpdateUserRequest) (*pb.Updat
 	}
 	userInfo := &UserInfo{
 		Uid:      user.Uid,
+		Desc:     req.Desc,
 		Status:   int(req.Status),
 		Nickname: req.Nickname,
 		Password: req.Password,
@@ -240,6 +243,7 @@ func (u *User) Update(ctx context.Context, req *pb.UpdateUserRequest) (*pb.Updat
 			Phone:        user.Phone,
 			Email:        user.Email,
 			Gender:       int32(user.Gender),
+			Desc:         user.Desc,
 		},
 		Success: true,
 	}, nil
@@ -264,6 +268,7 @@ func (u *User) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUser
 			Avatar:   user.Avatar,
 			Gender:   int32(user.Gender),
 			Nickname: user.Nickname,
+			Desc:     user.Desc,
 		},
 		Success: true,
 	}, nil

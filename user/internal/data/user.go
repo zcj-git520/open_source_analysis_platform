@@ -16,6 +16,7 @@ type UserInfo struct {
 	Nickname  string    `gorm:"type:varchar(50)" json:"nickname"`
 	Username  string    `gorm:"type:varchar(50)" json:"username"`
 	Password  string    `gorm:"type:varchar(255)" json:"password"`
+	Desc      string    `gorm:"type:varchar(500)" json:"desc"`
 	Email     string    `gorm:"type:varchar(50)" json:"email"`
 	Avatar    string    `gorm:"type:varchar(255)" json:"avatar"`
 	Role      []string  `gorm:"type:varchar(255)" json:"role"`
@@ -45,6 +46,7 @@ func (u *userRepo) changeType(ctx context.Context, user *UserInfo) *biz.UserInfo
 	return &biz.UserInfo{
 		ID:        user.ID,
 		Uid:       user.Uid,
+		Desc:      user.Desc,
 		Status:    user.Status,
 		Nickname:  user.Nickname,
 		Username:  user.Username,
@@ -119,6 +121,9 @@ func (u *userRepo) UpdateUser(ctx context.Context, user *biz.UserInfo) error {
 	}
 	if user.Email != "" {
 		userInfo.Email = user.Email
+	}
+	if user.Desc != "" {
+		userInfo.Desc = user.Desc
 	}
 	if user.Avatar != "" {
 		userInfo.Avatar = user.Avatar
