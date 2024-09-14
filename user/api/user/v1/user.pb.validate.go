@@ -35,6 +35,138 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on CommonReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CommonReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CommonReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CommonReplyMultiError, or
+// nil if none found.
+func (m *CommonReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CommonReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	// no validation rules for Message
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CommonReplyValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CommonReplyValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CommonReplyValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CommonReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CommonReplyMultiError is an error wrapping multiple validation errors
+// returned by CommonReply.ValidateAll() if the designated constraints aren't met.
+type CommonReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CommonReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CommonReplyMultiError) AllErrors() []error { return m }
+
+// CommonReplyValidationError is the validation error returned by
+// CommonReply.Validate if the designated constraints aren't met.
+type CommonReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CommonReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CommonReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CommonReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CommonReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CommonReplyValidationError) ErrorName() string { return "CommonReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CommonReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCommonReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CommonReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CommonReplyValidationError{}
+
 // Validate checks the field values on DeleteUserRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -181,8 +313,6 @@ func (m *DeleteUserReply) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return DeleteUserReplyMultiError(errors)
@@ -394,8 +524,6 @@ func (m *VerifyReply) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return VerifyReplyMultiError(errors)
@@ -643,8 +771,6 @@ func (m *RegisterReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Success
-
 	if len(errors) > 0 {
 		return RegisterReplyMultiError(errors)
 	}
@@ -866,36 +992,27 @@ func (m *LoginReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Success
+	// no validation rules for Uid
 
-	if all {
-		switch v := interface{}(m.GetData()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LoginReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LoginReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LoginReplyValidationError{
-				field:  "Data",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for AccessToken
+
+	// no validation rules for Avatar
+
+	// no validation rules for Nickname
+
+	// no validation rules for Username
+
+	// no validation rules for RefreshToken
+
+	// no validation rules for Expires
+
+	// no validation rules for Phone
+
+	// no validation rules for Email
+
+	// no validation rules for Gender
+
+	// no validation rules for Desc
 
 	if len(errors) > 0 {
 		return LoginReplyMultiError(errors)
@@ -1112,36 +1229,27 @@ func (m *UpdateUserReply) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Success
+	// no validation rules for Uid
 
-	if all {
-		switch v := interface{}(m.GetData()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateUserReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateUserReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateUserReplyValidationError{
-				field:  "Data",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for AccessToken
+
+	// no validation rules for Avatar
+
+	// no validation rules for Nickname
+
+	// no validation rules for Username
+
+	// no validation rules for RefreshToken
+
+	// no validation rules for Expires
+
+	// no validation rules for Phone
+
+	// no validation rules for Email
+
+	// no validation rules for Gender
+
+	// no validation rules for Desc
 
 	if len(errors) > 0 {
 		return UpdateUserReplyMultiError(errors)
@@ -1343,36 +1451,21 @@ func (m *GetUserReply) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetData()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetUserReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetUserReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetUserReplyValidationError{
-				field:  "Data",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Uid
 
-	// no validation rules for Success
+	// no validation rules for Nickname
+
+	// no validation rules for Username
+
+	// no validation rules for Email
+
+	// no validation rules for Phone
+
+	// no validation rules for Avatar
+
+	// no validation rules for Gender
+
+	// no validation rules for Desc
 
 	if len(errors) > 0 {
 		return GetUserReplyMultiError(errors)
@@ -1713,36 +1806,11 @@ func (m *RefreshTokenReply) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetData()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RefreshTokenReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RefreshTokenReplyValidationError{
-					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RefreshTokenReplyValidationError{
-				field:  "Data",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for AccessToken
 
-	// no validation rules for Success
+	// no validation rules for RefreshToken
+
+	// no validation rules for Expires
 
 	if len(errors) > 0 {
 		return RefreshTokenReplyMultiError(errors)
@@ -1823,475 +1891,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RefreshTokenReplyValidationError{}
-
-// Validate checks the field values on LoginReply_Data with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *LoginReply_Data) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on LoginReply_Data with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// LoginReply_DataMultiError, or nil if none found.
-func (m *LoginReply_Data) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *LoginReply_Data) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Uid
-
-	// no validation rules for AccessToken
-
-	// no validation rules for Avatar
-
-	// no validation rules for Nickname
-
-	// no validation rules for Username
-
-	// no validation rules for RefreshToken
-
-	// no validation rules for Expires
-
-	// no validation rules for Phone
-
-	// no validation rules for Email
-
-	// no validation rules for Gender
-
-	// no validation rules for Desc
-
-	if len(errors) > 0 {
-		return LoginReply_DataMultiError(errors)
-	}
-
-	return nil
-}
-
-// LoginReply_DataMultiError is an error wrapping multiple validation errors
-// returned by LoginReply_Data.ValidateAll() if the designated constraints
-// aren't met.
-type LoginReply_DataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m LoginReply_DataMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m LoginReply_DataMultiError) AllErrors() []error { return m }
-
-// LoginReply_DataValidationError is the validation error returned by
-// LoginReply_Data.Validate if the designated constraints aren't met.
-type LoginReply_DataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e LoginReply_DataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e LoginReply_DataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e LoginReply_DataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e LoginReply_DataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e LoginReply_DataValidationError) ErrorName() string { return "LoginReply_DataValidationError" }
-
-// Error satisfies the builtin error interface
-func (e LoginReply_DataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sLoginReply_Data.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = LoginReply_DataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = LoginReply_DataValidationError{}
-
-// Validate checks the field values on UpdateUserReply_Data with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUserReply_Data) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateUserReply_Data with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateUserReply_DataMultiError, or nil if none found.
-func (m *UpdateUserReply_Data) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateUserReply_Data) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Uid
-
-	// no validation rules for AccessToken
-
-	// no validation rules for Avatar
-
-	// no validation rules for Nickname
-
-	// no validation rules for Username
-
-	// no validation rules for RefreshToken
-
-	// no validation rules for Expires
-
-	// no validation rules for Phone
-
-	// no validation rules for Email
-
-	// no validation rules for Gender
-
-	// no validation rules for Desc
-
-	if len(errors) > 0 {
-		return UpdateUserReply_DataMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateUserReply_DataMultiError is an error wrapping multiple validation
-// errors returned by UpdateUserReply_Data.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateUserReply_DataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUserReply_DataMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateUserReply_DataMultiError) AllErrors() []error { return m }
-
-// UpdateUserReply_DataValidationError is the validation error returned by
-// UpdateUserReply_Data.Validate if the designated constraints aren't met.
-type UpdateUserReply_DataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateUserReply_DataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateUserReply_DataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateUserReply_DataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateUserReply_DataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateUserReply_DataValidationError) ErrorName() string {
-	return "UpdateUserReply_DataValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateUserReply_DataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateUserReply_Data.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateUserReply_DataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateUserReply_DataValidationError{}
-
-// Validate checks the field values on GetUserReply_Data with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *GetUserReply_Data) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetUserReply_Data with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetUserReply_DataMultiError, or nil if none found.
-func (m *GetUserReply_Data) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetUserReply_Data) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Uid
-
-	// no validation rules for Nickname
-
-	// no validation rules for Username
-
-	// no validation rules for Email
-
-	// no validation rules for Phone
-
-	// no validation rules for Avatar
-
-	// no validation rules for Gender
-
-	// no validation rules for Desc
-
-	if len(errors) > 0 {
-		return GetUserReply_DataMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetUserReply_DataMultiError is an error wrapping multiple validation errors
-// returned by GetUserReply_Data.ValidateAll() if the designated constraints
-// aren't met.
-type GetUserReply_DataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetUserReply_DataMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetUserReply_DataMultiError) AllErrors() []error { return m }
-
-// GetUserReply_DataValidationError is the validation error returned by
-// GetUserReply_Data.Validate if the designated constraints aren't met.
-type GetUserReply_DataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetUserReply_DataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetUserReply_DataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetUserReply_DataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetUserReply_DataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetUserReply_DataValidationError) ErrorName() string {
-	return "GetUserReply_DataValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetUserReply_DataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetUserReply_Data.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetUserReply_DataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetUserReply_DataValidationError{}
-
-// Validate checks the field values on RefreshTokenReply_Data with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RefreshTokenReply_Data) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RefreshTokenReply_Data with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RefreshTokenReply_DataMultiError, or nil if none found.
-func (m *RefreshTokenReply_Data) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RefreshTokenReply_Data) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for AccessToken
-
-	// no validation rules for RefreshToken
-
-	// no validation rules for Expires
-
-	if len(errors) > 0 {
-		return RefreshTokenReply_DataMultiError(errors)
-	}
-
-	return nil
-}
-
-// RefreshTokenReply_DataMultiError is an error wrapping multiple validation
-// errors returned by RefreshTokenReply_Data.ValidateAll() if the designated
-// constraints aren't met.
-type RefreshTokenReply_DataMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RefreshTokenReply_DataMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RefreshTokenReply_DataMultiError) AllErrors() []error { return m }
-
-// RefreshTokenReply_DataValidationError is the validation error returned by
-// RefreshTokenReply_Data.Validate if the designated constraints aren't met.
-type RefreshTokenReply_DataValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RefreshTokenReply_DataValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RefreshTokenReply_DataValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RefreshTokenReply_DataValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RefreshTokenReply_DataValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RefreshTokenReply_DataValidationError) ErrorName() string {
-	return "RefreshTokenReply_DataValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e RefreshTokenReply_DataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRefreshTokenReply_Data.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RefreshTokenReply_DataValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RefreshTokenReply_DataValidationError{}

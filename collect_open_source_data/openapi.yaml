@@ -158,16 +158,6 @@ components:
         LanguageReply:
             type: object
             properties:
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/LanguageReply_Data'
-                    description: 数据
-                success:
-                    type: boolean
-                    description: 是否成功
-        LanguageReply_Data:
-            type: object
-            properties:
                 page:
                     allOf:
                         - $ref: '#/components/schemas/Page'
@@ -223,16 +213,6 @@ components:
                     type: string
                     description: 用户更新时间
         OwnerReply:
-            type: object
-            properties:
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/OwnerReply_Data'
-                    description: 数据
-                success:
-                    type: boolean
-                    description: 是否成功
-        OwnerReply_Data:
             type: object
             properties:
                 page:
@@ -361,16 +341,6 @@ components:
         RepoReply:
             type: object
             properties:
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/RepoReply_Data'
-                    description: 数据
-                success:
-                    type: boolean
-                    description: 是否成功
-        RepoReply_Data:
-            type: object
-            properties:
                 page:
                     allOf:
                         - $ref: '#/components/schemas/Page'
@@ -380,7 +350,6 @@ components:
                     items:
                         $ref: '#/components/schemas/RepoInfo'
                     description: 开源仓库信息
-            description: 数据
         RepoRequest:
             type: object
             properties:

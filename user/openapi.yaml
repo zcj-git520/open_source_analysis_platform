@@ -150,21 +150,8 @@ components:
     schemas:
         user.v1.DeleteUserReply:
             type: object
-            properties:
-                success:
-                    type: boolean
-                    description: 成功
+            properties: {}
         user.v1.GetUserReply:
-            type: object
-            properties:
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/user.v1.GetUserReply_Data'
-                    description: 数据
-                success:
-                    type: boolean
-                    description: 成功
-        user.v1.GetUserReply_Data:
             type: object
             properties:
                 uid:
@@ -205,17 +192,6 @@ components:
         user.v1.LoginReply:
             type: object
             properties:
-                success:
-                    type: boolean
-                    description: 成功
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/user.v1.LoginReply_Data'
-                    description: 数据
-            description: 登录返回数据
-        user.v1.LoginReply_Data:
-            type: object
-            properties:
                 uid:
                     type: string
                     description: 用户ID
@@ -250,6 +226,7 @@ components:
                 desc:
                     type: string
                     description: 描述
+            description: 登录返回数据
         user.v1.LoginRequest:
             type: object
             properties:
@@ -263,17 +240,6 @@ components:
         user.v1.RefreshTokenReply:
             type: object
             properties:
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/user.v1.RefreshTokenReply_Data'
-                    description: 数据
-                success:
-                    type: boolean
-                    description: 成功
-            description: 刷新token
-        user.v1.RefreshTokenReply_Data:
-            type: object
-            properties:
                 accessToken:
                     type: string
                     description: token
@@ -283,11 +249,10 @@ components:
                 expires:
                     type: string
                     description: 过期时间
+            description: 刷新token
         user.v1.RegisterReply:
             type: object
-            properties:
-                success:
-                    type: boolean
+            properties: {}
             description: 注册信息返回
         user.v1.RegisterRequest:
             type: object
@@ -309,16 +274,6 @@ components:
                     description: 验证码
             description: 注册信息
         user.v1.UpdateUserReply:
-            type: object
-            properties:
-                success:
-                    type: boolean
-                    description: 成功
-                data:
-                    allOf:
-                        - $ref: '#/components/schemas/user.v1.UpdateUserReply_Data'
-                    description: 数据
-        user.v1.UpdateUserReply_Data:
             type: object
             properties:
                 uid:
@@ -383,10 +338,7 @@ components:
             description: 更新用户信息
         user.v1.VerifyReply:
             type: object
-            properties:
-                success:
-                    type: boolean
-                    description: 成功
+            properties: {}
         user.v1.VerifyRequest:
             type: object
             properties:

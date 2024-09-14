@@ -328,10 +328,10 @@ func (r *OpenSourceInfo) Collect() {
 }
 
 func (r *OpenSourceInfo) GetLanguage(ctx context.Context, req *pb.LanguageRequest) (*pb.LanguageReply, error) {
-	page := &domain.Page{
-		PageNum:  int(req.Page.Page),
-		PageSize: int(req.Page.PageSize),
-		Total:    int64(req.Page.Total),
+	page := &domain.Page{}
+	if req.Page != nil {
+		page.PageNum = int(req.Page.Page)
+		page.PageSize = int(req.Page.PageSize)
 	}
 	info, err := r.repo.FindLanguage(ctx, req.Name, 0, page)
 	if err != nil {
@@ -350,20 +350,17 @@ func (r *OpenSourceInfo) GetLanguage(ctx context.Context, req *pb.LanguageReques
 	}
 	req.Page.Total = int32(page.Total)
 	return &pb.LanguageReply{
-		Data: &pb.LanguageReply_Data{
-			Page:      req.Page,
-			Languages: data,
-		},
-		Success: true,
+		Page:      req.Page,
+		Languages: data,
 	}, nil
 
 }
 
 func (r *OpenSourceInfo) GetOwner(ctx context.Context, req *pb.OwnerRequest) (*pb.OwnerReply, error) {
-	page := &domain.Page{
-		PageNum:  int(req.Page.Page),
-		PageSize: int(req.Page.PageSize),
-		Total:    int64(req.Page.Total),
+	page := &domain.Page{}
+	if req.Page != nil {
+		page.PageNum = int(req.Page.Page)
+		page.PageSize = int(req.Page.PageSize)
 	}
 	info, err := r.repo.FindOwner(ctx, req.Name, req.Type, req.Email, 0, page)
 	if err != nil {
@@ -390,19 +387,17 @@ func (r *OpenSourceInfo) GetOwner(ctx context.Context, req *pb.OwnerRequest) (*p
 	}
 	req.Page.Total = int32(page.Total)
 	return &pb.OwnerReply{
-		Data: &pb.OwnerReply_Data{
-			Page:   req.Page,
-			Owners: data,
-		},
-		Success: true,
+		Page:   req.Page,
+		Owners: data,
 	}, nil
 }
 
 func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.RepoReply, error) {
-	page := &domain.Page{
-		PageNum:  int(req.Page.Page),
-		PageSize: int(req.Page.PageSize),
-		Total:    int64(req.Page.Total),
+	fmt.Println("GetRepo========================================", req)
+	page := &domain.Page{}
+	if req.Page != nil {
+		page.PageNum = int(req.Page.Page)
+		page.PageSize = int(req.Page.PageSize)
 	}
 	info, err := r.repo.FindRepo(ctx, req, page)
 	if err != nil {
@@ -454,11 +449,8 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 	}
 	req.Page.Total = int32(page.Total)
 	return &pb.RepoReply{
-		Data: &pb.RepoReply_Data{
-			Page:  req.Page,
-			Repos: data,
-		},
-		Success: true,
+		Page:  req.Page,
+		Repos: data,
 	}, nil
 
 }

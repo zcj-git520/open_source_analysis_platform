@@ -117,14 +117,10 @@ func (u *User) VerifyCode(ctx context.Context, req *pb.VerifyRequest) (*pb.Verif
 		return nil, fmt.Errorf("email format error")
 	}
 	// 发送验证码
-	result := &pb.VerifyReply{
-		Success: false,
-	}
 	if err := u.sendVerificationCodeByEmail(ctx, req.Email); err != nil {
-		return result, err
+		return nil, err
 	}
-	result.Success = true
-	return result, nil
+	return &pb.VerifyReply{}, nil
 }
 
 func (u *User) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterReply, error) {
@@ -157,9 +153,7 @@ func (u *User) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Regis
 		Password: pwd,
 		Email:    req.Email,
 	})
-	return &pb.RegisterReply{
-		Success: true,
-	}, err
+	return &pb.RegisterReply{}, err
 
 }
 
@@ -177,21 +171,17 @@ func (u *User) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginReply,
 		return nil, fmt.Errorf("create token error")
 	}
 	return &pb.LoginReply{
-		Data: &pb.LoginReply_Data{
-			Uid:          user.Uid,
-			AccessToken:  token,
-			Avatar:       user.Avatar,
-			Nickname:     user.Nickname,
-			Username:     user.Username,
-			RefreshToken: token,
-			Expires:      expStr,
-			Phone:        user.Phone,
-			Email:        user.Email,
-			Gender:       int32(user.Gender),
-			Desc:         user.Desc,
-		},
-
-		Success: true,
+		Uid:          user.Uid,
+		AccessToken:  token,
+		Avatar:       user.Avatar,
+		Nickname:     user.Nickname,
+		Username:     user.Username,
+		RefreshToken: token,
+		Expires:      expStr,
+		Phone:        user.Phone,
+		Email:        user.Email,
+		Gender:       int32(user.Gender),
+		Desc:         user.Desc,
 	}, nil
 }
 
@@ -232,20 +222,17 @@ func (u *User) Update(ctx context.Context, req *pb.UpdateUserRequest) (*pb.Updat
 		return nil, fmt.Errorf("create token error")
 	}
 	return &pb.UpdateUserReply{
-		Data: &pb.UpdateUserReply_Data{
-			Uid:          user.Uid,
-			AccessToken:  token,
-			Avatar:       user.Avatar,
-			Nickname:     user.Nickname,
-			Username:     user.Username,
-			RefreshToken: token,
-			Expires:      expStr,
-			Phone:        user.Phone,
-			Email:        user.Email,
-			Gender:       int32(user.Gender),
-			Desc:         user.Desc,
-		},
-		Success: true,
+		Uid:          user.Uid,
+		AccessToken:  token,
+		Avatar:       user.Avatar,
+		Nickname:     user.Nickname,
+		Username:     user.Username,
+		RefreshToken: token,
+		Expires:      expStr,
+		Phone:        user.Phone,
+		Email:        user.Email,
+		Gender:       int32(user.Gender),
+		Desc:         user.Desc,
 	}, nil
 }
 
@@ -260,17 +247,14 @@ func (u *User) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUser
 		return nil, fmt.Errorf("user not exists")
 	}
 	return &pb.GetUserReply{
-		Data: &pb.GetUserReply_Data{
-			Uid:      user.Uid,
-			Username: user.Username,
-			Email:    user.Email,
-			Phone:    user.Phone,
-			Avatar:   user.Avatar,
-			Gender:   int32(user.Gender),
-			Nickname: user.Nickname,
-			Desc:     user.Desc,
-		},
-		Success: true,
+		Uid:      user.Uid,
+		Username: user.Username,
+		Email:    user.Email,
+		Phone:    user.Phone,
+		Avatar:   user.Avatar,
+		Gender:   int32(user.Gender),
+		Nickname: user.Nickname,
+		Desc:     user.Desc,
 	}, nil
 }
 
@@ -299,7 +283,7 @@ func (u *User) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.D
 	}); err != nil {
 		return nil, fmt.Errorf("delete user error:%v", err)
 	}
-	return &pb.DeleteUserReply{Success: true}, nil
+	return &pb.DeleteUserReply{}, nil
 }
 
 func (u *User) RefreshToken(ctx context.Context) (*pb.RefreshTokenReply, error) {
@@ -316,11 +300,8 @@ func (u *User) RefreshToken(ctx context.Context) (*pb.RefreshTokenReply, error) 
 	}
 	token, expStr, err := u.createToken(ctx, user.Uid)
 	return &pb.RefreshTokenReply{
-		Data: &pb.RefreshTokenReply_Data{
-			AccessToken:  token,
-			RefreshToken: token,
-			Expires:      expStr,
-		},
-		Success: true,
+		AccessToken:  token,
+		RefreshToken: token,
+		Expires:      expStr,
 	}, nil
 }

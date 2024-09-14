@@ -5,6 +5,7 @@ package open_source.v1;
 import "validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/any.proto";
 
 option go_package = "collect_open_source_data/api/open_source/v1;v1";
 option java_multiple_files = true;
@@ -139,17 +140,10 @@ message RepoRequest {
 }
 
 message RepoReply {
-	// 数据
-	message Data {
-		// 分页信息
-		Page page = 1;
-		// 开源仓库信息
-		repeated RepoInfo repos = 2;
-	}
-	// 数据
-	Data data = 1;
-	// 是否成功
-	bool success = 2;
+	// 分页信息
+	Page page = 1;
+	// 开源仓库信息
+	repeated RepoInfo repos = 2;
 }
 
 message OwnerInfo {
@@ -195,16 +189,10 @@ message OwnerRequest {
 }
 
 message OwnerReply {
-	message Data {
-		// 分页信息
-		Page page = 1;
-		// 开源仓库信息
-		repeated OwnerInfo owners = 2;
-	}
-	// 数据
-	Data data = 1;
-	// 是否成功
-	bool success = 2;
+	// 分页信息
+	Page page = 1;
+	// 开源仓库信息
+	repeated OwnerInfo owners = 2;
 }
 
 message LanguageInfo {
@@ -240,15 +228,14 @@ message LanguageRequest {
 }
 
 message LanguageReply {
-	message Data {
 		// 分页信息
 		Page page = 1;
 		// 语言信息
 		repeated LanguageInfo languages = 2;
-	}
-	// 数据
-	Data data = 1;
-	// 是否成功
-	bool success = 2;
 }
 
+message CommonReply {
+	int32 code = 1;
+	string message = 2;
+	google.protobuf.Any data = 3;
+};
