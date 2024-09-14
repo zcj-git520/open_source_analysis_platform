@@ -135,10 +135,10 @@ func (u *User) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Regis
 		return nil, fmt.Errorf("user already exists")
 	}
 	// 判断用户收集号是否存在
-	user, err = u.repo.FindUserByPhone(ctx, req.Phone)
-	if err == nil && user != nil && user.Uid > 0 {
-		return nil, fmt.Errorf("user already exists")
-	}
+	//user, err = u.repo.FindUserByPhone(ctx, req.Phone)
+	//if err == nil && user != nil && user.Uid > 0 {
+	//	return nil, fmt.Errorf("user already exists")
+	//}
 	code, err := u.repo.GetVerifyCodeCache(ctx, req.Email)
 	if err != nil {
 		return nil, fmt.Errorf("verification code empty")

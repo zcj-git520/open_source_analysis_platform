@@ -25,3 +25,6 @@ email:
 
 auth:
   jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S
+
+casbin:
+  model: ../../configs/casbin/casbin_model.conf

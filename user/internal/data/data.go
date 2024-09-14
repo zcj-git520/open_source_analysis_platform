@@ -8,16 +8,13 @@ import (
 	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gormLogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	slog "log"
-	"os"
-	"time"
 	"user/internal/conf"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewUserRepo)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewRedis, NewUserRepo, NewCasbinRuleRepo)
 
 // Data .
 type Data struct {
@@ -34,19 +31,8 @@ func NewData(c *conf.Data, logger log.Logger, db *gorm.DB, rdb *redis.Client) (*
 }
 
 func NewDB(c *conf.Data) *gorm.DB {
-	// 终端打印输入 sql 执行记录
-	newLogger := logger.New(
-		slog.New(os.Stdout, "\r\n", slog.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold: time.Second, // 慢查询 SQL 阈值
-			Colorful:      true,        // 禁用彩色打印
-			//IgnoreRecordNotFoundError: false,
-			LogLevel: logger.Info, // Log lever
-		},
-	)
-
 	db, err := gorm.Open(mysql.Open(c.Database.Source), &gorm.Config{
-		Logger:                                   newLogger,
+		Logger:                                   gormLogger.Default.LogMode(gormLogger.Info),
 		DisableForeignKeyConstraintWhenMigrating: true,
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true, // 表名是否加 s

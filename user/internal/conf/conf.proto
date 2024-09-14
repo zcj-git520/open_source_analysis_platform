@@ -10,6 +10,7 @@ message Bootstrap {
   Data data = 2;
   Email email = 3;
   Auth auth = 4;
+  Casbin casbin = 5;
 }
 
 message Server {
@@ -55,4 +56,8 @@ message Email{
 
 message Auth {
   string jwt_key = 1;
+}
+
+message Casbin {
+  string model = 1;
 }

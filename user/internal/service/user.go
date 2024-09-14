@@ -9,11 +9,12 @@ import (
 
 type UserService struct {
 	pb.UnimplementedUserServer
-	uc *biz.User
+	uc         *biz.User
+	casbinCase *biz.CasbinRule
 }
 
-func NewUserService(uc *biz.User) *UserService {
-	return &UserService{uc: uc}
+func NewUserService(uc *biz.User, ca *biz.CasbinRule) *UserService {
+	return &UserService{uc: uc, casbinCase: ca}
 }
 
 func (s *UserService) Verify(ctx context.Context, req *pb.VerifyRequest) (*pb.VerifyReply, error) {

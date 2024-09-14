@@ -309,6 +309,9 @@ func (r *OpenSourceInfo) getRepoImage(ctx context.Context, repoName string) (str
 
 func (r *OpenSourceInfo) Collect() {
 	r.Page++
+	if r.Page > 10 {
+		r.Page = 1
+	}
 	fmt.Println("========================================:  ", r.Page)
 	language := []string{"Python", "JavaScript", "Java", "C", "C++", "C#", "PHP", "Ruby", "Go", "Rust", "TypeScript"}
 	for _, item := range language {

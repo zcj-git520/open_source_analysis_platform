@@ -51,6 +51,7 @@ func (u *userRepo) changeType(ctx context.Context, user *UserInfo) *biz.UserInfo
 		Nickname:  user.Nickname,
 		Username:  user.Username,
 		Password:  user.Password,
+		Phone:     user.Phone,
 		Email:     user.Email,
 		Avatar:    user.Avatar,
 		Gender:    user.Gender,
@@ -130,6 +131,9 @@ func (u *userRepo) UpdateUser(ctx context.Context, user *biz.UserInfo) error {
 	}
 	if user.Gender != 0 {
 		userInfo.Gender = user.Gender
+	}
+	if user.Phone != "" {
+		userInfo.Phone = user.Phone
 	}
 	return u.data.db.Model(&UserInfo{}).Where("uid = ?", user.Uid).Updates(userInfo).Error
 }
