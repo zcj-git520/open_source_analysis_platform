@@ -42,14 +42,14 @@ type UserHTTPServer interface {
 
 func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/verify", _User_Verify0_HTTP_Handler(srv))
-	r.POST("/v1/register", _User_Register0_HTTP_Handler(srv))
-	r.POST("/v1/login", _User_Login0_HTTP_Handler(srv))
-	r.PUT("/v1/user", _User_UpdateUser0_HTTP_Handler(srv))
-	r.GET("/v1/user", _User_GetUser0_HTTP_Handler(srv))
-	r.GET("/v1/user/list", _User_ListUser0_HTTP_Handler(srv))
-	r.DELETE("/v1/user", _User_DeleteUser0_HTTP_Handler(srv))
-	r.GET("/v1/refresh_token", _User_RefreshToken0_HTTP_Handler(srv))
+	r.POST("/verify", _User_Verify0_HTTP_Handler(srv))
+	r.POST("/register", _User_Register0_HTTP_Handler(srv))
+	r.POST("/login", _User_Login0_HTTP_Handler(srv))
+	r.PUT("/user", _User_UpdateUser0_HTTP_Handler(srv))
+	r.GET("/user", _User_GetUser0_HTTP_Handler(srv))
+	r.GET("/user/list", _User_ListUser0_HTTP_Handler(srv))
+	r.DELETE("/user", _User_DeleteUser0_HTTP_Handler(srv))
+	r.GET("/refresh_token", _User_RefreshToken0_HTTP_Handler(srv))
 }
 
 func _User_Verify0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -237,7 +237,7 @@ func NewUserHTTPClient(client *http.Client) UserHTTPClient {
 
 func (c *UserHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...http.CallOption) (*DeleteUserReply, error) {
 	var out DeleteUserReply
-	pattern := "/v1/user"
+	pattern := "/user"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserDeleteUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -250,7 +250,7 @@ func (c *UserHTTPClientImpl) DeleteUser(ctx context.Context, in *DeleteUserReque
 
 func (c *UserHTTPClientImpl) GetUser(ctx context.Context, in *GetUserRequest, opts ...http.CallOption) (*GetUserReply, error) {
 	var out GetUserReply
-	pattern := "/v1/user"
+	pattern := "/user"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -263,7 +263,7 @@ func (c *UserHTTPClientImpl) GetUser(ctx context.Context, in *GetUserRequest, op
 
 func (c *UserHTTPClientImpl) ListUser(ctx context.Context, in *ListUserRequest, opts ...http.CallOption) (*ListUserReply, error) {
 	var out ListUserReply
-	pattern := "/v1/user/list"
+	pattern := "/user/list"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserListUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -276,7 +276,7 @@ func (c *UserHTTPClientImpl) ListUser(ctx context.Context, in *ListUserRequest, 
 
 func (c *UserHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts ...http.CallOption) (*LoginReply, error) {
 	var out LoginReply
-	pattern := "/v1/login"
+	pattern := "/login"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserLogin))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -289,7 +289,7 @@ func (c *UserHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, opts .
 
 func (c *UserHTTPClientImpl) RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*RefreshTokenReply, error) {
 	var out RefreshTokenReply
-	pattern := "/v1/refresh_token"
+	pattern := "/refresh_token"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserRefreshToken))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -302,7 +302,7 @@ func (c *UserHTTPClientImpl) RefreshToken(ctx context.Context, in *emptypb.Empty
 
 func (c *UserHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*RegisterReply, error) {
 	var out RegisterReply
-	pattern := "/v1/register"
+	pattern := "/register"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRegister))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -315,7 +315,7 @@ func (c *UserHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, 
 
 func (c *UserHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...http.CallOption) (*UpdateUserReply, error) {
 	var out UpdateUserReply
-	pattern := "/v1/user"
+	pattern := "/user"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserUpdateUser))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -328,7 +328,7 @@ func (c *UserHTTPClientImpl) UpdateUser(ctx context.Context, in *UpdateUserReque
 
 func (c *UserHTTPClientImpl) Verify(ctx context.Context, in *VerifyRequest, opts ...http.CallOption) (*VerifyReply, error) {
 	var out VerifyReply
-	pattern := "/v1/verify"
+	pattern := "/verify"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserVerify))
 	opts = append(opts, http.PathTemplate(pattern))

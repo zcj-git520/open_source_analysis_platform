@@ -14,17 +14,17 @@ option java_package = "open_source.v1";
 service OpenSource {
 	rpc GetLanguage (LanguageRequest) returns (LanguageReply){
 		option (google.api.http) = {
-			get: "/v1/language"
+			get: "/language"
 		};
 	}
 	rpc GetOwner(OwnerRequest) returns (OwnerReply){
 		option (google.api.http) = {
-      get: "/v1/owner"
+      get: "/owner"
     };
   }
 	rpc GetRepo(RepoRequest) returns (RepoReply){
 		option (google.api.http) = {
-      post: "/v1/repo"
+      post: "/repo"
 			body: "*"
     };
 	}

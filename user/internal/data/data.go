@@ -62,3 +62,17 @@ func NewRedis(c *conf.Data) *redis.Client {
 	}
 	return rdb
 }
+
+//
+//func NewRegistrar(conf *conf.Registry) registry.Registrar {
+//	c := consulAPI.DefaultConfig()
+//	c.Address = conf.Consul.Address
+//	c.Scheme = conf.Consul.Scheme
+//	cli, err := consulAPI.NewClient(c)
+//	if err != nil {
+//		//
+//		//panic(err)
+//	}
+//	r := consul.New(cli, consul.WithHealthCheck(false))
+//	return r
+//}

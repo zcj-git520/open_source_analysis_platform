@@ -31,9 +31,9 @@ type OpenSourceHTTPServer interface {
 
 func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/v1/language", _OpenSource_GetLanguage0_HTTP_Handler(srv))
-	r.GET("/v1/owner", _OpenSource_GetOwner0_HTTP_Handler(srv))
-	r.POST("/v1/repo", _OpenSource_GetRepo0_HTTP_Handler(srv))
+	r.GET("/language", _OpenSource_GetLanguage0_HTTP_Handler(srv))
+	r.GET("/owner", _OpenSource_GetOwner0_HTTP_Handler(srv))
+	r.POST("/repo", _OpenSource_GetRepo0_HTTP_Handler(srv))
 }
 
 func _OpenSource_GetLanguage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
@@ -112,7 +112,7 @@ func NewOpenSourceHTTPClient(client *http.Client) OpenSourceHTTPClient {
 
 func (c *OpenSourceHTTPClientImpl) GetLanguage(ctx context.Context, in *LanguageRequest, opts ...http.CallOption) (*LanguageReply, error) {
 	var out LanguageReply
-	pattern := "/v1/language"
+	pattern := "/language"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOpenSourceGetLanguage))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -125,7 +125,7 @@ func (c *OpenSourceHTTPClientImpl) GetLanguage(ctx context.Context, in *Language
 
 func (c *OpenSourceHTTPClientImpl) GetOwner(ctx context.Context, in *OwnerRequest, opts ...http.CallOption) (*OwnerReply, error) {
 	var out OwnerReply
-	pattern := "/v1/owner"
+	pattern := "/owner"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOpenSourceGetOwner))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -138,7 +138,7 @@ func (c *OpenSourceHTTPClientImpl) GetOwner(ctx context.Context, in *OwnerReques
 
 func (c *OpenSourceHTTPClientImpl) GetRepo(ctx context.Context, in *RepoRequest, opts ...http.CallOption) (*RepoReply, error) {
 	var out RepoReply
-	pattern := "/v1/repo"
+	pattern := "/repo"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOpenSourceGetRepo))
 	opts = append(opts, http.PathTemplate(pattern))

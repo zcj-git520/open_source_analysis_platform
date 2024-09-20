@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"os"
-
 	"user/internal/conf"
 
 	"github.com/go-kratos/kratos/v2"
@@ -34,6 +33,7 @@ func init() {
 }
 
 func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+	Name = "osap.user"
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -44,6 +44,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 			gs,
 			hs,
 		),
+		//kratos.Registrar(rr),
 	)
 }
 
@@ -74,7 +75,12 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, bc.Email, bc.Casbin, logger)
+	var rc conf.Registry
+	if err := c.Scan(&rc); err != nil {
+		panic(err)
+	}
+
+	app, cleanup, err := wireApp(bc.Server, bc.Data, bc.Auth, bc.Email, bc.Casbin, &rc, logger)
 	if err != nil {
 		panic(err)
 	}

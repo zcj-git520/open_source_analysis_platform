@@ -6,7 +6,7 @@ info:
     title: OpenSource API
     version: 0.0.1
 paths:
-    /v1/language:
+    /language:
         get:
             tags:
                 - OpenSource
@@ -48,7 +48,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /v1/owner:
+    /owner:
         get:
             tags:
                 - OpenSource
@@ -100,7 +100,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /v1/repo:
+    /repo:
         post:
             tags:
                 - OpenSource

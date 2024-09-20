@@ -14,51 +14,51 @@ option java_package = "user.v1";
 service User {
 	rpc Verify (VerifyRequest) returns (VerifyReply){
 		option (google.api.http) = {
-        post: "/v1/verify"
+        post: "/verify"
         body: "*"
       };
 	}
 
 	rpc Register (RegisterRequest) returns (RegisterReply){
 		option (google.api.http) = {
-        post: "/v1/register"
+        post: "/register"
         body: "*"
       };
 			}
 
 	rpc Login (LoginRequest) returns (LoginReply){
 		  option (google.api.http) = {
-        post: "/v1/login"
+        post: "/login"
         body: "*"
       };
 	}
 
 	rpc UpdateUser (UpdateUserRequest) returns (UpdateUserReply){
 		  option (google.api.http) = {
-        put: "/v1/user"
+        put: "/user"
         body: "*"
       };
 	}
 
 	rpc GetUser (GetUserRequest) returns (GetUserReply){
 		option (google.api.http) = {
-        get: "/v1/user"
+        get: "/user"
       };
 	}
 
 	rpc ListUser (ListUserRequest) returns (ListUserReply){
 		option (google.api.http) = {
-        get: "/v1/user/list"
+        get: "/user/list"
       };
 	}
 	rpc DeleteUser (DeleteUserRequest) returns (DeleteUserReply){
 		option (google.api.http) = {
-        delete: "/v1/user"
+        delete: "/user"
       };
   }
 	rpc RefreshToken(google.protobuf.Empty) returns (RefreshTokenReply){
 		option (google.api.http) = {
-			get: "/v1/refresh_token"
+			get: "/refresh_token"
 		};
 	}
 }
