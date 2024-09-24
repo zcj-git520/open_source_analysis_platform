@@ -150,9 +150,7 @@ func (o *openSourceInfoRepo) FindRepo(ctx context.Context, req *pb.RepoRequest, 
 	if req.Sort != nil {
 		tx = tx.Order(fmt.Sprintf("%s %s", req.Sort.Field, req.Sort.Order))
 	}
-	tx.Limit(page.Limit()).Offset(page.Offset())
-
-	err := tx.Find(&repoInfo).Error
+	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&repoInfo).Error
 	return repoInfo, err
 }
 

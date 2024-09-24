@@ -36,43 +36,43 @@ message RepoInfo {
 	// 仓库名称
 	string    name = 2;
 	// 仓库全称
-	string    full_name = 3;
+	string    fullName = 3;
 	// 仓库图片
 	string    image = 4;
 	// 仓库所有者ID
-	int64     owner_id = 5;
+	int64     ownerId = 5;
 	// 仓库所有者名称
-	string     owner_name = 6;
+	string     ownerName = 6;
 	// 是否私有
 	bool      private = 7;
 	// 仓库描述
 	string    desc = 8;
 	// 库主页 URL
-	string    html_url = 9;
+	string    htmlUrl = 9;
 	// 仓库主页 URL
 	string    homepage = 10;
 	// 克隆 URL
-	string    clone_url = 11;
+	string    cloneUrl = 11;
 	// 仓库星标数量
-	int64     stargazers_count = 12;
+	int64     stargazersCount = 12;
 	// 仓库关注者数量
-	int64     watchers_count = 13;
+	int64     watchersCount = 13;
 	// 仓库语言名称
 	string    language = 14;
 	// 仓库语言ID
-	int64    language_id = 15;
+	int64    languageId = 15;
 	// 仓库分支数量
-	int64     forks_count = 16;
+	int64     forksCount = 16;
 	// 仓库问题数量
-	int64     open_issues_count = 17;
+	int64     openIssuesCount = 17;
 	// 仓库主题
 	repeated  string    topics = 18;
 	// 仓库问题数量
-	int64     open_issues = 19;
+	int64     openIssues = 19;
 	// 仓库关注者数量
 	int64     watchers = 20;
 	// 仓库默认分支
-	string    default_branch = 21;
+	string    defaultBranch = 21;
 	// 仓库评分
 	int64     score = 22;
 	// 仓库大小
@@ -80,15 +80,15 @@ message RepoInfo {
 	// 仓库分支数量
 	int64     forks = 24;
 	// 仓库创建时间
-	string    created_at = 25;
+	string    createdAt = 25;
 	// 更新时间
-	string    updated_at = 26;
+	string    updatedAt = 26;
 }
 
 // 查询条件
 message QueryFilter {
 	// 筛选值
-	int32 target_value = 1;
+	int32 targetValue = 1;
 	enum Operator {
 		// 等于
 		GT = 0;
@@ -128,9 +128,9 @@ message RepoRequest {
 	// 仓库描述
   string desc = 3;
 	// 仓库语言ID
-  int64 language_id = 4;
+  int64 languageId = 4;
 	// 仓库所有者ID
-  int64 owner_id = 5;
+  int64 ownerId = 5;
 	// 仓库id
 	int64  ID = 6;
 	// 筛选条件
@@ -150,13 +150,13 @@ message OwnerInfo {
 	// id
 	int64 id = 1;
 	// 头像URL
-	string avatar_url= 2;
+	string avatarUrl= 2;
 	// 用户类型：User / Organization
 	string type= 3;
 	// 用户登录名
 	string login= 4;
 	// 用户主页URL
-	string html_url= 5;
+	string htmlUrl= 5;
 	// 用户名
 	string name= 6;
 	// 用户邮箱
@@ -164,17 +164,17 @@ message OwnerInfo {
 	// 用户简介
 	string bio= 8;
 	// 用户仓库数量
-	int64  public_repos= 9;
+	int64  publicRepos= 9;
 	// 用户公开代码片段数量
-	int64  public_gists= 10;
+	int64  publicGists= 10;
 	// 用户粉丝数量
 	int64  followers= 11;
 	// 用户关注的人数量
 	int64  following= 12;
 	//用户注册时间
-	string created_at= 13;
+	string createdAt= 13;
 	// 用户更新时间
-	string updated_at= 14;     // 更新时间
+	string updatedAt= 14;     // 更新时间
 }
 
 message OwnerRequest {
@@ -203,9 +203,9 @@ message LanguageInfo {
 	// 语言描述
 	string description = 3;
 	// 语言连接
-	string image_url = 4;
+	string imageUrl = 4;
 	// 语言仓库地址
-	string repo_url = 5;
+	string repoUrl = 5;
 	// 语言简介
 	string bio = 6;
 }
@@ -215,7 +215,7 @@ message Page {
 	// 当前页码
 	int32 page = 1;
 	// 每页数量
-  int32 page_size = 2;
+  int32 pageSize = 2;
 	// 总数
 	int32 total = 3;
 }
