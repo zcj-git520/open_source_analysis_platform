@@ -32,3 +32,7 @@ func (s *OpenSourceService) GetRepo(ctx context.Context, req *pb.RepoRequest) (*
 func (s *OpenSourceService) GetRepoCategory(ctx context.Context, req *pb.RepoCategoryRequest) (*pb.RepoCategoryReply, error) {
 	return s.uc.GetRepoCategory(ctx, req)
 }
+
+func (s *OpenSourceService) GetRepoByCategory(ctx context.Context, req *pb.RepoByCategoryRequest) (*pb.RepoByCategoryReply, error) {
+	return s.uc.GetRepoByCategory(ctx, req)
+}

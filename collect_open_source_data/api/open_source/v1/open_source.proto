@@ -33,6 +33,12 @@ service OpenSource {
       get: "/repo/category"
     };
 	}
+
+	rpc GetRepoByCategory(RepoByCategoryRequest) returns (RepoByCategoryReply){
+		option (google.api.http) = {
+			get: "/repo/bycategory"
+		};
+	}
 }
 
 message RepoInfo {
@@ -156,6 +162,26 @@ message RepoReply {
 	repeated RepoInfo repos = 4;
 }
 
+message RepoByCategoryRequest {
+	// 分页
+  int32 pageNum = 1;
+  // 每页数量
+  int32 pageSize = 2;
+  // 分类id
+  int64  ID = 3;
+
+}
+
+message RepoByCategoryReply{
+	// 分页信息
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	int64 total = 3;
+	// 开源仓库信息
+	repeated RepoInfo repos = 4;
+}
+
 message OwnerInfo {
 	// id
 	int64 id = 1;
@@ -226,14 +252,6 @@ message LanguageInfo {
 	// 语言简介
 	string bio = 6;
 }
-
-// 分页
-//message Page {
-//	// 当前页码
-//
-//	// 总数
-//	int64 total = 3;
-//}
 
 message LanguageRequest {
 	// 分页

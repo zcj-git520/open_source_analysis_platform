@@ -104,3 +104,13 @@ type RepoCategory struct {
 func (RepoCategory) TableName() string {
 	return "repo_category"
 }
+
+type RepoCategoryId struct {
+	ID     int64 `gorm:"primarykey;type:int" json:"id"`
+	RepoID int64 `gorm:"type:int" json:"repo_id"` // 仓库ID
+	CatID  int64 `gorm:"type:int" json:"cat_id"`  // 分类ID
+}
+
+func (RepoCategoryId) TableName() string {
+	return "repo_category_id"
+}

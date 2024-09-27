@@ -48,6 +48,14 @@ func (o *openSourceInfoRepo) FindRepoByName(ctx context.Context, name string) (*
 	return repoInfo, nil
 }
 
+func (o *openSourceInfoRepo) FindRepoById(ctx context.Context, id int64) (*domain.RepoInfo, error) {
+	repoInfo := &domain.RepoInfo{}
+	if err := o.data.db.Where("id = ?", id).First(repoInfo).Error; err != nil {
+		return nil, err
+	}
+	return repoInfo, nil
+}
+
 func (o *openSourceInfoRepo) FindLanguage(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.Language, error) {
 	var language []*domain.Language
 	tx := o.data.db
@@ -206,7 +214,7 @@ func (o *openSourceInfoRepo) FindOwnerByCache(ctx context.Context, Id int64) (*d
 }
 
 func (o *openSourceInfoRepo) FindRepoCategory(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.RepoCategory, error) {
-	var language []*domain.RepoCategory
+	var repoCategory []*domain.RepoCategory
 	tx := o.data.db
 	if id > 0 {
 		tx = tx.Where("id = ?", id)
@@ -214,8 +222,46 @@ func (o *openSourceInfoRepo) FindRepoCategory(ctx context.Context, name string, 
 	if name != "" {
 		tx = tx.Where("`name` =  ? ", name)
 	}
-	tx.Find(&language).Count(&page.Total)
-	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&language).Error
+	tx.Find(&repoCategory).Count(&page.Total)
+	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&repoCategory).Error
 
-	return language, err
+	return repoCategory, err
+}
+
+func (o *openSourceInfoRepo) FindRepoCategoryId(ctx context.Context, repoId, categoryId int64) bool {
+	var repoCategoryId *domain.RepoCategoryId
+	err := o.data.db.Where("repo_id = ? and cat_id = ?", repoId, categoryId).First(&repoCategoryId).Error
+	if err == nil && repoCategoryId != nil {
+		return true
+	}
+	return false
+}
+
+func (o *openSourceInfoRepo) AddRepoCategoryId(ctx context.Context, repoId, categoryId int64) error {
+	repoCategoryId := &domain.RepoCategoryId{
+		RepoID: repoId,
+		CatID:  categoryId,
+	}
+	return o.data.db.Create(repoCategoryId).Error
+}
+
+func (o *openSourceInfoRepo) FindRepoCategoryIdByRepoId(repoId int64) bool {
+	var repoCategoryId *domain.RepoCategoryId
+	err := o.data.db.Where("repo_id = ?", repoId).First(&repoCategoryId).Error
+	if err == nil && repoCategoryId != nil {
+		return true
+	}
+	return false
+}
+
+func (o *openSourceInfoRepo) FindRepoCategoryByCatId(ctx context.Context, id int64, page *domain.Page) ([]*domain.RepoCategoryId, error) {
+	var repoCategoryId []*domain.RepoCategoryId
+	tx := o.data.db
+	if id > 0 {
+		tx = tx.Where("cat_id = ?", id)
+	}
+	tx.Find(&repoCategoryId).Count(&page.Total)
+	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&repoCategoryId).Error
+
+	return repoCategoryId, err
 }

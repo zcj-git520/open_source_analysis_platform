@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OpenSource_GetLanguage_FullMethodName     = "/open_source.v1.OpenSource/GetLanguage"
-	OpenSource_GetOwner_FullMethodName        = "/open_source.v1.OpenSource/GetOwner"
-	OpenSource_GetRepo_FullMethodName         = "/open_source.v1.OpenSource/GetRepo"
-	OpenSource_GetRepoCategory_FullMethodName = "/open_source.v1.OpenSource/GetRepoCategory"
+	OpenSource_GetLanguage_FullMethodName       = "/open_source.v1.OpenSource/GetLanguage"
+	OpenSource_GetOwner_FullMethodName          = "/open_source.v1.OpenSource/GetOwner"
+	OpenSource_GetRepo_FullMethodName           = "/open_source.v1.OpenSource/GetRepo"
+	OpenSource_GetRepoCategory_FullMethodName   = "/open_source.v1.OpenSource/GetRepoCategory"
+	OpenSource_GetRepoByCategory_FullMethodName = "/open_source.v1.OpenSource/GetRepoByCategory"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -33,6 +34,7 @@ type OpenSourceClient interface {
 	GetOwner(ctx context.Context, in *OwnerRequest, opts ...grpc.CallOption) (*OwnerReply, error)
 	GetRepo(ctx context.Context, in *RepoRequest, opts ...grpc.CallOption) (*RepoReply, error)
 	GetRepoCategory(ctx context.Context, in *RepoCategoryRequest, opts ...grpc.CallOption) (*RepoCategoryReply, error)
+	GetRepoByCategory(ctx context.Context, in *RepoByCategoryRequest, opts ...grpc.CallOption) (*RepoByCategoryReply, error)
 }
 
 type openSourceClient struct {
@@ -83,6 +85,16 @@ func (c *openSourceClient) GetRepoCategory(ctx context.Context, in *RepoCategory
 	return out, nil
 }
 
+func (c *openSourceClient) GetRepoByCategory(ctx context.Context, in *RepoByCategoryRequest, opts ...grpc.CallOption) (*RepoByCategoryReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RepoByCategoryReply)
+	err := c.cc.Invoke(ctx, OpenSource_GetRepoByCategory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type OpenSourceServer interface {
 	GetOwner(context.Context, *OwnerRequest) (*OwnerReply, error)
 	GetRepo(context.Context, *RepoRequest) (*RepoReply, error)
 	GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error)
+	GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedOpenSourceServer) GetRepo(context.Context, *RepoRequest) (*Re
 }
 func (UnimplementedOpenSourceServer) GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRepoCategory not implemented")
+}
+func (UnimplementedOpenSourceServer) GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRepoByCategory not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -206,6 +222,24 @@ func _OpenSource_GetRepoCategory_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_GetRepoByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RepoByCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).GetRepoByCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_GetRepoByCategory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).GetRepoByCategory(ctx, req.(*RepoByCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRepoCategory",
 			Handler:    _OpenSource_GetRepoCategory_Handler,
+		},
+		{
+			MethodName: "GetRepoByCategory",
+			Handler:    _OpenSource_GetRepoByCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

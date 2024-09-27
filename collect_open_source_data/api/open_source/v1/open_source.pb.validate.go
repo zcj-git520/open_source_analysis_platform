@@ -707,6 +707,256 @@ var _ interface {
 	ErrorName() string
 } = RepoReplyValidationError{}
 
+// Validate checks the field values on RepoByCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RepoByCategoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoByCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoByCategoryRequestMultiError, or nil if none found.
+func (m *RepoByCategoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoByCategoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for ID
+
+	if len(errors) > 0 {
+		return RepoByCategoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoByCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by RepoByCategoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RepoByCategoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoByCategoryRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoByCategoryRequestMultiError) AllErrors() []error { return m }
+
+// RepoByCategoryRequestValidationError is the validation error returned by
+// RepoByCategoryRequest.Validate if the designated constraints aren't met.
+type RepoByCategoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoByCategoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoByCategoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoByCategoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoByCategoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoByCategoryRequestValidationError) ErrorName() string {
+	return "RepoByCategoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RepoByCategoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoByCategoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoByCategoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoByCategoryRequestValidationError{}
+
+// Validate checks the field values on RepoByCategoryReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RepoByCategoryReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoByCategoryReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoByCategoryReplyMultiError, or nil if none found.
+func (m *RepoByCategoryReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoByCategoryReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetRepos() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RepoByCategoryReplyValidationError{
+						field:  fmt.Sprintf("Repos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RepoByCategoryReplyValidationError{
+						field:  fmt.Sprintf("Repos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RepoByCategoryReplyValidationError{
+					field:  fmt.Sprintf("Repos[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RepoByCategoryReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoByCategoryReplyMultiError is an error wrapping multiple validation
+// errors returned by RepoByCategoryReply.ValidateAll() if the designated
+// constraints aren't met.
+type RepoByCategoryReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoByCategoryReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoByCategoryReplyMultiError) AllErrors() []error { return m }
+
+// RepoByCategoryReplyValidationError is the validation error returned by
+// RepoByCategoryReply.Validate if the designated constraints aren't met.
+type RepoByCategoryReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoByCategoryReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoByCategoryReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoByCategoryReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoByCategoryReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoByCategoryReplyValidationError) ErrorName() string {
+	return "RepoByCategoryReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RepoByCategoryReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoByCategoryReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoByCategoryReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoByCategoryReplyValidationError{}
+
 // Validate checks the field values on OwnerInfo with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
