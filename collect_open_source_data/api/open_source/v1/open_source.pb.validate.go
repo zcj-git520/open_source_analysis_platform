@@ -414,34 +414,9 @@ func (m *RepoRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RepoRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RepoRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RepoRequestValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
 
 	// no validation rules for Name
 
@@ -615,34 +590,11 @@ func (m *RepoReply) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RepoReplyValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RepoReplyValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RepoReplyValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Total
 
 	for idx, item := range m.GetRepos() {
 		_, _ = idx, item
@@ -904,40 +856,17 @@ func (m *OwnerRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OwnerRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OwnerRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OwnerRequestValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
 
 	// no validation rules for Name
 
 	// no validation rules for Type
 
 	// no validation rules for Email
+
+	// no validation rules for ID
 
 	if len(errors) > 0 {
 		return OwnerRequestMultiError(errors)
@@ -1038,34 +967,11 @@ func (m *OwnerReply) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, OwnerReplyValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, OwnerReplyValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return OwnerReplyValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Total
 
 	for idx, item := range m.GetOwners() {
 		_, _ = idx, item
@@ -1289,110 +1195,6 @@ var _ interface {
 	ErrorName() string
 } = LanguageInfoValidationError{}
 
-// Validate checks the field values on Page with the rules defined in the proto
-// definition for this message. If any rules are violated, the first error
-// encountered is returned, or nil if there are no violations.
-func (m *Page) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Page with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in PageMultiError, or nil if none found.
-func (m *Page) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Page) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Page
-
-	// no validation rules for PageSize
-
-	// no validation rules for Total
-
-	if len(errors) > 0 {
-		return PageMultiError(errors)
-	}
-
-	return nil
-}
-
-// PageMultiError is an error wrapping multiple validation errors returned by
-// Page.ValidateAll() if the designated constraints aren't met.
-type PageMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m PageMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m PageMultiError) AllErrors() []error { return m }
-
-// PageValidationError is the validation error returned by Page.Validate if the
-// designated constraints aren't met.
-type PageValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e PageValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e PageValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e PageValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e PageValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e PageValidationError) ErrorName() string { return "PageValidationError" }
-
-// Error satisfies the builtin error interface
-func (e PageValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sPage.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = PageValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = PageValidationError{}
-
 // Validate checks the field values on LanguageRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1415,34 +1217,11 @@ func (m *LanguageRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LanguageRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LanguageRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LanguageRequestValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for ID
 
 	// no validation rules for Name
 
@@ -1546,34 +1325,11 @@ func (m *LanguageReply) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, LanguageReplyValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, LanguageReplyValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return LanguageReplyValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Total
 
 	for idx, item := range m.GetLanguages() {
 		_, _ = idx, item
@@ -1818,3 +1574,363 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CommonReplyValidationError{}
+
+// Validate checks the field values on RepoCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RepoCategoryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoCategoryRequestMultiError, or nil if none found.
+func (m *RepoCategoryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoCategoryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Name
+
+	// no validation rules for ID
+
+	if len(errors) > 0 {
+		return RepoCategoryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by RepoCategoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RepoCategoryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoCategoryRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoCategoryRequestMultiError) AllErrors() []error { return m }
+
+// RepoCategoryRequestValidationError is the validation error returned by
+// RepoCategoryRequest.Validate if the designated constraints aren't met.
+type RepoCategoryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoCategoryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoCategoryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoCategoryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoCategoryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoCategoryRequestValidationError) ErrorName() string {
+	return "RepoCategoryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RepoCategoryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoCategoryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoCategoryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoCategoryRequestValidationError{}
+
+// Validate checks the field values on RepoCategoryInfo with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RepoCategoryInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoCategoryInfo with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoCategoryInfoMultiError, or nil if none found.
+func (m *RepoCategoryInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoCategoryInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	// no validation rules for Description
+
+	// no validation rules for ImageUrl
+
+	if len(errors) > 0 {
+		return RepoCategoryInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoCategoryInfoMultiError is an error wrapping multiple validation errors
+// returned by RepoCategoryInfo.ValidateAll() if the designated constraints
+// aren't met.
+type RepoCategoryInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoCategoryInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoCategoryInfoMultiError) AllErrors() []error { return m }
+
+// RepoCategoryInfoValidationError is the validation error returned by
+// RepoCategoryInfo.Validate if the designated constraints aren't met.
+type RepoCategoryInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoCategoryInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoCategoryInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoCategoryInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoCategoryInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoCategoryInfoValidationError) ErrorName() string { return "RepoCategoryInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RepoCategoryInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoCategoryInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoCategoryInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoCategoryInfoValidationError{}
+
+// Validate checks the field values on RepoCategoryReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RepoCategoryReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoCategoryReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoCategoryReplyMultiError, or nil if none found.
+func (m *RepoCategoryReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoCategoryReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetCategory() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RepoCategoryReplyValidationError{
+						field:  fmt.Sprintf("Category[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RepoCategoryReplyValidationError{
+						field:  fmt.Sprintf("Category[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RepoCategoryReplyValidationError{
+					field:  fmt.Sprintf("Category[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RepoCategoryReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoCategoryReplyMultiError is an error wrapping multiple validation errors
+// returned by RepoCategoryReply.ValidateAll() if the designated constraints
+// aren't met.
+type RepoCategoryReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoCategoryReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoCategoryReplyMultiError) AllErrors() []error { return m }
+
+// RepoCategoryReplyValidationError is the validation error returned by
+// RepoCategoryReply.Validate if the designated constraints aren't met.
+type RepoCategoryReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoCategoryReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoCategoryReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoCategoryReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoCategoryReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoCategoryReplyValidationError) ErrorName() string {
+	return "RepoCategoryReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RepoCategoryReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoCategoryReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoCategoryReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoCategoryReplyValidationError{}

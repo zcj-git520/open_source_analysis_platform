@@ -204,3 +204,18 @@ func (o *openSourceInfoRepo) FindOwnerByCache(ctx context.Context, Id int64) (*d
 	}
 	return ownerInfo, err
 }
+
+func (o *openSourceInfoRepo) FindRepoCategory(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.RepoCategory, error) {
+	var language []*domain.RepoCategory
+	tx := o.data.db
+	if id > 0 {
+		tx = tx.Where("id = ?", id)
+	}
+	if name != "" {
+		tx = tx.Where("`name` =  ? ", name)
+	}
+	tx.Find(&language).Count(&page.Total)
+	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&language).Error
+
+	return language, err
+}

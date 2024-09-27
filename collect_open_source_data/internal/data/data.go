@@ -44,7 +44,7 @@ func NewDB(c *conf.Data) *gorm.DB {
 		log.Errorf("failed opening connection to mysql: %v", err)
 		//panic("failed to connect database")
 	}
-	_ = db.AutoMigrate(&domain.RepoInfo{}, &domain.Language{}, &domain.Owner{})
+	_ = db.AutoMigrate(&domain.RepoInfo{}, &domain.Language{}, &domain.Owner{}, &domain.RepoCategory{})
 	return db
 }
 

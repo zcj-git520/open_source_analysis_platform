@@ -8,6 +8,7 @@ type RepoInfo struct {
 	FullName        string    `gorm:"type:varchar(255)" json:"full_name"`      // 仓库全称
 	Image           string    `gorm:"type:varchar(255)" json:"image"`          // 仓库图片
 	OwnerID         int64     `gorm:"type:int" json:"owner_id"`                // 仓库所有者ID
+	CategoryID      int64     `gorm:"type:int" json:"category_id"`             // 仓库分类ID
 	Private         bool      `gorm:"type:tinyint" json:"private"`             // 是否私有
 	Desc            string    `gorm:"type:MEDIUMTEXT" json:"desc"`             // 仓库描述
 	HtmlURL         string    `gorm:"type:varchar(255)" json:"html_url"`       // 库主页 URL
@@ -74,8 +75,8 @@ func (Owner) TableName() string {
 }
 
 type Page struct {
-	PageNum  int   `json:"pageNum"`  // 当前页，默认为1
-	PageSize int   `json:"pageSize"` // 分页条目数据，默认10
+	PageNum  int32 `json:"pageNum"`  // 当前页，默认为1
+	PageSize int32 `json:"pageSize"` // 分页条目数据，默认10
 	Total    int64 `json:"total"`    // 查询总数量
 }
 
@@ -83,12 +84,23 @@ func (p *Page) Offset() int {
 	if p.PageSize < 1 {
 		p.PageSize = 1
 	}
-	return (p.PageNum - 1) * p.PageSize
+	return int((p.PageNum - 1) * p.PageSize)
 }
 
 func (p *Page) Limit() int {
 	if p.PageSize < 1 {
-		p.PageSize = 99999999 // 当不传时，返回9999条数据
+		p.PageSize = 10 // 当不传时，返回9999条数据
 	}
-	return p.PageSize
+	return int(p.PageSize)
+}
+
+type RepoCategory struct {
+	ID       int64  `gorm:"primarykey;type:int" json:"id"`
+	Name     string `gorm:"type:varchar(255)" json:"name"`      // 仓库分类名称
+	ImageURL string `gorm:"type:varchar(255)" json:"image_url"` // 仓库分类图片
+	Desc     string `gorm:"type:text" json:"desc"`              // 仓库分类描述
+}
+
+func (RepoCategory) TableName() string {
+	return "repo_category"
 }

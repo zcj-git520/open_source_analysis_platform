@@ -28,3 +28,7 @@ func (s *OpenSourceService) GetOwner(ctx context.Context, req *pb.OwnerRequest) 
 func (s *OpenSourceService) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.RepoReply, error) {
 	return s.uc.GetRepo(ctx, req)
 }
+
+func (s *OpenSourceService) GetRepoCategory(ctx context.Context, req *pb.RepoCategoryRequest) (*pb.RepoCategoryReply, error) {
+	return s.uc.GetRepoCategory(ctx, req)
+}

@@ -28,6 +28,11 @@ service OpenSource {
 			body: "*"
     };
 	}
+	rpc GetRepoCategory(RepoCategoryRequest) returns (RepoCategoryReply){
+		option (google.api.http) = {
+      get: "/repo/category"
+    };
+	}
 }
 
 message RepoInfo {
@@ -121,29 +126,34 @@ message SortOrder{
 }
 
 message RepoRequest {
-	// 分页
-	Page page = 1;
+	// 分页信息
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
 	// 创库名
-  string name = 2;
+  string name = 3;
 	// 仓库描述
-  string desc = 3;
+  string desc = 4;
 	// 仓库语言ID
-  int64 languageId = 4;
+  int64 languageId = 5;
 	// 仓库所有者ID
-  int64 ownerId = 5;
+  int64 ownerId = 6;
 	// 仓库id
-	int64  ID = 6;
+	int64  ID = 7;
 	// 筛选条件
-	repeated QueryFilter filters = 7;
+	repeated QueryFilter filters = 8;
 	// 排序条件
-	SortOrder sort = 8;
+	SortOrder sort = 9;
 }
 
 message RepoReply {
 	// 分页信息
-	Page page = 1;
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	int64 total = 3;
 	// 开源仓库信息
-	repeated RepoInfo repos = 2;
+	repeated RepoInfo repos = 4;
 }
 
 message OwnerInfo {
@@ -179,20 +189,27 @@ message OwnerInfo {
 
 message OwnerRequest {
 	// 分页
-  Page page = 1;
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
 	// 用户名
-  string name = 2;
+  string name = 3;
 	// 类型：User / Organization
-	string type = 3;
+	string type = 4;
 	// 用户邮箱
-	string email = 4;
+	string email = 5;
+	// 用户id
+	int64  ID = 6;
 }
 
 message OwnerReply {
 	// 分页信息
-	Page page = 1;
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	int64 total = 3;
 	// 开源仓库信息
-	repeated OwnerInfo owners = 2;
+	repeated OwnerInfo owners = 4;
 }
 
 message LanguageInfo {
@@ -211,27 +228,32 @@ message LanguageInfo {
 }
 
 // 分页
-message Page {
-	// 当前页码
-	int32 page = 1;
-	// 每页数量
-  int32 pageSize = 2;
-	// 总数
-	int32 total = 3;
-}
+//message Page {
+//	// 当前页码
+//
+//	// 总数
+//	int64 total = 3;
+//}
 
 message LanguageRequest {
 	// 分页
-	Page page = 1;
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	// 语言id
+	int64  ID = 3;
 	// 语言名称
-	string name = 2;
+	string name = 4;
 }
 
 message LanguageReply {
 		// 分页信息
-		Page page = 1;
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	int64 total = 3;
 		// 语言信息
-		repeated LanguageInfo languages = 2;
+		repeated LanguageInfo languages = 4;
 }
 
 message CommonReply {
@@ -239,3 +261,35 @@ message CommonReply {
 	string message = 2;
 	google.protobuf.Any data = 3;
 };
+
+message RepoCategoryRequest {
+	// 分页
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	// 分类名称
+	string name = 4;
+	// 分类id
+	int64  ID = 3;
+}
+
+message RepoCategoryInfo {
+	// 分类id
+  int64 id = 1;
+  // 分类名称
+  string name = 2;
+  // 分类描述
+  string description = 3;
+  // 分类的图片
+	string imageUrl = 4;
+}
+
+message RepoCategoryReply {
+	// 分页信息
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	int64 total = 3;
+	// 语言信息
+	repeated RepoCategoryInfo category = 4;
+}

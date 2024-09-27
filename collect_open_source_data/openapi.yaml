@@ -12,24 +12,23 @@ paths:
                 - OpenSource
             operationId: OpenSource_GetLanguage
             parameters:
-                - name: page.page
+                - name: pageNum
                   in: query
-                  description: 当前页码
+                  description: 分页
                   schema:
                     type: integer
                     format: int32
-                - name: page.pageSize
+                - name: pageSize
                   in: query
                   description: 每页数量
                   schema:
                     type: integer
                     format: int32
-                - name: page.total
+                - name: ID
                   in: query
-                  description: 总数
+                  description: 语言id
                   schema:
-                    type: integer
-                    format: int32
+                    type: string
                 - name: name
                   in: query
                   description: 语言名称
@@ -48,21 +47,15 @@ paths:
                 - OpenSource
             operationId: OpenSource_GetOwner
             parameters:
-                - name: page.page
+                - name: pageNum
                   in: query
-                  description: 当前页码
+                  description: 分页
                   schema:
                     type: integer
                     format: int32
-                - name: page.pageSize
+                - name: pageSize
                   in: query
                   description: 每页数量
-                  schema:
-                    type: integer
-                    format: int32
-                - name: page.total
-                  in: query
-                  description: 总数
                   schema:
                     type: integer
                     format: int32
@@ -79,6 +72,11 @@ paths:
                 - name: email
                   in: query
                   description: 用户邮箱
+                  schema:
+                    type: string
+                - name: ID
+                  in: query
+                  description: 用户id
                   schema:
                     type: string
             responses:
@@ -106,6 +104,41 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.RepoReply'
+    /repo/category:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetRepoCategory
+            parameters:
+                - name: pageNum
+                  in: query
+                  description: 分页
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  description: 每页数量
+                  schema:
+                    type: integer
+                    format: int32
+                - name: name
+                  in: query
+                  description: 分类名称
+                  schema:
+                    type: string
+                - name: ID
+                  in: query
+                  description: 分类id
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.RepoCategoryReply'
 components:
     schemas:
         open_source.v1.LanguageInfo:
@@ -132,10 +165,16 @@ components:
         open_source.v1.LanguageReply:
             type: object
             properties:
-                page:
-                    allOf:
-                        - $ref: '#/components/schemas/open_source.v1.Page'
+                pageNum:
+                    type: integer
                     description: 分页信息
+                    format: int32
+                pageSize:
+                    type: integer
+                    description: 每页数量
+                    format: int32
+                total:
+                    type: string
                 languages:
                     type: array
                     items:
@@ -189,31 +228,21 @@ components:
         open_source.v1.OwnerReply:
             type: object
             properties:
-                page:
-                    allOf:
-                        - $ref: '#/components/schemas/open_source.v1.Page'
-                    description: 分页信息
-                owners:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/open_source.v1.OwnerInfo'
-                    description: 开源仓库信息
-        open_source.v1.Page:
-            type: object
-            properties:
-                page:
+                pageNum:
                     type: integer
-                    description: 当前页码
+                    description: 分页信息
                     format: int32
                 pageSize:
                     type: integer
                     description: 每页数量
                     format: int32
                 total:
-                    type: integer
-                    description: 总数
-                    format: int32
-            description: 分页
+                    type: string
+                owners:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.OwnerInfo'
+                    description: 开源仓库信息
         open_source.v1.QueryFilter:
             type: object
             properties:
@@ -229,6 +258,39 @@ components:
                     type: string
                     description: 筛选字段
             description: 查询条件
+        open_source.v1.RepoCategoryInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: 分类id
+                name:
+                    type: string
+                    description: 分类名称
+                description:
+                    type: string
+                    description: 分类描述
+                imageUrl:
+                    type: string
+                    description: 分类的图片
+        open_source.v1.RepoCategoryReply:
+            type: object
+            properties:
+                pageNum:
+                    type: integer
+                    description: 分页信息
+                    format: int32
+                pageSize:
+                    type: integer
+                    description: 每页数量
+                    format: int32
+                total:
+                    type: string
+                category:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.RepoCategoryInfo'
+                    description: 语言信息
         open_source.v1.RepoInfo:
             type: object
             properties:
@@ -315,10 +377,16 @@ components:
         open_source.v1.RepoReply:
             type: object
             properties:
-                page:
-                    allOf:
-                        - $ref: '#/components/schemas/open_source.v1.Page'
+                pageNum:
+                    type: integer
                     description: 分页信息
+                    format: int32
+                pageSize:
+                    type: integer
+                    description: 每页数量
+                    format: int32
+                total:
+                    type: string
                 repos:
                     type: array
                     items:
@@ -327,10 +395,14 @@ components:
         open_source.v1.RepoRequest:
             type: object
             properties:
-                page:
-                    allOf:
-                        - $ref: '#/components/schemas/open_source.v1.Page'
-                    description: 分页
+                pageNum:
+                    type: integer
+                    description: 分页信息
+                    format: int32
+                pageSize:
+                    type: integer
+                    description: 每页数量
+                    format: int32
                 name:
                     type: string
                     description: 创库名

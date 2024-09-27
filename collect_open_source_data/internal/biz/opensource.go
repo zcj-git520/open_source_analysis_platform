@@ -34,6 +34,7 @@ type OpenSourceRepo interface {
 	FindLanguageByCache(ctx context.Context, languageId int64) (*domain.Language, error)
 	FindOwnerByCache(ctx context.Context, Id int64) (*domain.Owner, error)
 	UpdateOwner(ctx context.Context, owner *domain.Owner) error
+	FindRepoCategory(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.RepoCategory, error)
 }
 
 type OpenSourceInfo struct {
@@ -112,13 +113,164 @@ func (r *OpenSourceInfo) getOwnerInfo(ctx context.Context, url string, headers h
 	}, nil
 }
 
+func (r *OpenSourceInfo) addOwnerInfo(ctx context.Context, owner *domain.Owner) (int64, error) {
+	ownerId, err := r.repo.InsertOwner(ctx, owner)
+	if err != nil {
+		r.log.Errorf("create owner error: %v", err)
+		return ownerId, err
+	}
+	return ownerId, nil
+}
+
+func (r *OpenSourceInfo) updateOwnerInfo(ctx context.Context, ownerInfo, owner *domain.Owner) (int64, error) {
+	update := &domain.Owner{}
+	if ownerInfo.AvatarURL != owner.AvatarURL {
+		update.AvatarURL = owner.AvatarURL
+	}
+	if ownerInfo.Bio != owner.Bio {
+		update.Bio = owner.Bio
+	}
+	if ownerInfo.Email != owner.Email {
+		update.Email = owner.Email
+	}
+	if ownerInfo.Followers != owner.Followers {
+		update.Followers = owner.Followers
+	}
+	if ownerInfo.Following != owner.Following {
+		update.Following = owner.Following
+	}
+	if ownerInfo.PublicGists != owner.PublicGists {
+		update.PublicGists = owner.PublicGists
+	}
+	if ownerInfo.PublicRepos != owner.PublicRepos {
+		update.PublicRepos = owner.PublicRepos
+	}
+	if update != nil {
+		update.ID = ownerInfo.ID
+		if err := r.repo.UpdateOwner(ctx, update); err != nil {
+			r.log.Errorf("update owner error: %v", err)
+			return 0, err
+		}
+	}
+	return ownerInfo.ID, nil
+}
+
+func (r *OpenSourceInfo) OwnerInfoChange(ctx context.Context, owner *domain.Owner) (int64, error) {
+	// 查询owner是否存在
+	ownerInfo, err := r.repo.FindOwnerByHtmlUrl(ctx, owner.HtmlURL)
+	if err != nil || ownerInfo == nil {
+		// 不存在则创建
+		return r.addOwnerInfo(ctx, owner)
+	}
+	// 更新owner信息
+	return r.updateOwnerInfo(ctx, ownerInfo, owner)
+}
+
+func (r *OpenSourceInfo) addRepoInfo(ctx context.Context, item *Repo, ownerId int64, avatarURL string) error {
+	var langId int64
+	if langInfo, err := r.repo.FindLanguage(ctx, item.Language, 0, &domain.Page{
+		PageNum:  1,
+		PageSize: 1,
+	}); err == nil && len(langInfo) > 0 {
+		langId = langInfo[0].ID
+	}
+	repoImg, _ := r.getRepoImage(ctx, item.HtmlURL)
+	if repoImg == "" {
+		repoImg = avatarURL
+	}
+	topicData, _ := json.Marshal(item.Topics)
+	if err := r.repo.InsertRepo(ctx, &domain.RepoInfo{
+		Name:            item.Name,
+		FullName:        item.FullName,
+		Image:           repoImg,
+		OwnerID:         ownerId,
+		Private:         item.Private,
+		Desc:            item.Description,
+		HtmlURL:         item.HtmlURL,
+		Homepage:        item.Homepage,
+		CloneURL:        item.CloneURL,
+		Size:            int64(item.Size),
+		StargazersCount: int64(item.StargazersCount),
+		WatchersCount:   int64(item.WatchersCount),
+		LanguageId:      langId,
+		ForksCount:      int64(item.ForksCount),
+		OpenIssuesCount: int64(item.OpenIssuesCount),
+		Topics:          string(topicData),
+		Forks:           int64(item.Forks),
+		OpenIssues:      int64(item.OpenIssues),
+		Watchers:        int64(item.Watchers),
+		DefaultBranch:   item.DefaultBranch,
+		Score:           int64(item.Score),
+		CreatedAt:       item.CreatedAt,
+		UpdatedAt:       item.UpdatedAt,
+	}); err != nil {
+		r.log.Errorf("create repo error: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (r *OpenSourceInfo) updateRepoInfo(ctx context.Context, info *domain.RepoInfo, item *Repo) error {
+	updateRepo := &domain.RepoInfo{}
+	if int64(item.StargazersCount) != info.StargazersCount {
+		updateRepo.StargazersCount = int64(item.StargazersCount)
+	}
+	if int64(item.WatchersCount) != info.WatchersCount {
+		updateRepo.WatchersCount = int64(item.WatchersCount)
+	}
+	if int64(item.ForksCount) != info.ForksCount {
+		updateRepo.ForksCount = int64(item.ForksCount)
+	}
+	if int64(item.OpenIssuesCount) != info.OpenIssuesCount {
+		updateRepo.OpenIssuesCount = int64(item.OpenIssuesCount)
+	}
+	if int64(item.Forks) != info.Forks {
+		updateRepo.Forks = int64(item.Forks)
+	}
+	if int64(item.OpenIssues) != info.OpenIssues {
+		updateRepo.OpenIssues = int64(item.OpenIssues)
+	}
+	if int64(item.Watchers) != info.Watchers {
+		updateRepo.Watchers = int64(item.Watchers)
+	}
+	if item.DefaultBranch != info.DefaultBranch {
+		updateRepo.DefaultBranch = item.DefaultBranch
+	}
+	if int64(item.Score) != info.Score {
+		updateRepo.Score = int64(item.Score)
+	}
+	if item.UpdatedAt != info.UpdatedAt {
+		updateRepo.UpdatedAt = item.UpdatedAt
+	}
+	if updateRepo != nil {
+		updateRepo.ID = info.ID
+		updateRepo.UpdatedAt = item.UpdatedAt
+		if err := r.repo.UpdateRepo(ctx, updateRepo); err != nil {
+			r.log.Errorf("update repo error: %v", err)
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *OpenSourceInfo) RepoInfoChange(ctx context.Context, item *Repo, ownerId int64, avatarURL string) error {
+	// 查询repo是否存在
+	info, err := r.repo.FindRepoByName(ctx, item.Name)
+	if err != nil || info == nil {
+		// 不存在则创建
+		// 查找语言id
+		return r.addRepoInfo(ctx, item, ownerId, avatarURL)
+	}
+	// 存在就更新
+	return r.updateRepoInfo(ctx, info, item)
+}
+
 func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers http.Header, page int, stars int) error {
 	result, err := r.getResults(search, headers, page, stars)
 	if err != nil || len(result) == 0 {
 		return err
 	}
 	for _, item := range result {
-		var ownerId int64
 		if item.Owner == nil || item.Owner.URL == "" {
 			continue
 		}
@@ -126,135 +278,16 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 		if err != nil {
 			r.log.Errorf("getOwnerInfo error: %v", err)
 			continue
-		} else {
-			// 查询owner是否存在
-			ownerInfo, err := r.repo.FindOwnerByHtmlUrl(ctx, owner.HtmlURL)
-			if err != nil || ownerInfo == nil {
-				// 不存在则创建
-				if ownerId, err = r.repo.InsertOwner(ctx, owner); err != nil {
-					r.log.Errorf("create owner error: %v", err)
-					continue
-				}
-			} else {
-				ownerId = ownerInfo.ID
-				// 更新owner信息
-				update := &domain.Owner{}
-				if ownerInfo.AvatarURL != owner.AvatarURL {
-					update.AvatarURL = owner.AvatarURL
-				}
-				if ownerInfo.Bio != owner.Bio {
-					update.Bio = owner.Bio
-				}
-				if ownerInfo.Email != owner.Email {
-					update.Email = owner.Email
-				}
-				if ownerInfo.Followers != owner.Followers {
-					update.Followers = owner.Followers
-				}
-				if ownerInfo.Following != owner.Following {
-					update.Following = owner.Following
-				}
-				if ownerInfo.PublicGists != owner.PublicGists {
-					update.PublicGists = owner.PublicGists
-				}
-				if ownerInfo.PublicRepos != owner.PublicRepos {
-					update.PublicRepos = owner.PublicRepos
-				}
-				if update != nil {
-					update.ID = ownerInfo.ID
-					if err = r.repo.UpdateOwner(ctx, update); err != nil {
-						r.log.Errorf("update owner error: %v", err)
-						return err
-					}
-				}
-			}
 		}
-
-		// 查询repo是否存在
-		info, err := r.repo.FindRepoByName(ctx, item.Name)
-		if err != nil || info == nil {
-			// 不存在则创建
-			// 查找语言id
-			var langId int64
-			if langInfo, err := r.repo.FindLanguage(ctx, item.Language, 0, &domain.Page{
-				PageNum:  1,
-				PageSize: 1,
-			}); err == nil && len(langInfo) > 0 {
-				langId = langInfo[0].ID
-			}
-			repoImg, _ := r.getRepoImage(ctx, item.HtmlURL)
-			if repoImg == "" {
-				repoImg = owner.AvatarURL
-			}
-			topicData, _ := json.Marshal(item.Topics)
-			if err = r.repo.InsertRepo(ctx, &domain.RepoInfo{
-				Name:            item.Name,
-				FullName:        item.FullName,
-				Image:           repoImg,
-				OwnerID:         ownerId,
-				Private:         item.Private,
-				Desc:            item.Description,
-				HtmlURL:         item.HtmlURL,
-				Homepage:        item.Homepage,
-				CloneURL:        item.CloneURL,
-				Size:            int64(item.Size),
-				StargazersCount: int64(item.StargazersCount),
-				WatchersCount:   int64(item.WatchersCount),
-				LanguageId:      langId,
-				ForksCount:      int64(item.ForksCount),
-				OpenIssuesCount: int64(item.OpenIssuesCount),
-				Topics:          string(topicData),
-				Forks:           int64(item.Forks),
-				OpenIssues:      int64(item.OpenIssues),
-				Watchers:        int64(item.Watchers),
-				DefaultBranch:   item.DefaultBranch,
-				Score:           int64(item.Score),
-				CreatedAt:       item.CreatedAt,
-				UpdatedAt:       item.UpdatedAt,
-			}); err != nil {
-				r.log.Errorf("create repo error: %v", err)
-				return err
-			}
-		} else {
-			// 存在就更新
-			updateRepo := &domain.RepoInfo{}
-			if int64(item.StargazersCount) != info.StargazersCount {
-				updateRepo.StargazersCount = int64(item.StargazersCount)
-			}
-			if int64(item.WatchersCount) != info.WatchersCount {
-				updateRepo.WatchersCount = int64(item.WatchersCount)
-			}
-			if int64(item.ForksCount) != info.ForksCount {
-				updateRepo.ForksCount = int64(item.ForksCount)
-			}
-			if int64(item.OpenIssuesCount) != info.OpenIssuesCount {
-				updateRepo.OpenIssuesCount = int64(item.OpenIssuesCount)
-			}
-			if int64(item.Forks) != info.Forks {
-				updateRepo.Forks = int64(item.Forks)
-			}
-			if int64(item.OpenIssues) != info.OpenIssues {
-				updateRepo.OpenIssues = int64(item.OpenIssues)
-			}
-			if int64(item.Watchers) != info.Watchers {
-				updateRepo.Watchers = int64(item.Watchers)
-			}
-			if item.DefaultBranch != info.DefaultBranch {
-				updateRepo.DefaultBranch = item.DefaultBranch
-			}
-			if int64(item.Score) != info.Score {
-				updateRepo.Score = int64(item.Score)
-			}
-			if updateRepo != nil {
-				updateRepo.ID = info.ID
-				if err = r.repo.UpdateRepo(ctx, updateRepo); err != nil {
-					r.log.Errorf("update repo error: %v", err)
-					return err
-				}
-			}
-
+		ownerId, err := r.OwnerInfoChange(ctx, owner)
+		if err != nil {
+			r.log.Errorf("change OwnerInfo error: %v", err)
+			continue
 		}
-
+		if err = r.RepoInfoChange(ctx, item, ownerId, owner.AvatarURL); err != nil {
+			r.log.Errorf("change RepoInfo error: %v", err)
+			continue
+		}
 	}
 	return nil
 }
@@ -328,12 +361,11 @@ func (r *OpenSourceInfo) Collect() {
 }
 
 func (r *OpenSourceInfo) GetLanguage(ctx context.Context, req *pb.LanguageRequest) (*pb.LanguageReply, error) {
-	page := &domain.Page{}
-	if req.Page != nil {
-		page.PageNum = int(req.Page.Page)
-		page.PageSize = int(req.Page.PageSize)
+	page := &domain.Page{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
 	}
-	info, err := r.repo.FindLanguage(ctx, req.Name, 0, page)
+	info, err := r.repo.FindLanguage(ctx, req.Name, req.ID, page)
 	if err != nil {
 		return nil, err
 	}
@@ -348,21 +380,21 @@ func (r *OpenSourceInfo) GetLanguage(ctx context.Context, req *pb.LanguageReques
 			Bio:         item.Bio,
 		})
 	}
-	req.Page.Total = int32(page.Total)
 	return &pb.LanguageReply{
-		Page:      req.Page,
+		PageNum:   req.PageNum,
+		PageSize:  req.PageSize,
+		Total:     page.Total,
 		Languages: data,
 	}, nil
 
 }
 
 func (r *OpenSourceInfo) GetOwner(ctx context.Context, req *pb.OwnerRequest) (*pb.OwnerReply, error) {
-	page := &domain.Page{}
-	if req.Page != nil {
-		page.PageNum = int(req.Page.Page)
-		page.PageSize = int(req.Page.PageSize)
+	page := &domain.Page{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
 	}
-	info, err := r.repo.FindOwner(ctx, req.Name, req.Type, req.Email, 0, page)
+	info, err := r.repo.FindOwner(ctx, req.Name, req.Type, req.Email, req.ID, page)
 	if err != nil {
 		return nil, err
 	}
@@ -385,19 +417,19 @@ func (r *OpenSourceInfo) GetOwner(ctx context.Context, req *pb.OwnerRequest) (*p
 			UpdatedAt:   item.UpdatedAt.Format(time.DateTime),
 		})
 	}
-	req.Page.Total = int32(page.Total)
 	return &pb.OwnerReply{
-		Page:   req.Page,
-		Owners: data,
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+		Total:    page.Total,
+		Owners:   data,
 	}, nil
 }
 
 func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.RepoReply, error) {
 	fmt.Println("GetRepo========================================", req)
-	page := &domain.Page{}
-	if req.Page != nil {
-		page.PageNum = int(req.Page.Page)
-		page.PageSize = int(req.Page.PageSize)
+	page := &domain.Page{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
 	}
 	info, err := r.repo.FindRepo(ctx, req, page)
 	if err != nil {
@@ -447,10 +479,37 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 			UpdatedAt:       item.UpdatedAt.Format(time.DateTime),
 		})
 	}
-	req.Page.Total = int32(page.Total)
 	return &pb.RepoReply{
-		Page:  req.Page,
-		Repos: data,
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+		Total:    page.Total,
+		Repos:    data,
 	}, nil
 
+}
+
+func (r *OpenSourceInfo) GetRepoCategory(ctx context.Context, req *pb.RepoCategoryRequest) (*pb.RepoCategoryReply, error) {
+	page := &domain.Page{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+	}
+
+	info, err := r.repo.FindRepoCategory(ctx, req.Name, req.ID, page)
+	if err != nil {
+		return nil, err
+	}
+	var data []*pb.RepoCategoryInfo
+	for _, item := range info {
+		data = append(data, &pb.RepoCategoryInfo{
+			Id:          item.ID,
+			Name:        item.Name,
+			Description: item.Desc,
+			ImageUrl:    item.ImageURL})
+	}
+	return &pb.RepoCategoryReply{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+		Total:    page.Total,
+		Category: data,
+	}, nil
 }
