@@ -56,44 +56,47 @@ message RepoInfo {
 	string     ownerName = 6;
 	// 是否私有
 	bool      private = 7;
-	// 仓库描述
+	// 仓库中文描述
 	string    desc = 8;
+
+	// 仓库英文描述
+	string descEn = 9;
 	// 库主页 URL
-	string    htmlUrl = 9;
+	string    htmlUrl = 10;
 	// 仓库主页 URL
-	string    homepage = 10;
+	string    homepage = 11;
 	// 克隆 URL
-	string    cloneUrl = 11;
+	string    cloneUrl = 12;
 	// 仓库星标数量
-	int64     stargazersCount = 12;
+	int64     stargazersCount = 13;
 	// 仓库关注者数量
-	int64     watchersCount = 13;
+	int64     watchersCount = 14;
 	// 仓库语言名称
-	string    language = 14;
+	string    language = 15;
 	// 仓库语言ID
-	int64    languageId = 15;
+	int64    languageId = 16;
 	// 仓库分支数量
-	int64     forksCount = 16;
+	int64     forksCount = 17;
 	// 仓库问题数量
-	int64     openIssuesCount = 17;
+	int64     openIssuesCount = 18;
 	// 仓库主题
-	repeated  string    topics = 18;
+	repeated  string    topics = 19;
 	// 仓库问题数量
-	int64     openIssues = 19;
+	int64     openIssues = 20;
 	// 仓库关注者数量
-	int64     watchers = 20;
+	int64     watchers = 21;
 	// 仓库默认分支
-	string    defaultBranch = 21;
+	string    defaultBranch = 22;
 	// 仓库评分
-	int64     score = 22;
+	int64     score = 23;
 	// 仓库大小
-	int64     size = 23;
+	int64     size = 24;
 	// 仓库分支数量
-	int64     forks = 24;
+	int64     forks = 25;
 	// 仓库创建时间
-	string    createdAt = 25;
+	string    createdAt = 26;
 	// 更新时间
-	string    updatedAt = 26;
+	string    updatedAt = 27;
 }
 
 // 查询条件

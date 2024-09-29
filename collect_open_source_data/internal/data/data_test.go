@@ -2,6 +2,7 @@ package data
 
 import (
 	"collect_open_source_data/internal/domain"
+	"collect_open_source_data/internal/pkg"
 	"encoding/json"
 	"fmt"
 	"gorm.io/driver/mysql"
@@ -215,6 +216,10 @@ func updateRepoCategoryId(repoId, categoryId int64) {
 	}
 }
 
+func updateRepoDescZh(repo *domain.RepoInfo) {
+	db.Model(&domain.RepoInfo{}).Where("id = ?", repo.ID).Updates(repo)
+}
+
 func RepoCategoryIdChange(desc string, repoId int64) {
 	if frontendRegex.MatchString(desc) {
 		// 前端相关逻辑
@@ -270,8 +275,35 @@ func RepoCategoryIdChange(desc string, repoId int64) {
 	}
 }
 
+func updateRepoDescToZh() {
+	size := 50
+	num := 1
+	tran := pkg.NewTranslateModeler(pkg.AppID, pkg.SecretKey, "en", "zh")
+	for {
+		var repo []*domain.RepoInfo
+		db.Limit(size).Offset((num - 1) * size).Find(&repo)
+		if len(repo) == 0 {
+			return
+		}
+		for _, v := range repo {
+			if v.DescZh == "" {
+				descZh := tran.Translate(v.Desc)
+				fmt.Println("=====================: ", descZh)
+				if descZh != "" {
+					v.DescZh = descZh
+					updateRepoDescZh(v)
+				}
+			}
+
+		}
+
+		num++
+	}
+}
+
 func TestNewData(t *testing.T) {
 	conMysql()
-	readRepoData()
+	//readRepoData()
+	updateRepoDescToZh()
 
 }

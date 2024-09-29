@@ -166,7 +166,7 @@ func (o *openSourceInfoRepo) UpdateRepo(ctx context.Context, repo *domain.RepoIn
 	if repo == nil {
 		return fmt.Errorf("repo is nil")
 	}
-	repo.UpdatedAt = time.Now()
+	//repo.UpdatedAt = time.Now()
 	return o.data.db.Model(&domain.RepoInfo{}).Where("id = ?", repo.ID).Updates(repo).Error
 }
 

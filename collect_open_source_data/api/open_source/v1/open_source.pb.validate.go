@@ -73,6 +73,8 @@ func (m *RepoInfo) validate(all bool) error {
 
 	// no validation rules for Desc
 
+	// no validation rules for DescEn
+
 	// no validation rules for HtmlUrl
 
 	// no validation rules for Homepage

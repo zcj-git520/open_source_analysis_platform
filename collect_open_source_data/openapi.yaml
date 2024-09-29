@@ -365,7 +365,10 @@ components:
                     description: 是否私有
                 desc:
                     type: string
-                    description: 仓库描述
+                    description: 仓库中文描述
+                descEn:
+                    type: string
+                    description: 仓库英文描述
                 htmlUrl:
                     type: string
                     description: 库主页 URL

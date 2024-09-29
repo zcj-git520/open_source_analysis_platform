@@ -8,9 +8,9 @@ type RepoInfo struct {
 	FullName        string    `gorm:"type:varchar(255)" json:"full_name"`      // 仓库全称
 	Image           string    `gorm:"type:varchar(255)" json:"image"`          // 仓库图片
 	OwnerID         int64     `gorm:"type:int" json:"owner_id"`                // 仓库所有者ID
-	CategoryID      int64     `gorm:"type:int" json:"category_id"`             // 仓库分类ID
 	Private         bool      `gorm:"type:tinyint" json:"private"`             // 是否私有
 	Desc            string    `gorm:"type:MEDIUMTEXT" json:"desc"`             // 仓库描述
+	DescZh          string    `gorm:"type:MEDIUMTEXT" json:"desc_zh"`          // 仓库中文描述
 	HtmlURL         string    `gorm:"type:varchar(255)" json:"html_url"`       // 库主页 URL
 	Homepage        string    `gorm:"type:varchar(255)" json:"homepage"`       // 仓库主页 URL
 	CloneURL        string    `gorm:"type:varchar(255)" json:"clone_url"`      // 克隆 URL
@@ -113,4 +113,17 @@ type RepoCategoryId struct {
 
 func (RepoCategoryId) TableName() string {
 	return "repo_category_id"
+}
+
+// 仓库指标值的增量
+type RepoMetrics struct {
+	ID     int64     `gorm:"primarykey;type:int" json:"id"`
+	RepoID int64     `gorm:"type:int" json:"repo_id"`   // 仓库ID
+	Type   int       `gorm:"type:int" json:"type"`      // 指标类型 0: star 1: fork 2: watch 3: issue
+	Value  int64     `gorm:"type:int" json:"value"`     // 增量值
+	Date   time.Time `gorm:"type:datetime" json:"date"` // 时间
+}
+
+func (RepoMetrics) TableName() string {
+	return "repo_metrics"
 }
