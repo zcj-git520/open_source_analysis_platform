@@ -1,0 +1,14 @@
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (1, 'Web前端开发', 'https://10.idqqimg.com/qqcourse_logo_ng/ajNVdqHZLLCUfI85kcsUzqwyPLb2zLM4loia5rqMFHp07bYOOXWttZrvyCfJKfMmgnQ2wyYYoXvA/600', '前端框架如:React、Vue.js、Angular等现代前端框架的项目非常热门');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (2, 'Web后端框架', 'https://atts.w3cschool.cn/attachments/image/20201208/1607410145715356.jpg', '包括后端框架（如 Django、Flask）等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (3, '移动应用开发', 'https://pic.pngsucai.com/00/26/94/920fc444f58f6b18.webp', '例如 Android 和 iOS 应用开发项目');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (4, '数据科学与机器学习', 'https://swarma.org/wp-content/uploads/2020/07/wxsync-2020-07-29a86936de490cdc282ffba1fd92cb56.png', '包含数据分析工具、机器学习算法实现等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (5, '游戏开发', 'https://img2020.cnblogs.com/blog/1561139/202010/1561139-20201012165557046-933664682.png', '涵盖各种游戏引擎和游戏项目');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (6, '系统工具', 'https://www.zmtests.com/image/8da0447b-c397-4c8b-b808-9979dec1cf36', '如操作系统相关项目、命令行工具等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (7, '开源库和框架', 'https://tse2-mm.cn.bing.net/th/id/OIP-C.AZOMg3sc34S3k_LEAkJD2QHaDt?rs=1&pid=ImgDetMain', '为其他开发者提供功能模块的项目，如数据库连接库、图形处理库等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (8, '人工智能与机器学习', 'https://pic4.zhimg.com/v2-34d43321006cffe0b5ce509a39913959_r.jpg?source=172ae18b', '包括深度学习模型、自然语言处理等项目');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (9, '区块链', 'https://pic4.zhimg.com/v2-da0b06a82473d898457d8b7f77473026_r.jpg', '涉及区块链技术的实现和应用');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (10, '物联网（IoT）', 'https://www.shuangyi-tech.com/upload/month_2011/202011261009529139.jpg', '与物联网设备和系统相关的项目');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (11, '教育资源', 'https://pic3.zhimg.com/v2-69d8f7909d139258d04d2f16ad6477e0_1440w.jpg?source=172ae18b', '如编程教程、学习项目等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (12, '安全与加密', 'https://tse3-mm.cn.bing.net/th/id/OIP-C.0L5yfxYdb3qZnZJzRBWoPQHaDJ?rs=1&pid=ImgDetMain', '包括安全工具、加密算法实现等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (13, '设计与创意', 'https://img.zcool.cn/community/01b85255f3e60a6ac7251df8682e78.jpg@1280w_1l_2o_100sh.jpg', '如图形设计工具、创意代码项目等');
+INSERT INTO `repo_category` (`id`, `name`, `image_url`, `desc`) VALUES (14, '其他', 'https://www.shejizn.vip/wp-content/uploads/2020/07/1594349552-8f14e45fceea167.png', '其他');
