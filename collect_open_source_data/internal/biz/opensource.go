@@ -546,7 +546,6 @@ func (r *OpenSourceInfo) GetOwner(ctx context.Context, req *pb.OwnerRequest) (*p
 }
 
 func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.RepoReply, error) {
-	fmt.Println("GetRepo========================================", req)
 	page := &domain.Page{
 		PageNum:  req.PageNum,
 		PageSize: req.PageSize,
@@ -558,46 +557,7 @@ func (r *OpenSourceInfo) GetRepo(ctx context.Context, req *pb.RepoRequest) (*pb.
 
 	var data []*pb.RepoInfo
 	for _, item := range info {
-		ownerName := ""
-		language := ""
-		if owner, _ := r.repo.FindOwnerByCache(ctx, item.OwnerID); owner != nil {
-			ownerName = owner.Name
-		}
-		if langeInfo, _ := r.repo.FindLanguageByCache(ctx, item.LanguageId); langeInfo != nil {
-			language = langeInfo.Name
-		}
-		var topic []string
-		if item.Topics != "" {
-			_ = json.Unmarshal([]byte(item.Topics), &topic)
-		}
-		data = append(data, &pb.RepoInfo{
-			Id:              item.ID,
-			Name:            item.Name,
-			FullName:        item.FullName,
-			Image:           item.Image,
-			OwnerId:         item.OwnerID,
-			OwnerName:       ownerName,
-			Private:         item.Private,
-			Desc:            item.Desc,
-			HtmlUrl:         item.HtmlURL,
-			Homepage:        item.Homepage,
-			CloneUrl:        item.CloneURL,
-			StargazersCount: item.StargazersCount,
-			WatchersCount:   item.WatchersCount,
-			Language:        language,
-			LanguageId:      item.LanguageId,
-			ForksCount:      item.ForksCount,
-			OpenIssuesCount: item.OpenIssuesCount,
-			Topics:          topic,
-			OpenIssues:      item.OpenIssues,
-			Watchers:        item.Watchers,
-			DefaultBranch:   item.DefaultBranch,
-			Score:           item.Score,
-			Size:            item.Size,
-			Forks:           item.Forks,
-			CreatedAt:       item.CreatedAt.Format(time.DateTime),
-			UpdatedAt:       item.UpdatedAt.Format(time.DateTime),
-		})
+		data = append(data, r.repoData(ctx, item))
 	}
 	return &pb.RepoReply{
 		PageNum:  req.PageNum,
@@ -634,62 +594,69 @@ func (r *OpenSourceInfo) GetRepoCategory(ctx context.Context, req *pb.RepoCatego
 	}, nil
 }
 
+func (r *OpenSourceInfo) repoData(ctx context.Context, repoInfo *domain.RepoInfo) *pb.RepoInfo {
+	ownerName := ""
+	language := ""
+	if owner, _ := r.repo.FindOwnerByCache(ctx, repoInfo.OwnerID); owner != nil {
+		ownerName = owner.Name
+	}
+	if langeInfo, _ := r.repo.FindLanguageByCache(ctx, repoInfo.LanguageId); langeInfo != nil {
+		language = langeInfo.Name
+	}
+	var topic []string
+	if repoInfo.Topics != "" {
+		_ = json.Unmarshal([]byte(repoInfo.Topics), &topic)
+	}
+	return &pb.RepoInfo{
+		Id:              repoInfo.ID,
+		Name:            repoInfo.Name,
+		FullName:        repoInfo.FullName,
+		Image:           repoInfo.Image,
+		OwnerId:         repoInfo.OwnerID,
+		OwnerName:       ownerName,
+		Private:         repoInfo.Private,
+		Desc:            repoInfo.Desc,
+		HtmlUrl:         repoInfo.HtmlURL,
+		Homepage:        repoInfo.Homepage,
+		CloneUrl:        repoInfo.CloneURL,
+		StargazersCount: repoInfo.StargazersCount,
+		WatchersCount:   repoInfo.WatchersCount,
+		Language:        language,
+		LanguageId:      repoInfo.LanguageId,
+		ForksCount:      repoInfo.ForksCount,
+		OpenIssuesCount: repoInfo.OpenIssuesCount,
+		Topics:          topic,
+		OpenIssues:      repoInfo.OpenIssues,
+		Watchers:        repoInfo.Watchers,
+		DefaultBranch:   repoInfo.DefaultBranch,
+		Score:           repoInfo.Score,
+		Size:            repoInfo.Size,
+		Forks:           repoInfo.Forks,
+		CreatedAt:       repoInfo.CreatedAt.Format(time.DateTime),
+		UpdatedAt:       repoInfo.UpdatedAt.Format(time.DateTime),
+	}
+}
+
 func (r *OpenSourceInfo) GetRepoByCategory(ctx context.Context, req *pb.RepoByCategoryRequest) (*pb.RepoByCategoryReply, error) {
+	if req.Id < 1 {
+		return nil, fmt.Errorf("category id must be greater than 0")
+	}
 	page := &domain.Page{
 		PageNum:  req.PageNum,
 		PageSize: req.PageSize,
 	}
-	info, err := r.repo.FindRepoCategoryByCatId(ctx, req.ID, page)
+	info, err := r.repo.FindRepoCategoryByCatId(ctx, req.Id, page)
 	if err != nil {
 		return nil, err
 	}
 
 	var data []*pb.RepoInfo
 	for _, item := range info {
-		ownerName := ""
-		language := ""
 		repoInfo, err := r.repo.FindRepoById(ctx, item.RepoID)
 		if err != nil {
 			continue
 		}
-		if owner, _ := r.repo.FindOwnerByCache(ctx, repoInfo.OwnerID); owner != nil {
-			ownerName = owner.Name
-		}
-		if langeInfo, _ := r.repo.FindLanguageByCache(ctx, repoInfo.LanguageId); langeInfo != nil {
-			language = langeInfo.Name
-		}
-		var topic []string
-		if repoInfo.Topics != "" {
-			_ = json.Unmarshal([]byte(repoInfo.Topics), &topic)
-		}
-		data = append(data, &pb.RepoInfo{
-			Id:              repoInfo.ID,
-			Name:            repoInfo.Name,
-			FullName:        repoInfo.FullName,
-			Image:           repoInfo.Image,
-			OwnerId:         repoInfo.OwnerID,
-			OwnerName:       ownerName,
-			Private:         repoInfo.Private,
-			Desc:            repoInfo.Desc,
-			HtmlUrl:         repoInfo.HtmlURL,
-			Homepage:        repoInfo.Homepage,
-			CloneUrl:        repoInfo.CloneURL,
-			StargazersCount: repoInfo.StargazersCount,
-			WatchersCount:   repoInfo.WatchersCount,
-			Language:        language,
-			LanguageId:      repoInfo.LanguageId,
-			ForksCount:      repoInfo.ForksCount,
-			OpenIssuesCount: repoInfo.OpenIssuesCount,
-			Topics:          topic,
-			OpenIssues:      repoInfo.OpenIssues,
-			Watchers:        repoInfo.Watchers,
-			DefaultBranch:   repoInfo.DefaultBranch,
-			Score:           repoInfo.Score,
-			Size:            repoInfo.Size,
-			Forks:           repoInfo.Forks,
-			CreatedAt:       repoInfo.CreatedAt.Format(time.DateTime),
-			UpdatedAt:       repoInfo.UpdatedAt.Format(time.DateTime),
-		})
+		data = append(data, r.repoData(ctx, repoInfo))
 	}
 	return &pb.RepoByCategoryReply{
 		PageNum:  req.PageNum,

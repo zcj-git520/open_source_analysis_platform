@@ -168,7 +168,7 @@ message RepoByCategoryRequest {
   // 每页数量
   int32 pageSize = 2;
   // 分类id
-  int64  ID = 3;
+  int64  id = 3 [(validate.rules).int64 = {gt: 0}];
 
 }
 

@@ -733,7 +733,16 @@ func (m *RepoByCategoryRequest) validate(all bool) error {
 
 	// no validation rules for PageSize
 
-	// no validation rules for ID
+	if m.GetId() <= 0 {
+		err := RepoByCategoryRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return RepoByCategoryRequestMultiError(errors)

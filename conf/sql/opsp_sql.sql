@@ -112,4 +112,4 @@ VALUES
     ("教育资源", "https://pic3.zhimg.com/v2-69d8f7909d139258d04d2f16ad6477e0_1440w.jpg?source=172ae18b", "如编程教程、学习项目等"),
     ("安全与加密", "https://tse3-mm.cn.bing.net/th/id/OIP-C.0L5yfxYdb3qZnZJzRBWoPQHaDJ?rs=1&pid=ImgDetMain", "包括安全工具、加密算法实现等"),
     ("设计与创意", "https://img.zcool.cn/community/01b85255f3e60a6ac7251df8682e78.jpg@1280w_1l_2o_100sh.jpg", "如图形设计工具、创意代码项目等"),
-    ("其他",`https://www.shejizn.vip/wp-content/uploads/2020/07/1594349552-8f14e45fceea167.png`,"其他");
+    ("其他","https://www.shejizn.vip/wp-content/uploads/2020/07/1594349552-8f14e45fceea167.png","其他");
