@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type RepoInfo struct {
 	ID              int64     `gorm:"primarykey;type:int" json:"id"`
@@ -117,11 +119,13 @@ func (RepoCategoryId) TableName() string {
 
 // 仓库指标值的增量
 type RepoMetrics struct {
-	ID     int64     `gorm:"primarykey;type:int" json:"id"`
-	RepoID int64     `gorm:"type:int" json:"repo_id"`   // 仓库ID
-	Type   int       `gorm:"type:int" json:"type"`      // 指标类型 0: star 1: fork 2: watch 3: issue
-	Value  int64     `gorm:"type:int" json:"value"`     // 增量值
-	Date   time.Time `gorm:"type:datetime" json:"date"` // 时间
+	ID          int64     `gorm:"primarykey;type:int" json:"id"`
+	RepoID      int64     `gorm:"type:int" json:"repo_id"`      // 仓库ID
+	Type        int       `gorm:"type:int" json:"type"`         // 指标类型 0: star 1: fork 2: watch 3: issue
+	Value       int64     `gorm:"type:int" json:"value"`        // 增量值
+	OriginValue int64     `gorm:"type:int" json:"origin_value"` // 原始值
+	NowValue    int64     `gorm:"type:int" json:"now_value"`    // 当前值
+	Date        time.Time `gorm:"type:datetime" json:"date"`    // 时间
 }
 
 func (RepoMetrics) TableName() string {

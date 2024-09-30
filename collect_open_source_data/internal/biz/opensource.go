@@ -33,6 +33,7 @@ type OpenSourceRepo interface {
 	FindRepoCategoryIdByRepoId(repoId int64) bool
 	FindRepoCategoryByCatId(ctx context.Context, id int64, page *domain.Page) ([]*domain.RepoCategoryId, error)
 	FindRepoById(ctx context.Context, id int64) (*domain.RepoInfo, error)
+	AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error
 }
 
 type OpenSourceInfo struct {

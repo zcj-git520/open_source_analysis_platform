@@ -12,6 +12,14 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
+)
+
+const (
+	RepoMetricStar = iota
+	RepoMetricFork
+	RepoMetricWatch
+	RepoMetricIssue
 )
 
 func (r *OpenSourceInfo) request(method string, url string, headers http.Header, body io.Reader) ([]byte, error) {
@@ -88,28 +96,36 @@ func (r *OpenSourceInfo) addOwnerInfo(ctx context.Context, owner *domain.Owner) 
 
 func (r *OpenSourceInfo) updateOwnerInfo(ctx context.Context, ownerInfo, owner *domain.Owner) (int64, error) {
 	update := &domain.Owner{}
+	updateState := false
 	if ownerInfo.AvatarURL != owner.AvatarURL {
 		update.AvatarURL = owner.AvatarURL
+		updateState = true
 	}
 	if ownerInfo.Bio != owner.Bio {
 		update.Bio = owner.Bio
+		updateState = true
 	}
 	if ownerInfo.Email != owner.Email {
 		update.Email = owner.Email
+		updateState = true
 	}
 	if ownerInfo.Followers != owner.Followers {
 		update.Followers = owner.Followers
+		updateState = true
 	}
 	if ownerInfo.Following != owner.Following {
 		update.Following = owner.Following
+		updateState = true
 	}
 	if ownerInfo.PublicGists != owner.PublicGists {
 		update.PublicGists = owner.PublicGists
+		updateState = true
 	}
 	if ownerInfo.PublicRepos != owner.PublicRepos {
 		update.PublicRepos = owner.PublicRepos
+		updateState = true
 	}
-	if update != nil {
+	if update != nil && updateState {
 		update.ID = ownerInfo.ID
 		if err := r.repo.UpdateOwner(ctx, update); err != nil {
 			r.log.Errorf("update owner error: %v", err)
@@ -182,39 +198,102 @@ func (r *OpenSourceInfo) addRepoInfo(ctx context.Context, item *Repo, ownerId in
 
 func (r *OpenSourceInfo) updateRepoInfo(ctx context.Context, info *domain.RepoInfo, item *Repo) error {
 	updateRepo := &domain.RepoInfo{}
+	updateRepoState := false
+	var repoMetricList []*domain.RepoMetrics
 	if int64(item.StargazersCount) != info.StargazersCount {
+		repoMetricList = append(repoMetricList, &domain.RepoMetrics{
+			RepoID:      info.ID,
+			Type:        RepoMetricStar,
+			Value:       int64(item.StargazersCount) - info.StargazersCount,
+			OriginValue: info.StargazersCount,
+			NowValue:    int64(item.StargazersCount),
+			Date:        time.Now(),
+		})
 		updateRepo.StargazersCount = int64(item.StargazersCount)
+		updateRepoState = true
 	}
 	if int64(item.WatchersCount) != info.WatchersCount {
+		repoMetricList = append(repoMetricList, &domain.RepoMetrics{
+			RepoID:      info.ID,
+			Type:        RepoMetricWatch,
+			Value:       int64(item.WatchersCount) - info.WatchersCount,
+			OriginValue: info.WatchersCount,
+			NowValue:    int64(item.WatchersCount),
+			Date:        time.Now(),
+		})
 		updateRepo.WatchersCount = int64(item.WatchersCount)
+		updateRepoState = true
 	}
 	if int64(item.ForksCount) != info.ForksCount {
+		repoMetricList = append(repoMetricList, &domain.RepoMetrics{
+			RepoID:      info.ID,
+			Type:        RepoMetricFork,
+			Value:       int64(item.ForksCount) - info.ForksCount,
+			OriginValue: info.ForksCount,
+			NowValue:    int64(item.ForksCount),
+			Date:        time.Now(),
+		})
 		updateRepo.ForksCount = int64(item.ForksCount)
+		updateRepoState = true
 	}
 	if int64(item.OpenIssuesCount) != info.OpenIssuesCount {
+		repoMetricList = append(repoMetricList, &domain.RepoMetrics{
+			RepoID:      info.ID,
+			Type:        RepoMetricIssue,
+			Value:       int64(item.OpenIssuesCount) - info.OpenIssuesCount,
+			OriginValue: info.OpenIssuesCount,
+			NowValue:    int64(item.OpenIssuesCount),
+			Date:        time.Now(),
+		})
 		updateRepo.OpenIssuesCount = int64(item.OpenIssuesCount)
+		updateRepoState = true
 	}
 	if int64(item.Forks) != info.Forks {
+		repoMetricList = append(repoMetricList, &domain.RepoMetrics{
+			RepoID:      info.ID,
+			Type:        RepoMetricFork,
+			Value:       int64(item.Forks) - info.Forks,
+			OriginValue: info.Forks,
+			NowValue:    int64(item.Forks),
+			Date:        time.Now(),
+		})
 		updateRepo.Forks = int64(item.Forks)
+		updateRepoState = true
 	}
 	if int64(item.OpenIssues) != info.OpenIssues {
+		repoMetricList = append(repoMetricList, &domain.RepoMetrics{
+			RepoID:      info.ID,
+			Type:        RepoMetricIssue,
+			Value:       int64(item.OpenIssues) - info.OpenIssues,
+			OriginValue: info.OpenIssues,
+			NowValue:    int64(item.OpenIssues),
+			Date:        time.Now(),
+		})
 		updateRepo.OpenIssues = int64(item.OpenIssues)
+		updateRepoState = true
 	}
 	if int64(item.Watchers) != info.Watchers {
 		updateRepo.Watchers = int64(item.Watchers)
+		updateRepoState = true
 	}
 	if item.DefaultBranch != info.DefaultBranch {
 		updateRepo.DefaultBranch = item.DefaultBranch
+		updateRepoState = true
 	}
 	if int64(item.Score) != info.Score {
 		updateRepo.Score = int64(item.Score)
+		updateRepoState = true
 	}
 	if item.UpdatedAt != info.UpdatedAt {
 		updateRepo.UpdatedAt = item.UpdatedAt
+		updateRepoState = true
 	}
-	if updateRepo != nil {
+	// 更新仓库指标信息
+	if len(repoMetricList) > 0 {
+		_ = r.repo.AddRepoMetrics(ctx, repoMetricList)
+	}
+	if updateRepo != nil && updateRepoState {
 		updateRepo.ID = info.ID
-		updateRepo.UpdatedAt = item.UpdatedAt
 		if err := r.repo.UpdateRepo(ctx, updateRepo); err != nil {
 			r.log.Errorf("update repo error: %v", err)
 			return err
@@ -312,7 +391,7 @@ func (r *OpenSourceInfo) getRepoImage(ctx context.Context, repoName string) (str
 func (r *OpenSourceInfo) Collect() {
 	r.Page++
 	if r.Page > 10 {
-		r.Page = 1
+		return
 	}
 	fmt.Println("========================================:  ", r.Page)
 	language := []string{"Python", "JavaScript", "Java", "C", "C++", "C#", "PHP", "Ruby", "Go", "Rust", "TypeScript"}

@@ -157,6 +157,8 @@ func (o *openSourceInfoRepo) FindRepo(ctx context.Context, req *pb.RepoRequest, 
 	// 排序
 	if req.Sort != nil {
 		tx = tx.Order(fmt.Sprintf("%s %s", req.Sort.Field, req.Sort.Order))
+	} else {
+		tx = tx.Order("stargazers_count desc")
 	}
 	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&repoInfo).Error
 	return repoInfo, err
@@ -174,7 +176,7 @@ func (o *openSourceInfoRepo) UpdateOwner(ctx context.Context, owner *domain.Owne
 	if owner == nil {
 		return fmt.Errorf("owner is nil")
 	}
-	owner.UpdatedAt = time.Now()
+	//owner.UpdatedAt = time.Now()
 	return o.data.db.Model(&domain.Owner{}).Where("id = ?", owner.ID).Updates(owner).Error
 }
 
@@ -264,4 +266,8 @@ func (o *openSourceInfoRepo) FindRepoCategoryByCatId(ctx context.Context, id int
 	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&repoCategoryId).Error
 
 	return repoCategoryId, err
+}
+
+func (o *openSourceInfoRepo) AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error {
+	return o.data.db.CreateInBatches(metrics, len(metrics)).Error
 }
