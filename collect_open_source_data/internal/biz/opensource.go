@@ -14,6 +14,12 @@ const (
 	BaseGithubURL = "https://api.github.com/search/repositories"
 )
 
+const (
+	DateTypeDay = iota
+	DateTypeWeek
+	DateTypeMonth
+)
+
 type OpenSourceRepo interface {
 	InsertOwner(ctx context.Context, owner *domain.Owner) (int64, error)
 	InsertRepo(ctx context.Context, repo *domain.RepoInfo) error
@@ -34,6 +40,7 @@ type OpenSourceRepo interface {
 	FindRepoCategoryByCatId(ctx context.Context, id int64, page *domain.Page) ([]*domain.RepoCategoryId, error)
 	FindRepoById(ctx context.Context, id int64) (*domain.RepoInfo, error)
 	AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error
+	FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error)
 }
 
 type OpenSourceInfo struct {
@@ -235,4 +242,45 @@ func (r *OpenSourceInfo) GetRepoByCategory(ctx context.Context, req *pb.RepoByCa
 		Repos:    data,
 	}, nil
 
+}
+
+func (r *OpenSourceInfo) timeConverse(ctx context.Context, dateType, num int) string {
+	now := time.Now()
+	switch dateType {
+	case DateTypeDay:
+		return now.AddDate(0, 0, -num).Format(time.DateTime)
+	case DateTypeWeek:
+		return now.AddDate(0, 0, -num*7).Format(time.DateTime)
+	case DateTypeMonth:
+		return now.AddDate(0, -num, 0).Format(time.DateTime)
+	default:
+		return now.Format(time.DateTime)
+	}
+}
+
+func (r *OpenSourceInfo) GetRepoMeasure(ctx context.Context, req *pb.RepoMeasureRequest) (*pb.RepoMeasureReply, error) {
+	page := &domain.Page{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+	}
+	date := r.timeConverse(ctx, int(req.DateType), int(req.Num))
+	info, err := r.repo.FindRepoMetrics(ctx, date, page)
+	if err != nil {
+		return nil, err
+	}
+
+	var data []*pb.RepoInfo
+	for _, item := range info {
+		repoInfo, err := r.repo.FindRepoById(ctx, item.RepoID)
+		if err != nil {
+			continue
+		}
+		data = append(data, r.repoData(ctx, repoInfo))
+	}
+	return &pb.RepoMeasureReply{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+		Total:    page.Total,
+		Repos:    data,
+	}, nil
 }

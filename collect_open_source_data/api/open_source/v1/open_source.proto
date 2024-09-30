@@ -39,6 +39,36 @@ service OpenSource {
 			get: "/repo/bycategory"
 		};
 	}
+
+	rpc GetRepoMeasure(RepoMeasureRequest) returns (RepoMeasureReply){
+		option (google.api.http) = {
+      get: "/repo/measure"
+    };
+  }
+}
+
+message RepoMeasureRequest {
+	// 分页信息
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	// 指标类型 0: star 1: fork 2: watch 3: issue
+	int32 type = 3;
+	// 日期类型 0: day 1: week 2: month
+	int32 dateType = 4;
+	// 天数
+	int32 num = 5;
+}
+
+message RepoMeasureReply {
+	// 分页信息
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
+	// 总条数
+	int64 total = 3;
+	// 开源仓库信息
+	repeated RepoInfo repos = 4;
 }
 
 message RepoInfo {

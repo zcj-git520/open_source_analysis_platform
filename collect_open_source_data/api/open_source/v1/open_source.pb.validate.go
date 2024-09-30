@@ -35,6 +35,258 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on RepoMeasureRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RepoMeasureRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoMeasureRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoMeasureRequestMultiError, or nil if none found.
+func (m *RepoMeasureRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoMeasureRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Type
+
+	// no validation rules for DateType
+
+	// no validation rules for Num
+
+	if len(errors) > 0 {
+		return RepoMeasureRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoMeasureRequestMultiError is an error wrapping multiple validation errors
+// returned by RepoMeasureRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RepoMeasureRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoMeasureRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoMeasureRequestMultiError) AllErrors() []error { return m }
+
+// RepoMeasureRequestValidationError is the validation error returned by
+// RepoMeasureRequest.Validate if the designated constraints aren't met.
+type RepoMeasureRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoMeasureRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoMeasureRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoMeasureRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoMeasureRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoMeasureRequestValidationError) ErrorName() string {
+	return "RepoMeasureRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RepoMeasureRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoMeasureRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoMeasureRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoMeasureRequestValidationError{}
+
+// Validate checks the field values on RepoMeasureReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RepoMeasureReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoMeasureReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoMeasureReplyMultiError, or nil if none found.
+func (m *RepoMeasureReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoMeasureReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetRepos() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RepoMeasureReplyValidationError{
+						field:  fmt.Sprintf("Repos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RepoMeasureReplyValidationError{
+						field:  fmt.Sprintf("Repos[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RepoMeasureReplyValidationError{
+					field:  fmt.Sprintf("Repos[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RepoMeasureReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoMeasureReplyMultiError is an error wrapping multiple validation errors
+// returned by RepoMeasureReply.ValidateAll() if the designated constraints
+// aren't met.
+type RepoMeasureReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoMeasureReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoMeasureReplyMultiError) AllErrors() []error { return m }
+
+// RepoMeasureReplyValidationError is the validation error returned by
+// RepoMeasureReply.Validate if the designated constraints aren't met.
+type RepoMeasureReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoMeasureReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoMeasureReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoMeasureReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoMeasureReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoMeasureReplyValidationError) ErrorName() string { return "RepoMeasureReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RepoMeasureReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoMeasureReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoMeasureReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoMeasureReplyValidationError{}
+
 // Validate checks the field values on RepoInfo with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

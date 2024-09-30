@@ -36,3 +36,7 @@ func (s *OpenSourceService) GetRepoCategory(ctx context.Context, req *pb.RepoCat
 func (s *OpenSourceService) GetRepoByCategory(ctx context.Context, req *pb.RepoByCategoryRequest) (*pb.RepoByCategoryReply, error) {
 	return s.uc.GetRepoByCategory(ctx, req)
 }
+
+func (s *OpenSourceService) GetRepoMeasure(ctx context.Context, req *pb.RepoMeasureRequest) (*pb.RepoMeasureReply, error) {
+	return s.uc.GetRepoMeasure(ctx, req)
+}

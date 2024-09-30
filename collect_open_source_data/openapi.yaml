@@ -169,6 +169,49 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.RepoCategoryReply'
+    /repo/measure:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetRepoMeasure
+            parameters:
+                - name: pageNum
+                  in: query
+                  description: 分页信息
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  description: 每页数量
+                  schema:
+                    type: integer
+                    format: int32
+                - name: type
+                  in: query
+                  description: '指标类型 0: star 1: fork 2: watch 3: issue'
+                  schema:
+                    type: integer
+                    format: int32
+                - name: dateType
+                  in: query
+                  description: '日期类型 0: day 1: week 2: month'
+                  schema:
+                    type: integer
+                    format: int32
+                - name: num
+                  in: query
+                  description: 天数
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.RepoMeasureReply'
 components:
     schemas:
         open_source.v1.LanguageInfo:
@@ -425,6 +468,25 @@ components:
                 updatedAt:
                     type: string
                     description: 更新时间
+        open_source.v1.RepoMeasureReply:
+            type: object
+            properties:
+                pageNum:
+                    type: integer
+                    description: 分页信息
+                    format: int32
+                pageSize:
+                    type: integer
+                    description: 每页数量
+                    format: int32
+                total:
+                    type: string
+                    description: 总条数
+                repos:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.RepoInfo'
+                    description: 开源仓库信息
         open_source.v1.RepoReply:
             type: object
             properties:

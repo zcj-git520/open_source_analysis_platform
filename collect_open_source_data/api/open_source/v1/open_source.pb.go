@@ -77,7 +77,7 @@ func (x QueryFilter_Operator) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use QueryFilter_Operator.Descriptor instead.
 func (QueryFilter_Operator) EnumDescriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{1, 0}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{3, 0}
 }
 
 // 排序方式
@@ -126,7 +126,166 @@ func (x SortOrder_Order) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SortOrder_Order.Descriptor instead.
 func (SortOrder_Order) EnumDescriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{2, 0}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{4, 0}
+}
+
+type RepoMeasureRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// 分页信息
+	PageNum int32 `protobuf:"varint,1,opt,name=pageNum,proto3" json:"pageNum,omitempty"`
+	// 每页数量
+	PageSize int32 `protobuf:"varint,2,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
+	// 指标类型 0: star 1: fork 2: watch 3: issue
+	Type int32 `protobuf:"varint,3,opt,name=type,proto3" json:"type,omitempty"`
+	// 日期类型 0: day 1: week 2: month
+	DateType int32 `protobuf:"varint,4,opt,name=dateType,proto3" json:"dateType,omitempty"`
+	// 天数
+	Num int32 `protobuf:"varint,5,opt,name=num,proto3" json:"num,omitempty"`
+}
+
+func (x *RepoMeasureRequest) Reset() {
+	*x = RepoMeasureRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RepoMeasureRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RepoMeasureRequest) ProtoMessage() {}
+
+func (x *RepoMeasureRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RepoMeasureRequest.ProtoReflect.Descriptor instead.
+func (*RepoMeasureRequest) Descriptor() ([]byte, []int) {
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *RepoMeasureRequest) GetPageNum() int32 {
+	if x != nil {
+		return x.PageNum
+	}
+	return 0
+}
+
+func (x *RepoMeasureRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *RepoMeasureRequest) GetType() int32 {
+	if x != nil {
+		return x.Type
+	}
+	return 0
+}
+
+func (x *RepoMeasureRequest) GetDateType() int32 {
+	if x != nil {
+		return x.DateType
+	}
+	return 0
+}
+
+func (x *RepoMeasureRequest) GetNum() int32 {
+	if x != nil {
+		return x.Num
+	}
+	return 0
+}
+
+type RepoMeasureReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// 分页信息
+	PageNum int32 `protobuf:"varint,1,opt,name=pageNum,proto3" json:"pageNum,omitempty"`
+	// 每页数量
+	PageSize int32 `protobuf:"varint,2,opt,name=pageSize,proto3" json:"pageSize,omitempty"`
+	// 总条数
+	Total int64 `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	// 开源仓库信息
+	Repos []*RepoInfo `protobuf:"bytes,4,rep,name=repos,proto3" json:"repos,omitempty"`
+}
+
+func (x *RepoMeasureReply) Reset() {
+	*x = RepoMeasureReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RepoMeasureReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RepoMeasureReply) ProtoMessage() {}
+
+func (x *RepoMeasureReply) ProtoReflect() protoreflect.Message {
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RepoMeasureReply.ProtoReflect.Descriptor instead.
+func (*RepoMeasureReply) Descriptor() ([]byte, []int) {
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *RepoMeasureReply) GetPageNum() int32 {
+	if x != nil {
+		return x.PageNum
+	}
+	return 0
+}
+
+func (x *RepoMeasureReply) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *RepoMeasureReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *RepoMeasureReply) GetRepos() []*RepoInfo {
+	if x != nil {
+		return x.Repos
+	}
+	return nil
 }
 
 type RepoInfo struct {
@@ -193,7 +352,7 @@ type RepoInfo struct {
 func (x *RepoInfo) Reset() {
 	*x = RepoInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[0]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -206,7 +365,7 @@ func (x *RepoInfo) String() string {
 func (*RepoInfo) ProtoMessage() {}
 
 func (x *RepoInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[0]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -219,7 +378,7 @@ func (x *RepoInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoInfo.ProtoReflect.Descriptor instead.
 func (*RepoInfo) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{0}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *RepoInfo) GetId() int64 {
@@ -428,7 +587,7 @@ type QueryFilter struct {
 func (x *QueryFilter) Reset() {
 	*x = QueryFilter{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[1]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -441,7 +600,7 @@ func (x *QueryFilter) String() string {
 func (*QueryFilter) ProtoMessage() {}
 
 func (x *QueryFilter) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[1]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -454,7 +613,7 @@ func (x *QueryFilter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueryFilter.ProtoReflect.Descriptor instead.
 func (*QueryFilter) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{1}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *QueryFilter) GetTargetValue() int32 {
@@ -493,7 +652,7 @@ type SortOrder struct {
 func (x *SortOrder) Reset() {
 	*x = SortOrder{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[2]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -506,7 +665,7 @@ func (x *SortOrder) String() string {
 func (*SortOrder) ProtoMessage() {}
 
 func (x *SortOrder) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[2]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -519,7 +678,7 @@ func (x *SortOrder) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SortOrder.ProtoReflect.Descriptor instead.
 func (*SortOrder) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{2}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SortOrder) GetOrder() SortOrder_Order {
@@ -564,7 +723,7 @@ type RepoRequest struct {
 func (x *RepoRequest) Reset() {
 	*x = RepoRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[3]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -577,7 +736,7 @@ func (x *RepoRequest) String() string {
 func (*RepoRequest) ProtoMessage() {}
 
 func (x *RepoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[3]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -590,7 +749,7 @@ func (x *RepoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoRequest.ProtoReflect.Descriptor instead.
 func (*RepoRequest) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{3}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *RepoRequest) GetPageNum() int32 {
@@ -673,7 +832,7 @@ type RepoReply struct {
 func (x *RepoReply) Reset() {
 	*x = RepoReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[4]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -686,7 +845,7 @@ func (x *RepoReply) String() string {
 func (*RepoReply) ProtoMessage() {}
 
 func (x *RepoReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[4]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -699,7 +858,7 @@ func (x *RepoReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoReply.ProtoReflect.Descriptor instead.
 func (*RepoReply) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{4}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RepoReply) GetPageNum() int32 {
@@ -746,7 +905,7 @@ type RepoByCategoryRequest struct {
 func (x *RepoByCategoryRequest) Reset() {
 	*x = RepoByCategoryRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[5]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -759,7 +918,7 @@ func (x *RepoByCategoryRequest) String() string {
 func (*RepoByCategoryRequest) ProtoMessage() {}
 
 func (x *RepoByCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[5]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -772,7 +931,7 @@ func (x *RepoByCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoByCategoryRequest.ProtoReflect.Descriptor instead.
 func (*RepoByCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{5}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RepoByCategoryRequest) GetPageNum() int32 {
@@ -813,7 +972,7 @@ type RepoByCategoryReply struct {
 func (x *RepoByCategoryReply) Reset() {
 	*x = RepoByCategoryReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[6]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -826,7 +985,7 @@ func (x *RepoByCategoryReply) String() string {
 func (*RepoByCategoryReply) ProtoMessage() {}
 
 func (x *RepoByCategoryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[6]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -839,7 +998,7 @@ func (x *RepoByCategoryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoByCategoryReply.ProtoReflect.Descriptor instead.
 func (*RepoByCategoryReply) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{6}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *RepoByCategoryReply) GetPageNum() int32 {
@@ -908,7 +1067,7 @@ type OwnerInfo struct {
 func (x *OwnerInfo) Reset() {
 	*x = OwnerInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[7]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -921,7 +1080,7 @@ func (x *OwnerInfo) String() string {
 func (*OwnerInfo) ProtoMessage() {}
 
 func (x *OwnerInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[7]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -934,7 +1093,7 @@ func (x *OwnerInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnerInfo.ProtoReflect.Descriptor instead.
 func (*OwnerInfo) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{7}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *OwnerInfo) GetId() int64 {
@@ -1057,7 +1216,7 @@ type OwnerRequest struct {
 func (x *OwnerRequest) Reset() {
 	*x = OwnerRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[8]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1070,7 +1229,7 @@ func (x *OwnerRequest) String() string {
 func (*OwnerRequest) ProtoMessage() {}
 
 func (x *OwnerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[8]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1083,7 +1242,7 @@ func (x *OwnerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnerRequest.ProtoReflect.Descriptor instead.
 func (*OwnerRequest) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{8}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *OwnerRequest) GetPageNum() int32 {
@@ -1145,7 +1304,7 @@ type OwnerReply struct {
 func (x *OwnerReply) Reset() {
 	*x = OwnerReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[9]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1158,7 +1317,7 @@ func (x *OwnerReply) String() string {
 func (*OwnerReply) ProtoMessage() {}
 
 func (x *OwnerReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[9]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1171,7 +1330,7 @@ func (x *OwnerReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OwnerReply.ProtoReflect.Descriptor instead.
 func (*OwnerReply) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{9}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *OwnerReply) GetPageNum() int32 {
@@ -1224,7 +1383,7 @@ type LanguageInfo struct {
 func (x *LanguageInfo) Reset() {
 	*x = LanguageInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[10]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1237,7 +1396,7 @@ func (x *LanguageInfo) String() string {
 func (*LanguageInfo) ProtoMessage() {}
 
 func (x *LanguageInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[10]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1250,7 +1409,7 @@ func (x *LanguageInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LanguageInfo.ProtoReflect.Descriptor instead.
 func (*LanguageInfo) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{10}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *LanguageInfo) GetId() int64 {
@@ -1313,7 +1472,7 @@ type LanguageRequest struct {
 func (x *LanguageRequest) Reset() {
 	*x = LanguageRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[11]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1326,7 +1485,7 @@ func (x *LanguageRequest) String() string {
 func (*LanguageRequest) ProtoMessage() {}
 
 func (x *LanguageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[11]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1339,7 +1498,7 @@ func (x *LanguageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LanguageRequest.ProtoReflect.Descriptor instead.
 func (*LanguageRequest) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{11}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *LanguageRequest) GetPageNum() int32 {
@@ -1387,7 +1546,7 @@ type LanguageReply struct {
 func (x *LanguageReply) Reset() {
 	*x = LanguageReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[12]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1400,7 +1559,7 @@ func (x *LanguageReply) String() string {
 func (*LanguageReply) ProtoMessage() {}
 
 func (x *LanguageReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[12]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1413,7 +1572,7 @@ func (x *LanguageReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LanguageReply.ProtoReflect.Descriptor instead.
 func (*LanguageReply) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{12}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *LanguageReply) GetPageNum() int32 {
@@ -1457,7 +1616,7 @@ type CommonReply struct {
 func (x *CommonReply) Reset() {
 	*x = CommonReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[13]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1470,7 +1629,7 @@ func (x *CommonReply) String() string {
 func (*CommonReply) ProtoMessage() {}
 
 func (x *CommonReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[13]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1483,7 +1642,7 @@ func (x *CommonReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommonReply.ProtoReflect.Descriptor instead.
 func (*CommonReply) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{13}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CommonReply) GetCode() int32 {
@@ -1525,7 +1684,7 @@ type RepoCategoryRequest struct {
 func (x *RepoCategoryRequest) Reset() {
 	*x = RepoCategoryRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[14]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1538,7 +1697,7 @@ func (x *RepoCategoryRequest) String() string {
 func (*RepoCategoryRequest) ProtoMessage() {}
 
 func (x *RepoCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[14]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1551,7 +1710,7 @@ func (x *RepoCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoCategoryRequest.ProtoReflect.Descriptor instead.
 func (*RepoCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{14}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RepoCategoryRequest) GetPageNum() int32 {
@@ -1600,7 +1759,7 @@ type RepoCategoryInfo struct {
 func (x *RepoCategoryInfo) Reset() {
 	*x = RepoCategoryInfo{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[15]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1613,7 +1772,7 @@ func (x *RepoCategoryInfo) String() string {
 func (*RepoCategoryInfo) ProtoMessage() {}
 
 func (x *RepoCategoryInfo) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[15]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1626,7 +1785,7 @@ func (x *RepoCategoryInfo) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoCategoryInfo.ProtoReflect.Descriptor instead.
 func (*RepoCategoryInfo) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{15}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RepoCategoryInfo) GetId() int64 {
@@ -1674,7 +1833,7 @@ type RepoCategoryReply struct {
 func (x *RepoCategoryReply) Reset() {
 	*x = RepoCategoryReply{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_open_source_v1_open_source_proto_msgTypes[16]
+		mi := &file_api_open_source_v1_open_source_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1687,7 +1846,7 @@ func (x *RepoCategoryReply) String() string {
 func (*RepoCategoryReply) ProtoMessage() {}
 
 func (x *RepoCategoryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_api_open_source_v1_open_source_proto_msgTypes[16]
+	mi := &file_api_open_source_v1_open_source_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1700,7 +1859,7 @@ func (x *RepoCategoryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepoCategoryReply.ProtoReflect.Descriptor instead.
 func (*RepoCategoryReply) Descriptor() ([]byte, []int) {
-	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{16}
+	return file_api_open_source_v1_open_source_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RepoCategoryReply) GetPageNum() int32 {
@@ -1744,7 +1903,25 @@ var file_api_open_source_v1_open_source_proto_rawDesc = []byte{
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65,
 	0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x19, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x61, 0x6e, 0x79, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xfc, 0x05, 0x0a, 0x08, 0x52, 0x65, 0x70, 0x6f, 0x49, 0x6e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x8c, 0x01, 0x0a, 0x12, 0x52, 0x65, 0x70, 0x6f, 0x4d, 0x65,
+	0x61, 0x73, 0x75, 0x72, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a, 0x07,
+	0x70, 0x61, 0x67, 0x65, 0x4e, 0x75, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x70,
+	0x61, 0x67, 0x65, 0x4e, 0x75, 0x6d, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69,
+	0x7a, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69,
+	0x7a, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x64, 0x61, 0x74, 0x65, 0x54, 0x79,
+	0x70, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x64, 0x61, 0x74, 0x65, 0x54, 0x79,
+	0x70, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x6e, 0x75, 0x6d, 0x18, 0x05, 0x20, 0x01, 0x28, 0x05, 0x52,
+	0x03, 0x6e, 0x75, 0x6d, 0x22, 0x8e, 0x01, 0x0a, 0x10, 0x52, 0x65, 0x70, 0x6f, 0x4d, 0x65, 0x61,
+	0x73, 0x75, 0x72, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x61, 0x67,
+	0x65, 0x4e, 0x75, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x07, 0x70, 0x61, 0x67, 0x65,
+	0x4e, 0x75, 0x6d, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12,
+	0x14, 0x0a, 0x05, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05,
+	0x74, 0x6f, 0x74, 0x61, 0x6c, 0x12, 0x2e, 0x0a, 0x05, 0x72, 0x65, 0x70, 0x6f, 0x73, 0x18, 0x04,
+	0x20, 0x03, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72,
+	0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x70, 0x6f, 0x49, 0x6e, 0x66, 0x6f, 0x52, 0x05,
+	0x72, 0x65, 0x70, 0x6f, 0x73, 0x22, 0xfc, 0x05, 0x0a, 0x08, 0x52, 0x65, 0x70, 0x6f, 0x49, 0x6e,
 	0x66, 0x6f, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02,
 	0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x66, 0x75, 0x6c, 0x6c, 0x4e, 0x61,
@@ -1951,7 +2128,7 @@ var file_api_open_source_v1_open_source_proto_rawDesc = []byte{
 	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x20, 0x2e,
 	0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52,
 	0x65, 0x70, 0x6f, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x49, 0x6e, 0x66, 0x6f, 0x52,
-	0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x32, 0x87, 0x04, 0x0a, 0x0a, 0x4f, 0x70,
+	0x08, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x32, 0xf6, 0x04, 0x0a, 0x0a, 0x4f, 0x70,
 	0x65, 0x6e, 0x53, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x60, 0x0a, 0x0b, 0x47, 0x65, 0x74, 0x4c,
 	0x61, 0x6e, 0x67, 0x75, 0x61, 0x67, 0x65, 0x12, 0x1f, 0x2e, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73,
 	0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x4c, 0x61, 0x6e, 0x67, 0x75, 0x61, 0x67,
@@ -1984,11 +2161,18 @@ var file_api_open_source_v1_open_source_proto_rawDesc = []byte{
 	0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x70, 0x6f, 0x42, 0x79, 0x43, 0x61, 0x74, 0x65,
 	0x67, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x18, 0x82, 0xd3, 0xe4, 0x93, 0x02,
 	0x12, 0x12, 0x10, 0x2f, 0x72, 0x65, 0x70, 0x6f, 0x2f, 0x62, 0x79, 0x63, 0x61, 0x74, 0x65, 0x67,
-	0x6f, 0x72, 0x79, 0x42, 0x42, 0x0a, 0x0e, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x2e, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74,
-	0x5f, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74,
-	0x61, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63,
-	0x65, 0x2f, 0x76, 0x31, 0x3b, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x72, 0x79, 0x12, 0x6d, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x52, 0x65, 0x70, 0x6f, 0x4d, 0x65,
+	0x61, 0x73, 0x75, 0x72, 0x65, 0x12, 0x22, 0x2e, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x70, 0x6f, 0x4d, 0x65, 0x61, 0x73, 0x75,
+	0x72, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x6f, 0x70, 0x65, 0x6e,
+	0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x70, 0x6f, 0x4d,
+	0x65, 0x61, 0x73, 0x75, 0x72, 0x65, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x15, 0x82, 0xd3, 0xe4,
+	0x93, 0x02, 0x0f, 0x12, 0x0d, 0x2f, 0x72, 0x65, 0x70, 0x6f, 0x2f, 0x6d, 0x65, 0x61, 0x73, 0x75,
+	0x72, 0x65, 0x42, 0x42, 0x0a, 0x0e, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63,
+	0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x2e, 0x63, 0x6f, 0x6c, 0x6c, 0x65, 0x63, 0x74, 0x5f,
+	0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x5f, 0x64, 0x61, 0x74, 0x61,
+	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x6f, 0x70, 0x65, 0x6e, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
+	0x2f, 0x76, 0x31, 0x3b, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2004,55 +2188,60 @@ func file_api_open_source_v1_open_source_proto_rawDescGZIP() []byte {
 }
 
 var file_api_open_source_v1_open_source_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_api_open_source_v1_open_source_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_api_open_source_v1_open_source_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_api_open_source_v1_open_source_proto_goTypes = []any{
 	(QueryFilter_Operator)(0),     // 0: open_source.v1.QueryFilter.Operator
 	(SortOrder_Order)(0),          // 1: open_source.v1.SortOrder.Order
-	(*RepoInfo)(nil),              // 2: open_source.v1.RepoInfo
-	(*QueryFilter)(nil),           // 3: open_source.v1.QueryFilter
-	(*SortOrder)(nil),             // 4: open_source.v1.SortOrder
-	(*RepoRequest)(nil),           // 5: open_source.v1.RepoRequest
-	(*RepoReply)(nil),             // 6: open_source.v1.RepoReply
-	(*RepoByCategoryRequest)(nil), // 7: open_source.v1.RepoByCategoryRequest
-	(*RepoByCategoryReply)(nil),   // 8: open_source.v1.RepoByCategoryReply
-	(*OwnerInfo)(nil),             // 9: open_source.v1.OwnerInfo
-	(*OwnerRequest)(nil),          // 10: open_source.v1.OwnerRequest
-	(*OwnerReply)(nil),            // 11: open_source.v1.OwnerReply
-	(*LanguageInfo)(nil),          // 12: open_source.v1.LanguageInfo
-	(*LanguageRequest)(nil),       // 13: open_source.v1.LanguageRequest
-	(*LanguageReply)(nil),         // 14: open_source.v1.LanguageReply
-	(*CommonReply)(nil),           // 15: open_source.v1.CommonReply
-	(*RepoCategoryRequest)(nil),   // 16: open_source.v1.RepoCategoryRequest
-	(*RepoCategoryInfo)(nil),      // 17: open_source.v1.RepoCategoryInfo
-	(*RepoCategoryReply)(nil),     // 18: open_source.v1.RepoCategoryReply
-	(*anypb.Any)(nil),             // 19: google.protobuf.Any
+	(*RepoMeasureRequest)(nil),    // 2: open_source.v1.RepoMeasureRequest
+	(*RepoMeasureReply)(nil),      // 3: open_source.v1.RepoMeasureReply
+	(*RepoInfo)(nil),              // 4: open_source.v1.RepoInfo
+	(*QueryFilter)(nil),           // 5: open_source.v1.QueryFilter
+	(*SortOrder)(nil),             // 6: open_source.v1.SortOrder
+	(*RepoRequest)(nil),           // 7: open_source.v1.RepoRequest
+	(*RepoReply)(nil),             // 8: open_source.v1.RepoReply
+	(*RepoByCategoryRequest)(nil), // 9: open_source.v1.RepoByCategoryRequest
+	(*RepoByCategoryReply)(nil),   // 10: open_source.v1.RepoByCategoryReply
+	(*OwnerInfo)(nil),             // 11: open_source.v1.OwnerInfo
+	(*OwnerRequest)(nil),          // 12: open_source.v1.OwnerRequest
+	(*OwnerReply)(nil),            // 13: open_source.v1.OwnerReply
+	(*LanguageInfo)(nil),          // 14: open_source.v1.LanguageInfo
+	(*LanguageRequest)(nil),       // 15: open_source.v1.LanguageRequest
+	(*LanguageReply)(nil),         // 16: open_source.v1.LanguageReply
+	(*CommonReply)(nil),           // 17: open_source.v1.CommonReply
+	(*RepoCategoryRequest)(nil),   // 18: open_source.v1.RepoCategoryRequest
+	(*RepoCategoryInfo)(nil),      // 19: open_source.v1.RepoCategoryInfo
+	(*RepoCategoryReply)(nil),     // 20: open_source.v1.RepoCategoryReply
+	(*anypb.Any)(nil),             // 21: google.protobuf.Any
 }
 var file_api_open_source_v1_open_source_proto_depIdxs = []int32{
-	0,  // 0: open_source.v1.QueryFilter.op:type_name -> open_source.v1.QueryFilter.Operator
-	1,  // 1: open_source.v1.SortOrder.order:type_name -> open_source.v1.SortOrder.Order
-	3,  // 2: open_source.v1.RepoRequest.filters:type_name -> open_source.v1.QueryFilter
-	4,  // 3: open_source.v1.RepoRequest.sort:type_name -> open_source.v1.SortOrder
-	2,  // 4: open_source.v1.RepoReply.repos:type_name -> open_source.v1.RepoInfo
-	2,  // 5: open_source.v1.RepoByCategoryReply.repos:type_name -> open_source.v1.RepoInfo
-	9,  // 6: open_source.v1.OwnerReply.owners:type_name -> open_source.v1.OwnerInfo
-	12, // 7: open_source.v1.LanguageReply.languages:type_name -> open_source.v1.LanguageInfo
-	19, // 8: open_source.v1.CommonReply.data:type_name -> google.protobuf.Any
-	17, // 9: open_source.v1.RepoCategoryReply.category:type_name -> open_source.v1.RepoCategoryInfo
-	13, // 10: open_source.v1.OpenSource.GetLanguage:input_type -> open_source.v1.LanguageRequest
-	10, // 11: open_source.v1.OpenSource.GetOwner:input_type -> open_source.v1.OwnerRequest
-	5,  // 12: open_source.v1.OpenSource.GetRepo:input_type -> open_source.v1.RepoRequest
-	16, // 13: open_source.v1.OpenSource.GetRepoCategory:input_type -> open_source.v1.RepoCategoryRequest
-	7,  // 14: open_source.v1.OpenSource.GetRepoByCategory:input_type -> open_source.v1.RepoByCategoryRequest
-	14, // 15: open_source.v1.OpenSource.GetLanguage:output_type -> open_source.v1.LanguageReply
-	11, // 16: open_source.v1.OpenSource.GetOwner:output_type -> open_source.v1.OwnerReply
-	6,  // 17: open_source.v1.OpenSource.GetRepo:output_type -> open_source.v1.RepoReply
-	18, // 18: open_source.v1.OpenSource.GetRepoCategory:output_type -> open_source.v1.RepoCategoryReply
-	8,  // 19: open_source.v1.OpenSource.GetRepoByCategory:output_type -> open_source.v1.RepoByCategoryReply
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	4,  // 0: open_source.v1.RepoMeasureReply.repos:type_name -> open_source.v1.RepoInfo
+	0,  // 1: open_source.v1.QueryFilter.op:type_name -> open_source.v1.QueryFilter.Operator
+	1,  // 2: open_source.v1.SortOrder.order:type_name -> open_source.v1.SortOrder.Order
+	5,  // 3: open_source.v1.RepoRequest.filters:type_name -> open_source.v1.QueryFilter
+	6,  // 4: open_source.v1.RepoRequest.sort:type_name -> open_source.v1.SortOrder
+	4,  // 5: open_source.v1.RepoReply.repos:type_name -> open_source.v1.RepoInfo
+	4,  // 6: open_source.v1.RepoByCategoryReply.repos:type_name -> open_source.v1.RepoInfo
+	11, // 7: open_source.v1.OwnerReply.owners:type_name -> open_source.v1.OwnerInfo
+	14, // 8: open_source.v1.LanguageReply.languages:type_name -> open_source.v1.LanguageInfo
+	21, // 9: open_source.v1.CommonReply.data:type_name -> google.protobuf.Any
+	19, // 10: open_source.v1.RepoCategoryReply.category:type_name -> open_source.v1.RepoCategoryInfo
+	15, // 11: open_source.v1.OpenSource.GetLanguage:input_type -> open_source.v1.LanguageRequest
+	12, // 12: open_source.v1.OpenSource.GetOwner:input_type -> open_source.v1.OwnerRequest
+	7,  // 13: open_source.v1.OpenSource.GetRepo:input_type -> open_source.v1.RepoRequest
+	18, // 14: open_source.v1.OpenSource.GetRepoCategory:input_type -> open_source.v1.RepoCategoryRequest
+	9,  // 15: open_source.v1.OpenSource.GetRepoByCategory:input_type -> open_source.v1.RepoByCategoryRequest
+	2,  // 16: open_source.v1.OpenSource.GetRepoMeasure:input_type -> open_source.v1.RepoMeasureRequest
+	16, // 17: open_source.v1.OpenSource.GetLanguage:output_type -> open_source.v1.LanguageReply
+	13, // 18: open_source.v1.OpenSource.GetOwner:output_type -> open_source.v1.OwnerReply
+	8,  // 19: open_source.v1.OpenSource.GetRepo:output_type -> open_source.v1.RepoReply
+	20, // 20: open_source.v1.OpenSource.GetRepoCategory:output_type -> open_source.v1.RepoCategoryReply
+	10, // 21: open_source.v1.OpenSource.GetRepoByCategory:output_type -> open_source.v1.RepoByCategoryReply
+	3,  // 22: open_source.v1.OpenSource.GetRepoMeasure:output_type -> open_source.v1.RepoMeasureReply
+	17, // [17:23] is the sub-list for method output_type
+	11, // [11:17] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_api_open_source_v1_open_source_proto_init() }
@@ -2062,7 +2251,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_api_open_source_v1_open_source_proto_msgTypes[0].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoInfo); i {
+			switch v := v.(*RepoMeasureRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2074,7 +2263,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[1].Exporter = func(v any, i int) any {
-			switch v := v.(*QueryFilter); i {
+			switch v := v.(*RepoMeasureReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2086,7 +2275,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[2].Exporter = func(v any, i int) any {
-			switch v := v.(*SortOrder); i {
+			switch v := v.(*RepoInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2098,7 +2287,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[3].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoRequest); i {
+			switch v := v.(*QueryFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2110,7 +2299,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[4].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoReply); i {
+			switch v := v.(*SortOrder); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2122,7 +2311,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[5].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoByCategoryRequest); i {
+			switch v := v.(*RepoRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2134,7 +2323,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[6].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoByCategoryReply); i {
+			switch v := v.(*RepoReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2146,7 +2335,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[7].Exporter = func(v any, i int) any {
-			switch v := v.(*OwnerInfo); i {
+			switch v := v.(*RepoByCategoryRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2158,7 +2347,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[8].Exporter = func(v any, i int) any {
-			switch v := v.(*OwnerRequest); i {
+			switch v := v.(*RepoByCategoryReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2170,7 +2359,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[9].Exporter = func(v any, i int) any {
-			switch v := v.(*OwnerReply); i {
+			switch v := v.(*OwnerInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2182,7 +2371,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[10].Exporter = func(v any, i int) any {
-			switch v := v.(*LanguageInfo); i {
+			switch v := v.(*OwnerRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2194,7 +2383,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[11].Exporter = func(v any, i int) any {
-			switch v := v.(*LanguageRequest); i {
+			switch v := v.(*OwnerReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2206,7 +2395,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[12].Exporter = func(v any, i int) any {
-			switch v := v.(*LanguageReply); i {
+			switch v := v.(*LanguageInfo); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2218,7 +2407,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[13].Exporter = func(v any, i int) any {
-			switch v := v.(*CommonReply); i {
+			switch v := v.(*LanguageRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2230,7 +2419,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[14].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoCategoryRequest); i {
+			switch v := v.(*LanguageReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2242,7 +2431,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[15].Exporter = func(v any, i int) any {
-			switch v := v.(*RepoCategoryInfo); i {
+			switch v := v.(*CommonReply); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2254,6 +2443,30 @@ func file_api_open_source_v1_open_source_proto_init() {
 			}
 		}
 		file_api_open_source_v1_open_source_proto_msgTypes[16].Exporter = func(v any, i int) any {
+			switch v := v.(*RepoCategoryRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_open_source_v1_open_source_proto_msgTypes[17].Exporter = func(v any, i int) any {
+			switch v := v.(*RepoCategoryInfo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_open_source_v1_open_source_proto_msgTypes[18].Exporter = func(v any, i int) any {
 			switch v := v.(*RepoCategoryReply); i {
 			case 0:
 				return &v.state
@@ -2272,7 +2485,7 @@ func file_api_open_source_v1_open_source_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_open_source_v1_open_source_proto_rawDesc,
 			NumEnums:      2,
-			NumMessages:   17,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

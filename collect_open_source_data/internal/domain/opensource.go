@@ -128,6 +128,11 @@ type RepoMetrics struct {
 	Date        time.Time `gorm:"type:datetime" json:"date"`    // 时间
 }
 
+type RepoMetricsResult struct {
+	RepoID     int64
+	TotalValue int64
+}
+
 func (RepoMetrics) TableName() string {
 	return "repo_metrics"
 }

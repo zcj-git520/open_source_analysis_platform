@@ -24,6 +24,7 @@ const (
 	OpenSource_GetRepo_FullMethodName           = "/open_source.v1.OpenSource/GetRepo"
 	OpenSource_GetRepoCategory_FullMethodName   = "/open_source.v1.OpenSource/GetRepoCategory"
 	OpenSource_GetRepoByCategory_FullMethodName = "/open_source.v1.OpenSource/GetRepoByCategory"
+	OpenSource_GetRepoMeasure_FullMethodName    = "/open_source.v1.OpenSource/GetRepoMeasure"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -35,6 +36,7 @@ type OpenSourceClient interface {
 	GetRepo(ctx context.Context, in *RepoRequest, opts ...grpc.CallOption) (*RepoReply, error)
 	GetRepoCategory(ctx context.Context, in *RepoCategoryRequest, opts ...grpc.CallOption) (*RepoCategoryReply, error)
 	GetRepoByCategory(ctx context.Context, in *RepoByCategoryRequest, opts ...grpc.CallOption) (*RepoByCategoryReply, error)
+	GetRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error)
 }
 
 type openSourceClient struct {
@@ -95,6 +97,16 @@ func (c *openSourceClient) GetRepoByCategory(ctx context.Context, in *RepoByCate
 	return out, nil
 }
 
+func (c *openSourceClient) GetRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RepoMeasureReply)
+	err := c.cc.Invoke(ctx, OpenSource_GetRepoMeasure_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type OpenSourceServer interface {
 	GetRepo(context.Context, *RepoRequest) (*RepoReply, error)
 	GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error)
 	GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error)
+	GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedOpenSourceServer) GetRepoCategory(context.Context, *RepoCateg
 }
 func (UnimplementedOpenSourceServer) GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRepoByCategory not implemented")
+}
+func (UnimplementedOpenSourceServer) GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRepoMeasure not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -240,6 +256,24 @@ func _OpenSource_GetRepoByCategory_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_GetRepoMeasure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RepoMeasureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).GetRepoMeasure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_GetRepoMeasure_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).GetRepoMeasure(ctx, req.(*RepoMeasureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRepoByCategory",
 			Handler:    _OpenSource_GetRepoByCategory_Handler,
+		},
+		{
+			MethodName: "GetRepoMeasure",
+			Handler:    _OpenSource_GetRepoMeasure_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

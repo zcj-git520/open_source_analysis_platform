@@ -24,6 +24,7 @@ const OperationOpenSourceGetOwner = "/open_source.v1.OpenSource/GetOwner"
 const OperationOpenSourceGetRepo = "/open_source.v1.OpenSource/GetRepo"
 const OperationOpenSourceGetRepoByCategory = "/open_source.v1.OpenSource/GetRepoByCategory"
 const OperationOpenSourceGetRepoCategory = "/open_source.v1.OpenSource/GetRepoCategory"
+const OperationOpenSourceGetRepoMeasure = "/open_source.v1.OpenSource/GetRepoMeasure"
 
 type OpenSourceHTTPServer interface {
 	GetLanguage(context.Context, *LanguageRequest) (*LanguageReply, error)
@@ -31,6 +32,7 @@ type OpenSourceHTTPServer interface {
 	GetRepo(context.Context, *RepoRequest) (*RepoReply, error)
 	GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error)
 	GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error)
+	GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
 }
 
 func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
@@ -40,6 +42,7 @@ func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r.POST("/repo", _OpenSource_GetRepo0_HTTP_Handler(srv))
 	r.GET("/repo/category", _OpenSource_GetRepoCategory0_HTTP_Handler(srv))
 	r.GET("/repo/bycategory", _OpenSource_GetRepoByCategory0_HTTP_Handler(srv))
+	r.GET("/repo/measure", _OpenSource_GetRepoMeasure0_HTTP_Handler(srv))
 }
 
 func _OpenSource_GetLanguage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
@@ -140,12 +143,32 @@ func _OpenSource_GetRepoByCategory0_HTTP_Handler(srv OpenSourceHTTPServer) func(
 	}
 }
 
+func _OpenSource_GetRepoMeasure0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RepoMeasureRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOpenSourceGetRepoMeasure)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetRepoMeasure(ctx, req.(*RepoMeasureRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RepoMeasureReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type OpenSourceHTTPClient interface {
 	GetLanguage(ctx context.Context, req *LanguageRequest, opts ...http.CallOption) (rsp *LanguageReply, err error)
 	GetOwner(ctx context.Context, req *OwnerRequest, opts ...http.CallOption) (rsp *OwnerReply, err error)
 	GetRepo(ctx context.Context, req *RepoRequest, opts ...http.CallOption) (rsp *RepoReply, err error)
 	GetRepoByCategory(ctx context.Context, req *RepoByCategoryRequest, opts ...http.CallOption) (rsp *RepoByCategoryReply, err error)
 	GetRepoCategory(ctx context.Context, req *RepoCategoryRequest, opts ...http.CallOption) (rsp *RepoCategoryReply, err error)
+	GetRepoMeasure(ctx context.Context, req *RepoMeasureRequest, opts ...http.CallOption) (rsp *RepoMeasureReply, err error)
 }
 
 type OpenSourceHTTPClientImpl struct {
@@ -213,6 +236,19 @@ func (c *OpenSourceHTTPClientImpl) GetRepoCategory(ctx context.Context, in *Repo
 	pattern := "/repo/category"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOpenSourceGetRepoCategory))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *OpenSourceHTTPClientImpl) GetRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...http.CallOption) (*RepoMeasureReply, error) {
+	var out RepoMeasureReply
+	pattern := "/repo/measure"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationOpenSourceGetRepoMeasure))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

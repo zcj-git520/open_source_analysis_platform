@@ -271,3 +271,13 @@ func (o *openSourceInfoRepo) FindRepoCategoryByCatId(ctx context.Context, id int
 func (o *openSourceInfoRepo) AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error {
 	return o.data.db.CreateInBatches(metrics, len(metrics)).Error
 }
+
+func (o *openSourceInfoRepo) FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error) {
+	var repoMetricsResult []*domain.RepoMetricsResult
+	//var repoMetricsResult1 []*domain.RepoMetricsResult
+	tx := o.data.db.Table("repo_metrics").Select("repo_id, SUM(value) as total_value").
+		Where(fmt.Sprintf("date >= '%s'", data)).Group("repo_id")
+	//page.PageSize = int32(len(repoMetricsResult1))
+	err := tx.Limit(page.Limit()).Offset(page.Offset()).Scan(&repoMetricsResult).Error
+	return repoMetricsResult, err
+}
