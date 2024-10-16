@@ -4,7 +4,12 @@ import (
 	v1 "collect_open_source_data/api/open_source/v1"
 	"collect_open_source_data/internal/conf"
 	"collect_open_source_data/internal/service"
+	"context"
 	"encoding/json"
+	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
+	"github.com/go-kratos/kratos/v2/middleware/selector"
+	"github.com/go-kratos/kratos/v2/middleware/validate"
+	jwtv5 "github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/handlers"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -73,10 +78,16 @@ func EncoderResponse() http.EncodeResponseFunc {
 }
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, greeter *service.OpenSourceService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, greeter *service.OpenSourceService, ac *conf.Auth, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			validate.Validator(),
+			selector.Server(
+				jwt.Server(func(token *jwtv5.Token) (interface{}, error) {
+					return []byte(ac.JwtKey), nil
+				}, jwt.WithSigningMethod(jwtv5.SigningMethodHS256)),
+			).Match(NewWhiteListMatcher()).Build(),
 		),
 		http.Filter(handlers.CORS(
 			handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Language", "Origin", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"}),
@@ -98,4 +109,15 @@ func NewHTTPServer(c *conf.Server, greeter *service.OpenSourceService, logger lo
 	srv := http.NewServer(opts...)
 	v1.RegisterOpenSourceHTTPServer(srv, greeter)
 	return srv
+}
+
+func NewWhiteListMatcher() selector.MatchFunc {
+	whiteList := make(map[string]struct{})
+	whiteList["/open_source.v1.OpenSource/RepoFav"] = struct{}{}
+	return func(ctx context.Context, operation string) bool {
+		if _, ok := whiteList[operation]; ok {
+			return true
+		}
+		return false
+	}
 }

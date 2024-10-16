@@ -215,6 +215,28 @@ func (o *openSourceInfoRepo) FindOwnerByCache(ctx context.Context, Id int64) (*d
 	return ownerInfo, err
 }
 
+func (o *openSourceInfoRepo) FindRepoFaveByCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error) {
+	var info []*domain.RepoFav
+	data, err := o.data.rdb.Get(ctx, fmt.Sprintf("opensource_repoFav_%d", uid)).Result()
+	if err != nil {
+		return o.UpdateRepoFaveCache(ctx, uid)
+	}
+	if err = json.Unmarshal([]byte(data), &info); err != nil {
+		return nil, err
+	}
+	return info, nil
+}
+
+func (o *openSourceInfoRepo) UpdateRepoFaveCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error) {
+	var info []*domain.RepoFav
+	if err := o.data.db.Where("uid = ? and status = 0", uid).Find(&info).Error; err != nil {
+		return nil, err
+	}
+	cacheData, _ := json.Marshal(info)
+	o.data.rdb.Set(ctx, fmt.Sprintf("opensource_repoFav_%d", uid), string(cacheData), 1*time.Hour)
+	return info, nil
+}
+
 func (o *openSourceInfoRepo) FindRepoCategory(ctx context.Context, name string, id int64, page *domain.Page) ([]*domain.RepoCategory, error) {
 	var repoCategory []*domain.RepoCategory
 	tx := o.data.db
@@ -274,10 +296,35 @@ func (o *openSourceInfoRepo) AddRepoMetrics(ctx context.Context, metrics []*doma
 
 func (o *openSourceInfoRepo) FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error) {
 	var repoMetricsResult []*domain.RepoMetricsResult
-	//var repoMetricsResult1 []*domain.RepoMetricsResult
-	tx := o.data.db.Table("repo_metrics").Select("repo_id, SUM(value) as total_value").
-		Where(fmt.Sprintf("date >= '%s'", data)).Group("repo_id")
-	//page.PageSize = int32(len(repoMetricsResult1))
-	err := tx.Limit(page.Limit()).Offset(page.Offset()).Scan(&repoMetricsResult).Error
+	o.data.db.Table("repo_metrics").Select("repo_id, SUM(value) as total_value").
+		Where(fmt.Sprintf("date >= '%s'", data)).Group("repo_id").Scan(&[]*domain.RepoMetricsResult{}).Count(&page.Total)
+	err := o.data.db.Table("repo_metrics").Select("repo_id, SUM(value) as total_value").
+		Where(fmt.Sprintf("date >= '%s'", data)).Group("repo_id").Limit(page.Limit()).
+		Offset(page.Offset()).Scan(&repoMetricsResult).Error
 	return repoMetricsResult, err
+}
+
+func (o *openSourceInfoRepo) FindRepoFavor(ctx context.Context, id, uid, repoId int64) ([]*domain.RepoFav, error) {
+	var favorList []*domain.RepoFav
+	tx := o.data.db
+	if id > 0 {
+		tx = tx.Where("id = ?", id)
+	}
+	if uid > 0 {
+		tx = tx.Where("uid = ?", uid)
+	}
+	if repoId > 0 {
+		tx = tx.Where("repo_id = ?", repoId)
+	}
+	err := tx.Find(&favorList).Error
+	return favorList, err
+}
+
+func (o *openSourceInfoRepo) AddRepoFavor(ctx context.Context, favorInfo *domain.RepoFav) error {
+	return o.data.db.Create(favorInfo).Error
+}
+
+func (o *openSourceInfoRepo) UpdateRepoFavor(ctx context.Context, favorId int64, isFavor int32) error {
+	return o.data.db.Model(&domain.RepoFav{}).Where("id = ?", favorId).Updates(map[string]any{"status": isFavor,
+		"updated_at": time.Now()}).Error
 }

@@ -45,6 +45,24 @@ service OpenSource {
       get: "/repo/measure"
     };
   }
+
+	rpc RepoFav (RepoFavRequest) returns (RepoFavReply){
+			option (google.api.http) = {
+      put: "/repo/fav"
+			body: "*"
+    };
+	}
+}
+
+message RepoFavRequest {
+	// 仓库id
+	repeated int64 repoIds = 1;
+	// 是否收藏 0是收藏, 1 是取消收藏
+	int32 isFav = 2;
+}
+
+message RepoFavReply {
+
 }
 
 message RepoMeasureRequest {
@@ -123,10 +141,12 @@ message RepoInfo {
 	int64     size = 24;
 	// 仓库分支数量
 	int64     forks = 25;
+	// 是否收藏
+	bool      isFav = 26;
 	// 仓库创建时间
-	string    createdAt = 26;
+	string    createdAt = 27;
 	// 更新时间
-	string    updatedAt = 27;
+	string    updatedAt = 28;
 }
 
 // 查询条件

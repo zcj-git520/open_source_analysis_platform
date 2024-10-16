@@ -35,6 +35,207 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on RepoFavRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RepoFavRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoFavRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RepoFavRequestMultiError,
+// or nil if none found.
+func (m *RepoFavRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoFavRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IsFav
+
+	if len(errors) > 0 {
+		return RepoFavRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoFavRequestMultiError is an error wrapping multiple validation errors
+// returned by RepoFavRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RepoFavRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoFavRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoFavRequestMultiError) AllErrors() []error { return m }
+
+// RepoFavRequestValidationError is the validation error returned by
+// RepoFavRequest.Validate if the designated constraints aren't met.
+type RepoFavRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoFavRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoFavRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoFavRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoFavRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoFavRequestValidationError) ErrorName() string { return "RepoFavRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RepoFavRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoFavRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoFavRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoFavRequestValidationError{}
+
+// Validate checks the field values on RepoFavReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RepoFavReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoFavReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RepoFavReplyMultiError, or
+// nil if none found.
+func (m *RepoFavReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoFavReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return RepoFavReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoFavReplyMultiError is an error wrapping multiple validation errors
+// returned by RepoFavReply.ValidateAll() if the designated constraints aren't met.
+type RepoFavReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoFavReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoFavReplyMultiError) AllErrors() []error { return m }
+
+// RepoFavReplyValidationError is the validation error returned by
+// RepoFavReply.Validate if the designated constraints aren't met.
+type RepoFavReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoFavReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoFavReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoFavReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoFavReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoFavReplyValidationError) ErrorName() string { return "RepoFavReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RepoFavReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoFavReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoFavReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoFavReplyValidationError{}
+
 // Validate checks the field values on RepoMeasureRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -356,6 +557,8 @@ func (m *RepoInfo) validate(all bool) error {
 	// no validation rules for Size
 
 	// no validation rules for Forks
+
+	// no validation rules for IsFav
 
 	// no validation rules for CreatedAt
 

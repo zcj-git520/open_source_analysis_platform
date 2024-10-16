@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	jwtauth "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -25,6 +26,22 @@ func CreateToken(c Claims, key string) (string, error) {
 		return "", errors.New("generate token failed" + err.Error())
 	}
 	return signedString, nil
+}
+
+func ParsToken(tokenString, key string) *Claims {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(key), nil
+	})
+
+	if err != nil {
+		fmt.Println("解析 token 失败：", err)
+		return nil
+	}
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		return claims
+	}
+	return nil
+
 }
 
 func UserInfo(ctx context.Context) *Claims {

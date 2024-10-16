@@ -3,10 +3,13 @@ package biz
 import (
 	pb "collect_open_source_data/api/open_source/v1"
 	"collect_open_source_data/internal/domain"
+	"collect_open_source_data/internal/pkg/auth"
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/transport"
+	"strings"
 	"time"
 )
 
@@ -41,6 +44,11 @@ type OpenSourceRepo interface {
 	FindRepoById(ctx context.Context, id int64) (*domain.RepoInfo, error)
 	AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error
 	FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error)
+	FindRepoFavor(ctx context.Context, id, uid, repoId int64) ([]*domain.RepoFav, error)
+	AddRepoFavor(ctx context.Context, favorInfo *domain.RepoFav) error
+	UpdateRepoFavor(ctx context.Context, favorId int64, isFavor int32) error
+	UpdateRepoFaveCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
+	FindRepoFaveByCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
 }
 
 type OpenSourceInfo struct {
@@ -170,6 +178,22 @@ func (r *OpenSourceInfo) GetRepoCategory(ctx context.Context, req *pb.RepoCatego
 	}, nil
 }
 
+func (r *OpenSourceInfo) getUid(ctx context.Context) int64 {
+	authorizationKey := "Authorization"
+	bearerWord := "Bearer"
+	if header, ok := transport.FromServerContext(ctx); ok {
+		auths := strings.SplitN(header.RequestHeader().Get(authorizationKey), " ", 2)
+		if len(auths) != 2 || !strings.EqualFold(auths[0], bearerWord) {
+			return 0
+		}
+		info := auth.ParsToken(auths[1], "hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S")
+		if info != nil {
+			return info.Uid
+		}
+	}
+	return 0
+}
+
 func (r *OpenSourceInfo) repoData(ctx context.Context, repoInfo *domain.RepoInfo) *pb.RepoInfo {
 	ownerName := ""
 	language := ""
@@ -209,9 +233,27 @@ func (r *OpenSourceInfo) repoData(ctx context.Context, repoInfo *domain.RepoInfo
 		Score:           repoInfo.Score,
 		Size:            repoInfo.Size,
 		Forks:           repoInfo.Forks,
+		IsFav:           r.IsRepoFavorite(ctx, r.getUid(ctx), repoInfo.ID),
 		CreatedAt:       repoInfo.CreatedAt.Format(time.DateTime),
 		UpdatedAt:       repoInfo.UpdatedAt.Format(time.DateTime),
 	}
+}
+
+func (r *OpenSourceInfo) IsRepoFavorite(ctx context.Context, uid, repoId int64) bool {
+	if uid < 1 {
+		return false
+	}
+	// 得到收藏的信息
+	info, err := r.repo.FindRepoFaveByCache(ctx, uid)
+	if err != nil {
+		return false
+	}
+	for _, item := range info {
+		if item.RepoID == repoId {
+			return true
+		}
+	}
+	return false
 }
 
 func (r *OpenSourceInfo) GetRepoByCategory(ctx context.Context, req *pb.RepoByCategoryRequest) (*pb.RepoByCategoryReply, error) {
@@ -283,4 +325,43 @@ func (r *OpenSourceInfo) GetRepoMeasure(ctx context.Context, req *pb.RepoMeasure
 		Total:    page.Total,
 		Repos:    data,
 	}, nil
+}
+
+func (r *OpenSourceInfo) RepoFav(ctx context.Context, req *pb.RepoFavRequest) (*pb.RepoFavReply, error) {
+	// 获取uid
+	uid := auth.GetUid(ctx)
+	if uid == 0 {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	if len(req.RepoIds) == 0 {
+		return nil, fmt.Errorf("repo ids is empty")
+	}
+	// 收藏的仓库不能为空
+	for _, repoId := range req.RepoIds {
+		// 判断是否已经收藏
+		info, _ := r.repo.FindRepoFavor(ctx, 0, uid, repoId)
+		if len(info) > 0 {
+			// 判断状态是否一致
+			if info[0].Status != int(req.IsFav) {
+				if err := r.repo.UpdateRepoFavor(ctx, info[0].ID, req.IsFav); err != nil {
+					r.log.Error(ctx, "update repo favor error", err)
+					continue
+				}
+			}
+		} else {
+			if err := r.repo.AddRepoFavor(ctx, &domain.RepoFav{
+				UID:       uid,
+				RepoID:    repoId,
+				Status:    0,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}); err != nil {
+				r.log.Error(ctx, "add repo favor error", err)
+				continue
+			}
+		}
+	}
+	// 更新缓存
+	_, _ = r.repo.UpdateRepoFaveCache(ctx, uid)
+	return &pb.RepoFavReply{}, nil
 }

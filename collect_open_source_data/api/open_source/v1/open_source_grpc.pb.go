@@ -25,6 +25,7 @@ const (
 	OpenSource_GetRepoCategory_FullMethodName   = "/open_source.v1.OpenSource/GetRepoCategory"
 	OpenSource_GetRepoByCategory_FullMethodName = "/open_source.v1.OpenSource/GetRepoByCategory"
 	OpenSource_GetRepoMeasure_FullMethodName    = "/open_source.v1.OpenSource/GetRepoMeasure"
+	OpenSource_RepoFav_FullMethodName           = "/open_source.v1.OpenSource/RepoFav"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -37,6 +38,7 @@ type OpenSourceClient interface {
 	GetRepoCategory(ctx context.Context, in *RepoCategoryRequest, opts ...grpc.CallOption) (*RepoCategoryReply, error)
 	GetRepoByCategory(ctx context.Context, in *RepoByCategoryRequest, opts ...grpc.CallOption) (*RepoByCategoryReply, error)
 	GetRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error)
+	RepoFav(ctx context.Context, in *RepoFavRequest, opts ...grpc.CallOption) (*RepoFavReply, error)
 }
 
 type openSourceClient struct {
@@ -107,6 +109,16 @@ func (c *openSourceClient) GetRepoMeasure(ctx context.Context, in *RepoMeasureRe
 	return out, nil
 }
 
+func (c *openSourceClient) RepoFav(ctx context.Context, in *RepoFavRequest, opts ...grpc.CallOption) (*RepoFavReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RepoFavReply)
+	err := c.cc.Invoke(ctx, OpenSource_RepoFav_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -117,6 +129,7 @@ type OpenSourceServer interface {
 	GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error)
 	GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error)
 	GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
+	RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -144,6 +157,9 @@ func (UnimplementedOpenSourceServer) GetRepoByCategory(context.Context, *RepoByC
 }
 func (UnimplementedOpenSourceServer) GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRepoMeasure not implemented")
+}
+func (UnimplementedOpenSourceServer) RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RepoFav not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -274,6 +290,24 @@ func _OpenSource_GetRepoMeasure_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_RepoFav_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RepoFavRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).RepoFav(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_RepoFav_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).RepoFav(ctx, req.(*RepoFavRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,6 +338,10 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRepoMeasure",
 			Handler:    _OpenSource_GetRepoMeasure_Handler,
+		},
+		{
+			MethodName: "RepoFav",
+			Handler:    _OpenSource_RepoFav_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

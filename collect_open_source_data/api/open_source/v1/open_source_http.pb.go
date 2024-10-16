@@ -25,6 +25,7 @@ const OperationOpenSourceGetRepo = "/open_source.v1.OpenSource/GetRepo"
 const OperationOpenSourceGetRepoByCategory = "/open_source.v1.OpenSource/GetRepoByCategory"
 const OperationOpenSourceGetRepoCategory = "/open_source.v1.OpenSource/GetRepoCategory"
 const OperationOpenSourceGetRepoMeasure = "/open_source.v1.OpenSource/GetRepoMeasure"
+const OperationOpenSourceRepoFav = "/open_source.v1.OpenSource/RepoFav"
 
 type OpenSourceHTTPServer interface {
 	GetLanguage(context.Context, *LanguageRequest) (*LanguageReply, error)
@@ -33,6 +34,7 @@ type OpenSourceHTTPServer interface {
 	GetRepoByCategory(context.Context, *RepoByCategoryRequest) (*RepoByCategoryReply, error)
 	GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error)
 	GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
+	RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error)
 }
 
 func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
@@ -43,6 +45,7 @@ func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r.GET("/repo/category", _OpenSource_GetRepoCategory0_HTTP_Handler(srv))
 	r.GET("/repo/bycategory", _OpenSource_GetRepoByCategory0_HTTP_Handler(srv))
 	r.GET("/repo/measure", _OpenSource_GetRepoMeasure0_HTTP_Handler(srv))
+	r.PUT("/repo/fav", _OpenSource_RepoFav0_HTTP_Handler(srv))
 }
 
 func _OpenSource_GetLanguage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
@@ -162,6 +165,28 @@ func _OpenSource_GetRepoMeasure0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx
 	}
 }
 
+func _OpenSource_RepoFav0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RepoFavRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOpenSourceRepoFav)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RepoFav(ctx, req.(*RepoFavRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RepoFavReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type OpenSourceHTTPClient interface {
 	GetLanguage(ctx context.Context, req *LanguageRequest, opts ...http.CallOption) (rsp *LanguageReply, err error)
 	GetOwner(ctx context.Context, req *OwnerRequest, opts ...http.CallOption) (rsp *OwnerReply, err error)
@@ -169,6 +194,7 @@ type OpenSourceHTTPClient interface {
 	GetRepoByCategory(ctx context.Context, req *RepoByCategoryRequest, opts ...http.CallOption) (rsp *RepoByCategoryReply, err error)
 	GetRepoCategory(ctx context.Context, req *RepoCategoryRequest, opts ...http.CallOption) (rsp *RepoCategoryReply, err error)
 	GetRepoMeasure(ctx context.Context, req *RepoMeasureRequest, opts ...http.CallOption) (rsp *RepoMeasureReply, err error)
+	RepoFav(ctx context.Context, req *RepoFavRequest, opts ...http.CallOption) (rsp *RepoFavReply, err error)
 }
 
 type OpenSourceHTTPClientImpl struct {
@@ -251,6 +277,19 @@ func (c *OpenSourceHTTPClientImpl) GetRepoMeasure(ctx context.Context, in *RepoM
 	opts = append(opts, http.Operation(OperationOpenSourceGetRepoMeasure))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *OpenSourceHTTPClientImpl) RepoFav(ctx context.Context, in *RepoFavRequest, opts ...http.CallOption) (*RepoFavReply, error) {
+	var out RepoFavReply
+	pattern := "/repo/fav"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationOpenSourceRepoFav))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
