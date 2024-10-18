@@ -8,8 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/transport"
-	"strings"
 	"time"
 )
 
@@ -178,22 +176,6 @@ func (r *OpenSourceInfo) GetRepoCategory(ctx context.Context, req *pb.RepoCatego
 	}, nil
 }
 
-func (r *OpenSourceInfo) getUid(ctx context.Context) int64 {
-	authorizationKey := "Authorization"
-	bearerWord := "Bearer"
-	if header, ok := transport.FromServerContext(ctx); ok {
-		auths := strings.SplitN(header.RequestHeader().Get(authorizationKey), " ", 2)
-		if len(auths) != 2 || !strings.EqualFold(auths[0], bearerWord) {
-			return 0
-		}
-		info := auth.ParsToken(auths[1], "hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S")
-		if info != nil {
-			return info.Uid
-		}
-	}
-	return 0
-}
-
 func (r *OpenSourceInfo) repoData(ctx context.Context, repoInfo *domain.RepoInfo) *pb.RepoInfo {
 	ownerName := ""
 	language := ""
@@ -233,7 +215,7 @@ func (r *OpenSourceInfo) repoData(ctx context.Context, repoInfo *domain.RepoInfo
 		Score:           repoInfo.Score,
 		Size:            repoInfo.Size,
 		Forks:           repoInfo.Forks,
-		IsFav:           r.IsRepoFavorite(ctx, r.getUid(ctx), repoInfo.ID),
+		IsFav:           r.IsRepoFavorite(ctx, auth.GetUid(ctx), repoInfo.ID),
 		CreatedAt:       repoInfo.CreatedAt.Format(time.DateTime),
 		UpdatedAt:       repoInfo.UpdatedAt.Format(time.DateTime),
 	}

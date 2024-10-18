@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	jwtauth "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
+	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/golang-jwt/jwt/v5"
+	"strings"
 )
 
 type Claims struct {
@@ -55,6 +57,19 @@ func UserInfo(ctx context.Context) *Claims {
 	}
 }
 
+func passTokenString(ctx context.Context) *Claims {
+	authorizationKey := "Authorization"
+	bearerWord := "Bearer"
+	if header, ok := transport.FromServerContext(ctx); ok {
+		auths := strings.SplitN(header.RequestHeader().Get(authorizationKey), " ", 2)
+		if len(auths) != 2 || !strings.EqualFold(auths[0], bearerWord) {
+			return nil
+		}
+		return ParsToken(auths[1], "hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S")
+	}
+	return nil
+}
+
 func GetUid(ctx context.Context) int64 {
 	var uId int64
 	if claims, ok := jwtauth.FromContext(ctx); ok {
@@ -64,6 +79,10 @@ func GetUid(ctx context.Context) int64 {
 			return uId
 		}
 		uId = int64(i)
+	} else {
+		if info := passTokenString(ctx); info != nil {
+			uId = info.Uid
+		}
 	}
 	return uId
 }
@@ -73,6 +92,10 @@ func GetNickname(ctx context.Context) string {
 	if claims, ok := jwtauth.FromContext(ctx); ok {
 		c := claims.(jwt.MapClaims)
 		nickname = c["username"].(string)
+	} else {
+		if info := passTokenString(ctx); info != nil {
+			nickname = info.Nickname
+		}
 	}
 	return nickname
 }
@@ -82,6 +105,10 @@ func GetEmail(ctx context.Context) string {
 	if claims, ok := jwtauth.FromContext(ctx); ok {
 		c := claims.(jwt.MapClaims)
 		email = c["email"].(string)
+	} else {
+		if info := passTokenString(ctx); info != nil {
+			email = info.Email
+		}
 	}
 	return email
 }
@@ -104,6 +131,10 @@ func GetGender(ctx context.Context) int {
 			return gender
 		}
 		gender = int(i)
+	} else {
+		if info := passTokenString(ctx); info != nil {
+			gender = info.Gender
+		}
 	}
 	return gender
 }
@@ -113,6 +144,10 @@ func GetPhone(ctx context.Context) string {
 	if claims, ok := jwtauth.FromContext(ctx); ok {
 		c := claims.(jwt.MapClaims)
 		phone = c["phone"].(string)
+	} else {
+		if info := passTokenString(ctx); info != nil {
+			phone = info.Phone
+		}
 	}
 	return phone
 }
