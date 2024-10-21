@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	jwtauth "github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/golang-jwt/jwt/v5"
@@ -36,7 +35,7 @@ func ParsToken(tokenString, key string) *Claims {
 	})
 
 	if err != nil {
-		fmt.Println("解析 token 失败：", err)
+		//fmt.Println("解析 token 失败：", err)
 		return nil
 	}
 	if claims, ok := token.Claims.(*Claims); ok && token.Valid {

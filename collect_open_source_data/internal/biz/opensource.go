@@ -42,7 +42,7 @@ type OpenSourceRepo interface {
 	FindRepoById(ctx context.Context, id int64) (*domain.RepoInfo, error)
 	AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error
 	FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error)
-	FindRepoFavor(ctx context.Context, id, uid, repoId int64) ([]*domain.RepoFav, error)
+	FindRepoFavor(ctx context.Context, id, uid, repoId int64, page *domain.Page) ([]*domain.RepoFav, error)
 	AddRepoFavor(ctx context.Context, favorInfo *domain.RepoFav) error
 	UpdateRepoFavor(ctx context.Context, favorId int64, isFavor int32) error
 	UpdateRepoFaveCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
@@ -321,7 +321,7 @@ func (r *OpenSourceInfo) RepoFav(ctx context.Context, req *pb.RepoFavRequest) (*
 	// 收藏的仓库不能为空
 	for _, repoId := range req.RepoIds {
 		// 判断是否已经收藏
-		info, _ := r.repo.FindRepoFavor(ctx, 0, uid, repoId)
+		info, _ := r.repo.FindRepoFavor(ctx, 0, uid, repoId, &domain.Page{})
 		if len(info) > 0 {
 			// 判断状态是否一致
 			if info[0].Status != int(req.IsFav) {
@@ -346,4 +346,34 @@ func (r *OpenSourceInfo) RepoFav(ctx context.Context, req *pb.RepoFavRequest) (*
 	// 更新缓存
 	_, _ = r.repo.UpdateRepoFaveCache(ctx, uid)
 	return &pb.RepoFavReply{}, nil
+}
+
+func (r *OpenSourceInfo) GetRepoFav(ctx context.Context, req *pb.RepoFavListRequest) (*pb.RepoReply, error) {
+	uid := auth.GetUid(ctx)
+	if uid == 0 {
+		return nil, fmt.Errorf("uid is empty")
+	}
+	page := &domain.Page{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+	}
+	info, err := r.repo.FindRepoFavor(ctx, 0, uid, 0, page)
+	if err != nil {
+		return nil, err
+	}
+	var data []*pb.RepoInfo
+	for _, item := range info {
+		repoInfo, err := r.repo.FindRepoById(ctx, item.RepoID)
+		if err != nil {
+			continue
+		}
+		data = append(data, r.repoData(ctx, repoInfo))
+	}
+	return &pb.RepoReply{
+		PageNum:  req.PageNum,
+		PageSize: req.PageSize,
+		Total:    page.Total,
+		Repos:    data,
+	}, nil
+
 }

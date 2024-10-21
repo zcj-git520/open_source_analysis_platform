@@ -52,6 +52,19 @@ service OpenSource {
 			body: "*"
     };
 	}
+
+	rpc GetRepoFav (RepoFavListRequest) returns (RepoReply){
+		option (google.api.http) = {
+      get: "/repo/fav"
+    };
+	}
+}
+
+message RepoFavListRequest{
+	// 分页信息
+	int32 pageNum = 1;
+	// 每页数量
+	int32 pageSize = 2;
 }
 
 message RepoFavRequest {

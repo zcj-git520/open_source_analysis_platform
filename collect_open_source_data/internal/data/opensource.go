@@ -304,9 +304,9 @@ func (o *openSourceInfoRepo) FindRepoMetrics(ctx context.Context, data string, p
 	return repoMetricsResult, err
 }
 
-func (o *openSourceInfoRepo) FindRepoFavor(ctx context.Context, id, uid, repoId int64) ([]*domain.RepoFav, error) {
+func (o *openSourceInfoRepo) FindRepoFavor(ctx context.Context, id, uid, repoId int64, page *domain.Page) ([]*domain.RepoFav, error) {
 	var favorList []*domain.RepoFav
-	tx := o.data.db
+	tx := o.data.db.Where("status = 0")
 	if id > 0 {
 		tx = tx.Where("id = ?", id)
 	}
@@ -316,7 +316,9 @@ func (o *openSourceInfoRepo) FindRepoFavor(ctx context.Context, id, uid, repoId 
 	if repoId > 0 {
 		tx = tx.Where("repo_id = ?", repoId)
 	}
-	err := tx.Find(&favorList).Error
+	tx.Find(&favorList).Count(&page.Total)
+	// 排序
+	err := tx.Limit(page.Limit()).Offset(page.Offset()).Find(&favorList).Error
 	return favorList, err
 }
 

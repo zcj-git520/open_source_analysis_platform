@@ -44,3 +44,7 @@ func (s *OpenSourceService) GetRepoMeasure(ctx context.Context, req *pb.RepoMeas
 func (s *OpenSourceService) RepoFav(ctx context.Context, req *pb.RepoFavRequest) (*pb.RepoFavReply, error) {
 	return s.uc.RepoFav(ctx, req)
 }
+
+func (s *OpenSourceService) GetRepoFav(ctx context.Context, req *pb.RepoFavListRequest) (*pb.RepoReply, error) {
+	return s.uc.GetRepoFav(ctx, req)
+}

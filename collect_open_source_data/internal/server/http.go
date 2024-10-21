@@ -114,6 +114,7 @@ func NewHTTPServer(c *conf.Server, greeter *service.OpenSourceService, ac *conf.
 func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList := make(map[string]struct{})
 	whiteList["/open_source.v1.OpenSource/RepoFav"] = struct{}{}
+	whiteList["/open_source.v1.OpenSource/GetRepoFav"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return true

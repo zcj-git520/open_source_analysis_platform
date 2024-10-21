@@ -35,6 +35,112 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on RepoFavListRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RepoFavListRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RepoFavListRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RepoFavListRequestMultiError, or nil if none found.
+func (m *RepoFavListRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RepoFavListRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageNum
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return RepoFavListRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RepoFavListRequestMultiError is an error wrapping multiple validation errors
+// returned by RepoFavListRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RepoFavListRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RepoFavListRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RepoFavListRequestMultiError) AllErrors() []error { return m }
+
+// RepoFavListRequestValidationError is the validation error returned by
+// RepoFavListRequest.Validate if the designated constraints aren't met.
+type RepoFavListRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RepoFavListRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RepoFavListRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RepoFavListRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RepoFavListRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RepoFavListRequestValidationError) ErrorName() string {
+	return "RepoFavListRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RepoFavListRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRepoFavListRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RepoFavListRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RepoFavListRequestValidationError{}
+
 // Validate checks the field values on RepoFavRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
