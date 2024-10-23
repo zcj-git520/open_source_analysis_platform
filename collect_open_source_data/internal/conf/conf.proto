@@ -9,6 +9,7 @@ message Bootstrap {
   Server server = 1;
   Data data = 2;
   Auth auth = 3;
+  Email email = 4;
 }
 
 message Server {
@@ -46,4 +47,12 @@ message Data {
 
 message Auth {
   string jwt_key = 1;
+}
+
+message Email{
+  string from = 1;
+  string smtp_host= 2;
+  int32 smtp_port = 3;
+  string smtp_username = 4;
+  string smtp_password =5;
 }

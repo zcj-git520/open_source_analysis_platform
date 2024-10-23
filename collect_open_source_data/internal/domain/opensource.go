@@ -140,8 +140,9 @@ func (RepoMetrics) TableName() string {
 // 仓库收藏
 type RepoFav struct {
 	ID        int64     `gorm:"primarykey;type:int" json:"id"`
-	UID       int64     `gorm:"type:int" json:"uid"`             // 用户ID
-	RepoID    int64     `gorm:"type:int" json:"repo_id"`         // 仓库ID
+	UID       int64     `gorm:"type:int" json:"uid"`     // 用户ID
+	RepoID    int64     `gorm:"type:int" json:"repo_id"` // 仓库ID
+	Email     string    `gorm:"type:varchar(50)" json:"email"`
 	Status    int       `gorm:"type:int" json:"status"`          // 状态 0: 收藏 1: 取消收藏
 	CreatedAt time.Time `gorm:"type:datetime" json:"created_at"` // 创建时间
 	UpdatedAt time.Time `gorm:"type:datetime" json:"updated_at"` // 更新时间

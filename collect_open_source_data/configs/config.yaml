@@ -17,3 +17,9 @@ data:
     write_timeout: 0.2s
 auth:
   jwt_key: hqFr%3ddt32DGlSTOI5cO6@TH#fFwYnP$S
+email:
+  from: "osap.work@qq.com"
+  smtp_host: "smtp.qq.com"
+  smtp_port: 587
+  smtp_username: "osap.work@qq.com"
+  smtp_password: "dkcgahsacpdcbdjg"

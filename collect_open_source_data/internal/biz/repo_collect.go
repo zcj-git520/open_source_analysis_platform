@@ -22,6 +22,24 @@ const (
 	RepoMetricIssue
 )
 
+const (
+	RepoChangeSubject = "osap 开源仓库变更"
+	RepoChangeContent = `<td style="font-size:14px;color:#333;padding:24px 40px 0 40px">
+                尊敬的用户 您好！
+                <br>
+                <br>
+                您关注的开源仓库：<b>%s</b>，发生变更!
+	    		<br>
+				osap地址：<b>http://192.168.40.25:5173/#/project-trends/index</b>
+				<br>
+				仓库地址：<b>%s</b>
+				<br>
+				请查看!
+                <br> 
+                如果您已查看，请无视。
+            </td>`
+)
+
 func (r *OpenSourceInfo) request(method string, url string, headers http.Header, body io.Reader) ([]byte, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -293,6 +311,9 @@ func (r *OpenSourceInfo) updateRepoInfo(ctx context.Context, info *domain.RepoIn
 		_ = r.repo.AddRepoMetrics(ctx, repoMetricList)
 	}
 	if updateRepo != nil && updateRepoState {
+		// 仓库变更通知
+		go r.Notify(ctx, updateRepo)
+		// 更新仓库信息
 		updateRepo.ID = info.ID
 		if err := r.repo.UpdateRepo(ctx, updateRepo); err != nil {
 			r.log.Errorf("update repo error: %v", err)
@@ -406,4 +427,29 @@ func (r *OpenSourceInfo) Collect() {
 		}
 	}
 
+}
+
+// 仓库发生变更通知收藏该仓库的用户
+func (r *OpenSourceInfo) Notify(ctx context.Context, repo *domain.RepoInfo) {
+	// 查询所有收藏该仓库的用户
+	info, err := r.repo.FindRepoFavor(ctx, 0, 0, repo.ID, &domain.Page{
+		PageNum:  1,
+		PageSize: 10000000,
+	})
+	if err != nil {
+		r.log.Errorf("change RepoInfo error: %v", err)
+		return
+	}
+	for _, item := range info {
+		// 通过uid 查询用户信息
+		email := pkg.NewEmailSMTP(pkg.WithSmtpHost(r.ec.SmtpHost), pkg.WithSmtpPort(int(r.ec.SmtpPort)),
+			pkg.WithSmtpUsername(r.ec.SmtpUsername), pkg.WithSmtpPassword(r.ec.SmtpPassword),
+			pkg.WithFrom(r.ec.From),
+			pkg.WithTo([]string{item.Email}))
+		// 邮件内容
+		if err = email.SendEmailSMTP(RepoChangeSubject, fmt.Sprintf(RepoChangeContent, repo.Name, repo.HtmlURL)); err != nil {
+			r.log.Errorf("email: %s: send email error: %v", item.Email, err)
+			continue
+		}
+	}
 }

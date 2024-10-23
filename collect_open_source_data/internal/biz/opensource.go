@@ -2,6 +2,7 @@ package biz
 
 import (
 	pb "collect_open_source_data/api/open_source/v1"
+	"collect_open_source_data/internal/conf"
 	"collect_open_source_data/internal/domain"
 	"collect_open_source_data/internal/pkg/auth"
 	"context"
@@ -52,12 +53,14 @@ type OpenSourceRepo interface {
 type OpenSourceInfo struct {
 	repo OpenSourceRepo
 	log  *log.Helper
+	ec   *conf.Email
 	Page int
 }
 
-func NewOpenSourceInfo(repo OpenSourceRepo, logger log.Logger) *OpenSourceInfo {
+func NewOpenSourceInfo(repo OpenSourceRepo, email *conf.Email, logger log.Logger) *OpenSourceInfo {
 	return &OpenSourceInfo{
 		repo: repo,
+		ec:   email,
 		log:  log.NewHelper(logger),
 	}
 }
@@ -335,6 +338,7 @@ func (r *OpenSourceInfo) RepoFav(ctx context.Context, req *pb.RepoFavRequest) (*
 				UID:       uid,
 				RepoID:    repoId,
 				Status:    0,
+				Email:     auth.GetEmail(ctx),
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}); err != nil {
