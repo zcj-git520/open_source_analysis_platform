@@ -42,7 +42,7 @@ type OpenSourceRepo interface {
 	FindRepoCategoryByCatId(ctx context.Context, id int64, page *domain.Page) ([]*domain.RepoCategoryId, error)
 	FindRepoById(ctx context.Context, id int64) (*domain.RepoInfo, error)
 	AddRepoMetrics(ctx context.Context, metrics []*domain.RepoMetrics) error
-	FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error)
+	FindRepoMetrics(ctx context.Context, metricType int, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error)
 	FindRepoFavor(ctx context.Context, id, uid, repoId int64, page *domain.Page) ([]*domain.RepoFav, error)
 	AddRepoFavor(ctx context.Context, favorInfo *domain.RepoFav) error
 	UpdateRepoFavor(ctx context.Context, favorId int64, isFavor int32) error
@@ -294,7 +294,7 @@ func (r *OpenSourceInfo) GetRepoMeasure(ctx context.Context, req *pb.RepoMeasure
 		PageSize: req.PageSize,
 	}
 	date := r.timeConverse(ctx, int(req.DateType), int(req.Num))
-	info, err := r.repo.FindRepoMetrics(ctx, date, page)
+	info, err := r.repo.FindRepoMetrics(ctx, int(req.Type), date, page)
 	if err != nil {
 		return nil, err
 	}

@@ -294,12 +294,16 @@ func (o *openSourceInfoRepo) AddRepoMetrics(ctx context.Context, metrics []*doma
 	return o.data.db.CreateInBatches(metrics, len(metrics)).Error
 }
 
-func (o *openSourceInfoRepo) FindRepoMetrics(ctx context.Context, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error) {
+func (o *openSourceInfoRepo) FindRepoMetrics(ctx context.Context, metricType int, data string, page *domain.Page) ([]*domain.RepoMetricsResult, error) {
 	var repoMetricsResult []*domain.RepoMetricsResult
 	o.data.db.Table("repo_metrics").Select("repo_id, SUM(value) as total_value").
-		Where(fmt.Sprintf("date >= '%s'", data)).Group("repo_id").Scan(&[]*domain.RepoMetricsResult{}).Count(&page.Total)
+		Where(" `type` = ?", metricType).
+		Where(fmt.Sprintf("date >= '%s'", data)).
+		Group("repo_id").Scan(&[]*domain.RepoMetricsResult{}).Count(&page.Total)
 	err := o.data.db.Table("repo_metrics").Select("repo_id, SUM(value) as total_value").
-		Where(fmt.Sprintf("date >= '%s'", data)).Group("repo_id").Limit(page.Limit()).
+		Where(" `type` = ?", metricType).
+		Where(fmt.Sprintf("date >= '%s'", data)).
+		Group("repo_id").Limit(page.Limit()).
 		Offset(page.Offset()).Scan(&repoMetricsResult).Error
 	return repoMetricsResult, err
 }

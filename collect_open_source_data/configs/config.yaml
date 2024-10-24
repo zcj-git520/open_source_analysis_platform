@@ -25,5 +25,5 @@ email:
   smtp_username: "osap.work@qq.com"
   smtp_password: "dkcgahsacpdcbdjg"
 collect:
-  enable: true
+  enable: false
   token: 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
