@@ -306,13 +306,15 @@ func (r *OpenSourceInfo) updateRepoInfo(ctx context.Context, info *domain.RepoIn
 		updateRepo.UpdatedAt = item.UpdatedAt
 		updateRepoState = true
 	}
+	if int64(item.Size) != info.Size {
+		// 仓库变更通知
+		go r.Notify(ctx, info)
+	}
 	// 更新仓库指标信息
 	if len(repoMetricList) > 0 {
 		_ = r.repo.AddRepoMetrics(ctx, repoMetricList)
 	}
 	if updateRepo != nil && updateRepoState {
-		// 仓库变更通知
-		go r.Notify(ctx, updateRepo)
 		// 更新仓库信息
 		updateRepo.ID = info.ID
 		if err := r.repo.UpdateRepo(ctx, updateRepo); err != nil {
@@ -340,22 +342,27 @@ func (r *OpenSourceInfo) ParseResult(ctx context.Context, search string, headers
 		return err
 	}
 	for _, item := range result {
-		if item.Owner == nil || item.Owner.URL == "" {
-			continue
-		}
-		owner, err := r.getOwnerInfo(ctx, item.Owner.URL, headers)
-		if err != nil {
-			r.log.Errorf("getOwnerInfo error: %v", err)
-			continue
-		}
-		ownerId, err := r.OwnerInfoChange(ctx, owner)
-		if err != nil {
-			r.log.Errorf("change OwnerInfo error: %v", err)
-			continue
-		}
-		if err = r.RepoInfoChange(ctx, item, ownerId, owner.AvatarURL); err != nil {
-			r.log.Errorf("change RepoInfo error: %v", err)
-			continue
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			if item.Owner == nil || item.Owner.URL == "" {
+				continue
+			}
+			owner, err := r.getOwnerInfo(ctx, item.Owner.URL, headers)
+			if err != nil {
+				r.log.Errorf("getOwnerInfo error: %v", err)
+				continue
+			}
+			ownerId, err := r.OwnerInfoChange(ctx, owner)
+			if err != nil {
+				r.log.Errorf("change OwnerInfo error: %v", err)
+				continue
+			}
+			if err = r.RepoInfoChange(ctx, item, ownerId, owner.AvatarURL); err != nil {
+				r.log.Errorf("change RepoInfo error: %v", err)
+				continue
+			}
 		}
 	}
 	return nil
@@ -417,20 +424,27 @@ func (r *OpenSourceInfo) Collect() {
 	fmt.Println("========================================:  ", r.Page)
 	language := []string{"Python", "JavaScript", "Java", "C", "C++", "C#", "PHP", "Ruby", "Go", "Rust", "TypeScript"}
 	for _, item := range language {
-		r.log.Infof("language: %v", item)
-		if err := r.ParseResult(context.TODO(), "language:"+item, http.Header{
-			"Authorization": []string{"token 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"},
-			"Accept":        []string{"application/json"},
-		}, r.Page, 1000); err != nil {
-			r.log.Errorf("parse result error: %v", err)
-			continue
+		select {
+		case <-r.Ctx.Done():
+			return
+		default:
+			r.log.Infof("language: %v", item)
+			if err := r.ParseResult(r.Ctx, "language:"+item, http.Header{
+				"Authorization": []string{fmt.Sprintf("token %s", r.ccf.Token)},
+				"Accept":        []string{"application/json"},
+			}, r.Page, 1000); err != nil {
+				r.log.Errorf("parse result error: %v", err)
+				continue
+			}
 		}
 	}
-
 }
 
 // 仓库发生变更通知收藏该仓库的用户
 func (r *OpenSourceInfo) Notify(ctx context.Context, repo *domain.RepoInfo) {
+	if !r.ec.Enable {
+		return
+	}
 	// 查询所有收藏该仓库的用户
 	info, err := r.repo.FindRepoFavor(ctx, 0, 0, repo.ID, &domain.Page{
 		PageNum:  1,

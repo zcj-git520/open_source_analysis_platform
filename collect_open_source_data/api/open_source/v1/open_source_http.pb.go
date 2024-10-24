@@ -47,7 +47,7 @@ func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r.GET("/repo/category", _OpenSource_GetRepoCategory0_HTTP_Handler(srv))
 	r.GET("/repo/bycategory", _OpenSource_GetRepoByCategory0_HTTP_Handler(srv))
 	r.GET("/repo/measure", _OpenSource_GetRepoMeasure0_HTTP_Handler(srv))
-	r.PUT("/repo/fav", _OpenSource_RepoFav0_HTTP_Handler(srv))
+	r.POST("/repo/fav", _OpenSource_RepoFav0_HTTP_Handler(srv))
 	r.GET("/repo/fav", _OpenSource_GetRepoFav0_HTTP_Handler(srv))
 }
 
@@ -325,7 +325,7 @@ func (c *OpenSourceHTTPClientImpl) RepoFav(ctx context.Context, in *RepoFavReque
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationOpenSourceRepoFav))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -10,6 +10,7 @@ message Bootstrap {
   Data data = 2;
   Auth auth = 3;
   Email email = 4;
+  collect collect = 5;
 }
 
 message Server {
@@ -55,4 +56,10 @@ message Email{
   int32 smtp_port = 3;
   string smtp_username = 4;
   string smtp_password =5;
+  bool enable = 6;
+}
+
+message collect{
+  bool enable = 1;
+  string token = 2;
 }

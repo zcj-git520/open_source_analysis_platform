@@ -48,7 +48,7 @@ service OpenSource {
 
 	rpc RepoFav (RepoFavRequest) returns (RepoFavReply){
 			option (google.api.http) = {
-      put: "/repo/fav"
+      post: "/repo/fav"
 			body: "*"
     };
 	}

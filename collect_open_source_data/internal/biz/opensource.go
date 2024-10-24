@@ -54,13 +54,16 @@ type OpenSourceInfo struct {
 	repo OpenSourceRepo
 	log  *log.Helper
 	ec   *conf.Email
+	ccf  *conf.Collect
+	Ctx  context.Context
 	Page int
 }
 
-func NewOpenSourceInfo(repo OpenSourceRepo, email *conf.Email, logger log.Logger) *OpenSourceInfo {
+func NewOpenSourceInfo(repo OpenSourceRepo, email *conf.Email, ccf *conf.Collect, logger log.Logger) *OpenSourceInfo {
 	return &OpenSourceInfo{
 		repo: repo,
 		ec:   email,
+		ccf:  ccf,
 		log:  log.NewHelper(logger),
 	}
 }

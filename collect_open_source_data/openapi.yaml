@@ -194,7 +194,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.RepoReply'
-        put:
+        post:
             tags:
                 - OpenSource
             operationId: OpenSource_RepoFav
