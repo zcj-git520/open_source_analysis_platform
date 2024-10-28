@@ -58,6 +58,24 @@ service OpenSource {
       get: "/repo/fav"
     };
 	}
+	rpc GetScreenLanguageCount (google.protobuf.Empty) returns (ScreenLanguageCountReply){
+		option (google.api.http) = {
+      get: "/screen/language/count"
+    };
+	}
+}
+
+message ScreenLanguageCountReply {
+	message languageCount {
+		// 语言id
+		int64  LanguageID = 1;
+		// 语言名称
+		string LanguageName = 2;
+		// 仓库数量
+		int64 count = 3;
+	}
+	// 语言仓库数量
+	repeated languageCount languageCounts = 1;
 }
 
 message RepoFavListRequest{

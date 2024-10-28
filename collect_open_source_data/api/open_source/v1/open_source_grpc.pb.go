@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,14 +20,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OpenSource_GetLanguage_FullMethodName       = "/open_source.v1.OpenSource/GetLanguage"
-	OpenSource_GetOwner_FullMethodName          = "/open_source.v1.OpenSource/GetOwner"
-	OpenSource_GetRepo_FullMethodName           = "/open_source.v1.OpenSource/GetRepo"
-	OpenSource_GetRepoCategory_FullMethodName   = "/open_source.v1.OpenSource/GetRepoCategory"
-	OpenSource_GetRepoByCategory_FullMethodName = "/open_source.v1.OpenSource/GetRepoByCategory"
-	OpenSource_GetRepoMeasure_FullMethodName    = "/open_source.v1.OpenSource/GetRepoMeasure"
-	OpenSource_RepoFav_FullMethodName           = "/open_source.v1.OpenSource/RepoFav"
-	OpenSource_GetRepoFav_FullMethodName        = "/open_source.v1.OpenSource/GetRepoFav"
+	OpenSource_GetLanguage_FullMethodName            = "/open_source.v1.OpenSource/GetLanguage"
+	OpenSource_GetOwner_FullMethodName               = "/open_source.v1.OpenSource/GetOwner"
+	OpenSource_GetRepo_FullMethodName                = "/open_source.v1.OpenSource/GetRepo"
+	OpenSource_GetRepoCategory_FullMethodName        = "/open_source.v1.OpenSource/GetRepoCategory"
+	OpenSource_GetRepoByCategory_FullMethodName      = "/open_source.v1.OpenSource/GetRepoByCategory"
+	OpenSource_GetRepoMeasure_FullMethodName         = "/open_source.v1.OpenSource/GetRepoMeasure"
+	OpenSource_RepoFav_FullMethodName                = "/open_source.v1.OpenSource/RepoFav"
+	OpenSource_GetRepoFav_FullMethodName             = "/open_source.v1.OpenSource/GetRepoFav"
+	OpenSource_GetScreenLanguageCount_FullMethodName = "/open_source.v1.OpenSource/GetScreenLanguageCount"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -41,6 +43,7 @@ type OpenSourceClient interface {
 	GetRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error)
 	RepoFav(ctx context.Context, in *RepoFavRequest, opts ...grpc.CallOption) (*RepoFavReply, error)
 	GetRepoFav(ctx context.Context, in *RepoFavListRequest, opts ...grpc.CallOption) (*RepoReply, error)
+	GetScreenLanguageCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLanguageCountReply, error)
 }
 
 type openSourceClient struct {
@@ -131,6 +134,16 @@ func (c *openSourceClient) GetRepoFav(ctx context.Context, in *RepoFavListReques
 	return out, nil
 }
 
+func (c *openSourceClient) GetScreenLanguageCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLanguageCountReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ScreenLanguageCountReply)
+	err := c.cc.Invoke(ctx, OpenSource_GetScreenLanguageCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -143,6 +156,7 @@ type OpenSourceServer interface {
 	GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
 	RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error)
 	GetRepoFav(context.Context, *RepoFavListRequest) (*RepoReply, error)
+	GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -176,6 +190,9 @@ func (UnimplementedOpenSourceServer) RepoFav(context.Context, *RepoFavRequest) (
 }
 func (UnimplementedOpenSourceServer) GetRepoFav(context.Context, *RepoFavListRequest) (*RepoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRepoFav not implemented")
+}
+func (UnimplementedOpenSourceServer) GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetScreenLanguageCount not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -342,6 +359,24 @@ func _OpenSource_GetRepoFav_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_GetScreenLanguageCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).GetScreenLanguageCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_GetScreenLanguageCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).GetScreenLanguageCount(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -380,6 +415,10 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRepoFav",
 			Handler:    _OpenSource_GetRepoFav_Handler,
+		},
+		{
+			MethodName: "GetScreenLanguageCount",
+			Handler:    _OpenSource_GetScreenLanguageCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

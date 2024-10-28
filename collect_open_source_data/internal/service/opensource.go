@@ -4,6 +4,7 @@ import (
 	pb "collect_open_source_data/api/open_source/v1"
 	"collect_open_source_data/internal/biz"
 	"context"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type OpenSourceService struct {
@@ -47,4 +48,8 @@ func (s *OpenSourceService) RepoFav(ctx context.Context, req *pb.RepoFavRequest)
 
 func (s *OpenSourceService) GetRepoFav(ctx context.Context, req *pb.RepoFavListRequest) (*pb.RepoReply, error) {
 	return s.uc.GetRepoFav(ctx, req)
+}
+
+func (s *OpenSourceService) GetScreenLanguageCount(ctx context.Context, req *emptypb.Empty) (*pb.ScreenLanguageCountReply, error) {
+	return s.uc.GetScreenLanguageCount(ctx, req)
 }

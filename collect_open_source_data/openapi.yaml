@@ -254,6 +254,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.RepoMeasureReply'
+    /screen/language/count:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetScreenLanguageCount
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.ScreenLanguageCountReply'
 components:
     schemas:
         open_source.v1.LanguageInfo:
@@ -600,6 +612,26 @@ components:
                     allOf:
                         - $ref: '#/components/schemas/open_source.v1.SortOrder'
                     description: 排序条件
+        open_source.v1.ScreenLanguageCountReply:
+            type: object
+            properties:
+                languageCounts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.ScreenLanguageCountReply_languageCount'
+                    description: 语言仓库数量
+        open_source.v1.ScreenLanguageCountReply_languageCount:
+            type: object
+            properties:
+                LanguageID:
+                    type: string
+                    description: 语言id
+                LanguageName:
+                    type: string
+                    description: 语言名称
+                count:
+                    type: string
+                    description: 仓库数量
         open_source.v1.SortOrder:
             type: object
             properties:

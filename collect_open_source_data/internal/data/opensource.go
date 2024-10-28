@@ -334,3 +334,9 @@ func (o *openSourceInfoRepo) UpdateRepoFavor(ctx context.Context, favorId int64,
 	return o.data.db.Model(&domain.RepoFav{}).Where("id = ?", favorId).Updates(map[string]any{"status": isFavor,
 		"updated_at": time.Now()}).Error
 }
+
+func (o *openSourceInfoRepo) RepoCountByLanguage(ctx context.Context, languageId int64) (int64, error) {
+	var count int64
+	err := o.data.db.Where("language_id = ?", languageId).Find(&[]*domain.RepoInfo{}).Count(&count).Error
+	return count, err
+}

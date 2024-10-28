@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -26,6 +27,7 @@ const OperationOpenSourceGetRepoByCategory = "/open_source.v1.OpenSource/GetRepo
 const OperationOpenSourceGetRepoCategory = "/open_source.v1.OpenSource/GetRepoCategory"
 const OperationOpenSourceGetRepoFav = "/open_source.v1.OpenSource/GetRepoFav"
 const OperationOpenSourceGetRepoMeasure = "/open_source.v1.OpenSource/GetRepoMeasure"
+const OperationOpenSourceGetScreenLanguageCount = "/open_source.v1.OpenSource/GetScreenLanguageCount"
 const OperationOpenSourceRepoFav = "/open_source.v1.OpenSource/RepoFav"
 
 type OpenSourceHTTPServer interface {
@@ -36,6 +38,7 @@ type OpenSourceHTTPServer interface {
 	GetRepoCategory(context.Context, *RepoCategoryRequest) (*RepoCategoryReply, error)
 	GetRepoFav(context.Context, *RepoFavListRequest) (*RepoReply, error)
 	GetRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
+	GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error)
 	RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error)
 }
 
@@ -49,6 +52,7 @@ func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r.GET("/repo/measure", _OpenSource_GetRepoMeasure0_HTTP_Handler(srv))
 	r.POST("/repo/fav", _OpenSource_RepoFav0_HTTP_Handler(srv))
 	r.GET("/repo/fav", _OpenSource_GetRepoFav0_HTTP_Handler(srv))
+	r.GET("/screen/language/count", _OpenSource_GetScreenLanguageCount0_HTTP_Handler(srv))
 }
 
 func _OpenSource_GetLanguage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
@@ -209,6 +213,25 @@ func _OpenSource_GetRepoFav0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx htt
 	}
 }
 
+func _OpenSource_GetScreenLanguageCount0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOpenSourceGetScreenLanguageCount)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetScreenLanguageCount(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ScreenLanguageCountReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type OpenSourceHTTPClient interface {
 	GetLanguage(ctx context.Context, req *LanguageRequest, opts ...http.CallOption) (rsp *LanguageReply, err error)
 	GetOwner(ctx context.Context, req *OwnerRequest, opts ...http.CallOption) (rsp *OwnerReply, err error)
@@ -217,6 +240,7 @@ type OpenSourceHTTPClient interface {
 	GetRepoCategory(ctx context.Context, req *RepoCategoryRequest, opts ...http.CallOption) (rsp *RepoCategoryReply, err error)
 	GetRepoFav(ctx context.Context, req *RepoFavListRequest, opts ...http.CallOption) (rsp *RepoReply, err error)
 	GetRepoMeasure(ctx context.Context, req *RepoMeasureRequest, opts ...http.CallOption) (rsp *RepoMeasureReply, err error)
+	GetScreenLanguageCount(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *ScreenLanguageCountReply, err error)
 	RepoFav(ctx context.Context, req *RepoFavRequest, opts ...http.CallOption) (rsp *RepoFavReply, err error)
 }
 
@@ -311,6 +335,19 @@ func (c *OpenSourceHTTPClientImpl) GetRepoMeasure(ctx context.Context, in *RepoM
 	pattern := "/repo/measure"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOpenSourceGetRepoMeasure))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *OpenSourceHTTPClientImpl) GetScreenLanguageCount(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*ScreenLanguageCountReply, error) {
+	var out ScreenLanguageCountReply
+	pattern := "/screen/language/count"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationOpenSourceGetScreenLanguageCount))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

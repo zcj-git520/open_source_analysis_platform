@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"time"
 )
 
@@ -48,6 +49,7 @@ type OpenSourceRepo interface {
 	UpdateRepoFavor(ctx context.Context, favorId int64, isFavor int32) error
 	UpdateRepoFaveCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
 	FindRepoFaveByCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
+	RepoCountByLanguage(ctx context.Context, languageId int64) (int64, error)
 }
 
 type OpenSourceInfo struct {
@@ -383,4 +385,27 @@ func (r *OpenSourceInfo) GetRepoFav(ctx context.Context, req *pb.RepoFavListRequ
 		Repos:    data,
 	}, nil
 
+}
+
+func (r *OpenSourceInfo) GetScreenLanguageCount(ctx context.Context, req *emptypb.Empty) (*pb.ScreenLanguageCountReply, error) {
+	// 获取所有语言
+	langeInfo, err := r.repo.FindLanguage(ctx, "", 0, &domain.Page{PageSize: 1000})
+	if err != nil {
+		return nil, err
+	}
+	var data []*pb.ScreenLanguageCountReplyLanguageCount
+	for _, item := range langeInfo {
+		count, err := r.repo.RepoCountByLanguage(ctx, item.ID)
+		if err != nil {
+			continue
+		}
+		data = append(data, &pb.ScreenLanguageCountReplyLanguageCount{
+			LanguageName: item.Name,
+			LanguageID:   item.ID,
+			Count:        count,
+		})
+	}
+	return &pb.ScreenLanguageCountReply{
+		LanguageCounts: data,
+	}, nil
 }

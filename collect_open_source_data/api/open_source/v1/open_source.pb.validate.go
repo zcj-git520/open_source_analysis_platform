@@ -35,6 +35,142 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ScreenLanguageCountReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ScreenLanguageCountReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScreenLanguageCountReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ScreenLanguageCountReplyMultiError, or nil if none found.
+func (m *ScreenLanguageCountReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScreenLanguageCountReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetLanguageCounts() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ScreenLanguageCountReplyValidationError{
+						field:  fmt.Sprintf("LanguageCounts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ScreenLanguageCountReplyValidationError{
+						field:  fmt.Sprintf("LanguageCounts[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ScreenLanguageCountReplyValidationError{
+					field:  fmt.Sprintf("LanguageCounts[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ScreenLanguageCountReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScreenLanguageCountReplyMultiError is an error wrapping multiple validation
+// errors returned by ScreenLanguageCountReply.ValidateAll() if the designated
+// constraints aren't met.
+type ScreenLanguageCountReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScreenLanguageCountReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScreenLanguageCountReplyMultiError) AllErrors() []error { return m }
+
+// ScreenLanguageCountReplyValidationError is the validation error returned by
+// ScreenLanguageCountReply.Validate if the designated constraints aren't met.
+type ScreenLanguageCountReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScreenLanguageCountReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScreenLanguageCountReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScreenLanguageCountReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScreenLanguageCountReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScreenLanguageCountReplyValidationError) ErrorName() string {
+	return "ScreenLanguageCountReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ScreenLanguageCountReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScreenLanguageCountReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScreenLanguageCountReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScreenLanguageCountReplyValidationError{}
+
 // Validate checks the field values on RepoFavListRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -2756,3 +2892,114 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RepoCategoryReplyValidationError{}
+
+// Validate checks the field values on ScreenLanguageCountReplyLanguageCount
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *ScreenLanguageCountReplyLanguageCount) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ScreenLanguageCountReplyLanguageCount
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// ScreenLanguageCountReplyLanguageCountMultiError, or nil if none found.
+func (m *ScreenLanguageCountReplyLanguageCount) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ScreenLanguageCountReplyLanguageCount) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for LanguageID
+
+	// no validation rules for LanguageName
+
+	// no validation rules for Count
+
+	if len(errors) > 0 {
+		return ScreenLanguageCountReplyLanguageCountMultiError(errors)
+	}
+
+	return nil
+}
+
+// ScreenLanguageCountReplyLanguageCountMultiError is an error wrapping
+// multiple validation errors returned by
+// ScreenLanguageCountReplyLanguageCount.ValidateAll() if the designated
+// constraints aren't met.
+type ScreenLanguageCountReplyLanguageCountMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ScreenLanguageCountReplyLanguageCountMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ScreenLanguageCountReplyLanguageCountMultiError) AllErrors() []error { return m }
+
+// ScreenLanguageCountReplyLanguageCountValidationError is the validation error
+// returned by ScreenLanguageCountReplyLanguageCount.Validate if the
+// designated constraints aren't met.
+type ScreenLanguageCountReplyLanguageCountValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ScreenLanguageCountReplyLanguageCountValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ScreenLanguageCountReplyLanguageCountValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ScreenLanguageCountReplyLanguageCountValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ScreenLanguageCountReplyLanguageCountValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ScreenLanguageCountReplyLanguageCountValidationError) ErrorName() string {
+	return "ScreenLanguageCountReplyLanguageCountValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ScreenLanguageCountReplyLanguageCountValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sScreenLanguageCountReplyLanguageCount.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ScreenLanguageCountReplyLanguageCountValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ScreenLanguageCountReplyLanguageCountValidationError{}
