@@ -63,6 +63,16 @@ service OpenSource {
       get: "/screen/language/count"
     };
 	}
+	rpc GetScreenCategoryCount (google.protobuf.Empty) returns (ScreenCategoryCountReply){
+		option (google.api.http) = {
+			get: "/screen/category/count"
+		};
+	}
+	rpc GetScreenRepoMeasure (RepoMeasureRequest) returns (RepoMeasureReply){
+		option (google.api.http) = {
+      get: "/screen/repo/measure"
+    };
+	}
 }
 
 message ScreenLanguageCountReply {
@@ -76,6 +86,19 @@ message ScreenLanguageCountReply {
 	}
 	// 语言仓库数量
 	repeated languageCount languageCounts = 1;
+}
+
+message ScreenCategoryCountReply {
+	message categoryCount {
+		// 分类id
+    int64  CategoryID = 1;
+    // 分类名称
+    string CategoryName = 2;
+    // 仓库数量
+    int64 count = 3;
+  }
+  // 语言仓库数量
+  repeated categoryCount categoryCounts = 1;
 }
 
 message RepoFavListRequest{

@@ -53,3 +53,7 @@ func (s *OpenSourceService) GetRepoFav(ctx context.Context, req *pb.RepoFavListR
 func (s *OpenSourceService) GetScreenLanguageCount(ctx context.Context, req *emptypb.Empty) (*pb.ScreenLanguageCountReply, error) {
 	return s.uc.GetScreenLanguageCount(ctx, req)
 }
+
+func (s *OpenSourceService) GetScreenCategoryCount(ctx context.Context, req *emptypb.Empty) (*pb.ScreenCategoryCountReply, error) {
+	return s.uc.GetScreenCategoryCount(ctx, req)
+}

@@ -254,6 +254,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.RepoMeasureReply'
+    /screen/category/count:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetScreenCategoryCount
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.ScreenCategoryCountReply'
     /screen/language/count:
         get:
             tags:
@@ -612,6 +624,26 @@ components:
                     allOf:
                         - $ref: '#/components/schemas/open_source.v1.SortOrder'
                     description: 排序条件
+        open_source.v1.ScreenCategoryCountReply:
+            type: object
+            properties:
+                categoryCounts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.ScreenCategoryCountReply_categoryCount'
+                    description: 语言仓库数量
+        open_source.v1.ScreenCategoryCountReply_categoryCount:
+            type: object
+            properties:
+                CategoryID:
+                    type: string
+                    description: 分类id
+                CategoryName:
+                    type: string
+                    description: 分类名称
+                count:
+                    type: string
+                    description: 仓库数量
         open_source.v1.ScreenLanguageCountReply:
             type: object
             properties:

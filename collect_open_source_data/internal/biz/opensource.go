@@ -409,3 +409,27 @@ func (r *OpenSourceInfo) GetScreenLanguageCount(ctx context.Context, req *emptyp
 		LanguageCounts: data,
 	}, nil
 }
+
+func (r *OpenSourceInfo) GetScreenCategoryCount(ctx context.Context, req *emptypb.Empty) (*pb.ScreenCategoryCountReply, error) {
+	// 获取所有分类
+	cateInfo, err := r.repo.FindRepoCategory(ctx, "", 0, &domain.Page{PageSize: 1000})
+	if err != nil {
+		return nil, err
+	}
+	var data []*pb.ScreenCategoryCountReplyCategoryCount
+	for _, item := range cateInfo {
+		page := &domain.Page{}
+		_, err = r.repo.FindRepoCategoryByCatId(ctx, item.ID, page)
+		if err != nil {
+			continue
+		}
+		data = append(data, &pb.ScreenCategoryCountReplyCategoryCount{
+			CategoryName: item.Name,
+			CategoryID:   item.ID,
+			Count:        page.Total,
+		})
+	}
+	return &pb.ScreenCategoryCountReply{
+		CategoryCounts: data,
+	}, nil
+}

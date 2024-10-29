@@ -29,6 +29,7 @@ const (
 	OpenSource_RepoFav_FullMethodName                = "/open_source.v1.OpenSource/RepoFav"
 	OpenSource_GetRepoFav_FullMethodName             = "/open_source.v1.OpenSource/GetRepoFav"
 	OpenSource_GetScreenLanguageCount_FullMethodName = "/open_source.v1.OpenSource/GetScreenLanguageCount"
+	OpenSource_GetScreenCategoryCount_FullMethodName = "/open_source.v1.OpenSource/GetScreenCategoryCount"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -44,6 +45,7 @@ type OpenSourceClient interface {
 	RepoFav(ctx context.Context, in *RepoFavRequest, opts ...grpc.CallOption) (*RepoFavReply, error)
 	GetRepoFav(ctx context.Context, in *RepoFavListRequest, opts ...grpc.CallOption) (*RepoReply, error)
 	GetScreenLanguageCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLanguageCountReply, error)
+	GetScreenCategoryCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenCategoryCountReply, error)
 }
 
 type openSourceClient struct {
@@ -144,6 +146,16 @@ func (c *openSourceClient) GetScreenLanguageCount(ctx context.Context, in *empty
 	return out, nil
 }
 
+func (c *openSourceClient) GetScreenCategoryCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenCategoryCountReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ScreenCategoryCountReply)
+	err := c.cc.Invoke(ctx, OpenSource_GetScreenCategoryCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -157,6 +169,7 @@ type OpenSourceServer interface {
 	RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error)
 	GetRepoFav(context.Context, *RepoFavListRequest) (*RepoReply, error)
 	GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error)
+	GetScreenCategoryCount(context.Context, *emptypb.Empty) (*ScreenCategoryCountReply, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -193,6 +206,9 @@ func (UnimplementedOpenSourceServer) GetRepoFav(context.Context, *RepoFavListReq
 }
 func (UnimplementedOpenSourceServer) GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetScreenLanguageCount not implemented")
+}
+func (UnimplementedOpenSourceServer) GetScreenCategoryCount(context.Context, *emptypb.Empty) (*ScreenCategoryCountReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetScreenCategoryCount not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -377,6 +393,24 @@ func _OpenSource_GetScreenLanguageCount_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_GetScreenCategoryCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).GetScreenCategoryCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_GetScreenCategoryCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).GetScreenCategoryCount(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -419,6 +453,10 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetScreenLanguageCount",
 			Handler:    _OpenSource_GetScreenLanguageCount_Handler,
+		},
+		{
+			MethodName: "GetScreenCategoryCount",
+			Handler:    _OpenSource_GetScreenCategoryCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
