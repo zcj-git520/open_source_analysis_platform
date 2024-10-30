@@ -73,6 +73,26 @@ service OpenSource {
       get: "/screen/repo/measure"
     };
 	}
+	rpc GetMessage (google.protobuf.Empty) returns (MessageReply){
+		option (google.api.http) = {
+      get: "/message"
+    };
+	}
+}
+
+message  MessageReply {
+	message message {
+		// 消息id
+		int64 messageID = 1;
+		// 消息类型
+		string  messageType = 2;
+		// 消息内容
+		string messageContent = 3;
+		// 消息时间
+		string messageTime = 4;
+	}
+	// 消息列表
+	repeated message messages = 1;
 }
 
 message ScreenLanguageCountReply {

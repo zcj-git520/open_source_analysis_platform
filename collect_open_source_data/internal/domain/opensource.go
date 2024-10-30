@@ -151,3 +151,27 @@ type RepoFav struct {
 func (RepoFav) TableName() string {
 	return "repo_fav"
 }
+
+type MessageType struct {
+	ID   int64  `gorm:"primarykey;type:int" json:"id"`
+	Name string `gorm:"type:varchar(255)" json:"name"` // 消息类型名称
+	Desc string `gorm:"type:text" json:"desc"`         // 消息类型描述
+	Icon string `gorm:"type:varchar(255)" json:"icon"` // 消息类型图标
+}
+
+func (MessageType) TableName() string {
+	return "message_type"
+}
+
+type Message struct {
+	ID     int64     `gorm:"primarykey;type:int" json:"id"`
+	UID    int64     `gorm:"type:int" json:"uid"`        // 用户ID
+	Type   int       `gorm:"type:int" json:"type"`       // 消息类型
+	Msg    string    `gorm:"type:MEDIUMTEXT" json:"msg"` // 消息内容
+	Status int       `gorm:"type:int" json:"status"`     // 消息状态 0: 未读 1: 已读
+	Date   time.Time `gorm:"type:datetime" json:"date"`  // 消息时间
+}
+
+func (Message) TableName() string {
+	return "message"
+}

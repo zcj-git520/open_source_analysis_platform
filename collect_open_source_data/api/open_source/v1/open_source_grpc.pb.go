@@ -30,6 +30,8 @@ const (
 	OpenSource_GetRepoFav_FullMethodName             = "/open_source.v1.OpenSource/GetRepoFav"
 	OpenSource_GetScreenLanguageCount_FullMethodName = "/open_source.v1.OpenSource/GetScreenLanguageCount"
 	OpenSource_GetScreenCategoryCount_FullMethodName = "/open_source.v1.OpenSource/GetScreenCategoryCount"
+	OpenSource_GetScreenRepoMeasure_FullMethodName   = "/open_source.v1.OpenSource/GetScreenRepoMeasure"
+	OpenSource_GetMessage_FullMethodName             = "/open_source.v1.OpenSource/GetMessage"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -46,6 +48,8 @@ type OpenSourceClient interface {
 	GetRepoFav(ctx context.Context, in *RepoFavListRequest, opts ...grpc.CallOption) (*RepoReply, error)
 	GetScreenLanguageCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenLanguageCountReply, error)
 	GetScreenCategoryCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenCategoryCountReply, error)
+	GetScreenRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error)
+	GetMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MessageReply, error)
 }
 
 type openSourceClient struct {
@@ -156,6 +160,26 @@ func (c *openSourceClient) GetScreenCategoryCount(ctx context.Context, in *empty
 	return out, nil
 }
 
+func (c *openSourceClient) GetScreenRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RepoMeasureReply)
+	err := c.cc.Invoke(ctx, OpenSource_GetScreenRepoMeasure_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *openSourceClient) GetMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MessageReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MessageReply)
+	err := c.cc.Invoke(ctx, OpenSource_GetMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -170,6 +194,8 @@ type OpenSourceServer interface {
 	GetRepoFav(context.Context, *RepoFavListRequest) (*RepoReply, error)
 	GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error)
 	GetScreenCategoryCount(context.Context, *emptypb.Empty) (*ScreenCategoryCountReply, error)
+	GetScreenRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
+	GetMessage(context.Context, *emptypb.Empty) (*MessageReply, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -209,6 +235,12 @@ func (UnimplementedOpenSourceServer) GetScreenLanguageCount(context.Context, *em
 }
 func (UnimplementedOpenSourceServer) GetScreenCategoryCount(context.Context, *emptypb.Empty) (*ScreenCategoryCountReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetScreenCategoryCount not implemented")
+}
+func (UnimplementedOpenSourceServer) GetScreenRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetScreenRepoMeasure not implemented")
+}
+func (UnimplementedOpenSourceServer) GetMessage(context.Context, *emptypb.Empty) (*MessageReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMessage not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -411,6 +443,42 @@ func _OpenSource_GetScreenCategoryCount_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_GetScreenRepoMeasure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RepoMeasureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).GetScreenRepoMeasure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_GetScreenRepoMeasure_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).GetScreenRepoMeasure(ctx, req.(*RepoMeasureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OpenSource_GetMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).GetMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_GetMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).GetMessage(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -457,6 +525,14 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetScreenCategoryCount",
 			Handler:    _OpenSource_GetScreenCategoryCount_Handler,
+		},
+		{
+			MethodName: "GetScreenRepoMeasure",
+			Handler:    _OpenSource_GetScreenRepoMeasure_Handler,
+		},
+		{
+			MethodName: "GetMessage",
+			Handler:    _OpenSource_GetMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

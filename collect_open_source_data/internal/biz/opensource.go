@@ -50,6 +50,8 @@ type OpenSourceRepo interface {
 	UpdateRepoFaveCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
 	FindRepoFaveByCache(ctx context.Context, uid int64) ([]*domain.RepoFav, error)
 	RepoCountByLanguage(ctx context.Context, languageId int64) (int64, error)
+	AddMessage(ctx context.Context, message *domain.Message) error
+	FindMessage(ctx context.Context, uid, status int64) ([]*domain.Message, error)
 }
 
 type OpenSourceInfo struct {
@@ -431,5 +433,26 @@ func (r *OpenSourceInfo) GetScreenCategoryCount(ctx context.Context, req *emptyp
 	}
 	return &pb.ScreenCategoryCountReply{
 		CategoryCounts: data,
+	}, nil
+}
+
+func (r *OpenSourceInfo) GetMessage(ctx context.Context, req *emptypb.Empty) (*pb.MessageReply, error) {
+	// 获取uid
+	uid := auth.GetUid(ctx)
+	mesInfo, err := r.repo.FindMessage(ctx, uid, 0)
+	if err != nil {
+		return nil, err
+	}
+	var data []*pb.MessageReplyMessage
+	for _, item := range mesInfo {
+		data = append(data, &pb.MessageReplyMessage{
+			MessageID:      item.ID,
+			MessageType:    "通知",
+			MessageContent: item.Msg,
+			MessageTime:    item.Date.Format(time.DateTime),
+		})
+	}
+	return &pb.MessageReply{
+		Messages: data,
 	}, nil
 }

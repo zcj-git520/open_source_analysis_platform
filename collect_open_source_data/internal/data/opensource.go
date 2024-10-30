@@ -340,3 +340,13 @@ func (o *openSourceInfoRepo) RepoCountByLanguage(ctx context.Context, languageId
 	err := o.data.db.Where("language_id = ?", languageId).Find(&[]*domain.RepoInfo{}).Count(&count).Error
 	return count, err
 }
+
+func (o *openSourceInfoRepo) AddMessage(ctx context.Context, message *domain.Message) error {
+	return o.data.db.Create(message).Error
+}
+
+func (o *openSourceInfoRepo) FindMessage(ctx context.Context, uid, status int64) ([]*domain.Message, error) {
+	var message []*domain.Message
+	err := o.data.db.Where("uid = ?", uid).Where("status = ?", status).Find(&message).Error
+	return message, err
+}

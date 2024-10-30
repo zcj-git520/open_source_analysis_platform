@@ -57,3 +57,7 @@ func (s *OpenSourceService) GetScreenLanguageCount(ctx context.Context, req *emp
 func (s *OpenSourceService) GetScreenCategoryCount(ctx context.Context, req *emptypb.Empty) (*pb.ScreenCategoryCountReply, error) {
 	return s.uc.GetScreenCategoryCount(ctx, req)
 }
+
+func (s *OpenSourceService) GetMessage(ctx context.Context, req *emptypb.Empty) (*pb.MessageReply, error) {
+	return s.uc.GetMessage(ctx, req)
+}

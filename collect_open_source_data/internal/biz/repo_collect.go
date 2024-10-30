@@ -38,6 +38,7 @@ const (
                 <br> 
                 如果您已查看，请无视。
             </td>`
+	MessageTypeNotice = 1 // 通知类型的消息
 )
 
 func (r *OpenSourceInfo) request(method string, url string, headers http.Header, body io.Reader) ([]byte, error) {
@@ -442,9 +443,6 @@ func (r *OpenSourceInfo) Collect() {
 
 // 仓库发生变更通知收藏该仓库的用户
 func (r *OpenSourceInfo) Notify(ctx context.Context, repo *domain.RepoInfo) {
-	if !r.ec.Enable {
-		return
-	}
 	// 查询所有收藏该仓库的用户
 	info, err := r.repo.FindRepoFavor(ctx, 0, 0, repo.ID, &domain.Page{
 		PageNum:  1,
@@ -455,15 +453,24 @@ func (r *OpenSourceInfo) Notify(ctx context.Context, repo *domain.RepoInfo) {
 		return
 	}
 	for _, item := range info {
+		// 将消息插入到信息中
+		_ = r.repo.AddMessage(ctx, &domain.Message{
+			UID:    item.UID,
+			Type:   MessageTypeNotice,
+			Msg:    fmt.Sprintf("仓库 %s 发生变更，请及时关注", repo.Name),
+			Status: 0,
+			Date:   time.Now(),
+		})
 		// 通过uid 查询用户信息
-		email := pkg.NewEmailSMTP(pkg.WithSmtpHost(r.ec.SmtpHost), pkg.WithSmtpPort(int(r.ec.SmtpPort)),
-			pkg.WithSmtpUsername(r.ec.SmtpUsername), pkg.WithSmtpPassword(r.ec.SmtpPassword),
-			pkg.WithFrom(r.ec.From),
-			pkg.WithTo([]string{item.Email}))
-		// 邮件内容
-		if err = email.SendEmailSMTP(RepoChangeSubject, fmt.Sprintf(RepoChangeContent, repo.Name, repo.HtmlURL)); err != nil {
-			r.log.Errorf("email: %s: send email error: %v", item.Email, err)
-			continue
+		if r.ec.Enable {
+			email := pkg.NewEmailSMTP(pkg.WithSmtpHost(r.ec.SmtpHost), pkg.WithSmtpPort(int(r.ec.SmtpPort)),
+				pkg.WithSmtpUsername(r.ec.SmtpUsername), pkg.WithSmtpPassword(r.ec.SmtpPassword),
+				pkg.WithFrom(r.ec.From),
+				pkg.WithTo([]string{item.Email}))
+			// 邮件内容
+			if err = email.SendEmailSMTP(RepoChangeSubject, fmt.Sprintf(RepoChangeContent, repo.Name, repo.HtmlURL)); err != nil {
+				r.log.Errorf("email: %s: send email error: %v", item.Email, err)
+			}
 		}
 	}
 }

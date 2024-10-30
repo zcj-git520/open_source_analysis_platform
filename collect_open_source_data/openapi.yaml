@@ -41,6 +41,18 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.LanguageReply'
+    /message:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetMessage
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.MessageReply'
     /owner:
         get:
             tags:
@@ -278,6 +290,49 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.ScreenLanguageCountReply'
+    /screen/repo/measure:
+        get:
+            tags:
+                - OpenSource
+            operationId: OpenSource_GetScreenRepoMeasure
+            parameters:
+                - name: pageNum
+                  in: query
+                  description: 分页信息
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  description: 每页数量
+                  schema:
+                    type: integer
+                    format: int32
+                - name: type
+                  in: query
+                  description: '指标类型 0: star 1: fork 2: watch 3: issue'
+                  schema:
+                    type: integer
+                    format: int32
+                - name: dateType
+                  in: query
+                  description: '日期类型 0: day 1: week 2: month'
+                  schema:
+                    type: integer
+                    format: int32
+                - name: num
+                  in: query
+                  description: 天数
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/open_source.v1.RepoMeasureReply'
 components:
     schemas:
         open_source.v1.LanguageInfo:
@@ -319,6 +374,29 @@ components:
                     items:
                         $ref: '#/components/schemas/open_source.v1.LanguageInfo'
                     description: 语言信息
+        open_source.v1.MessageReply:
+            type: object
+            properties:
+                messages:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/open_source.v1.MessageReply_message'
+                    description: 消息列表
+        open_source.v1.MessageReply_message:
+            type: object
+            properties:
+                messageID:
+                    type: string
+                    description: 消息id
+                messageType:
+                    type: string
+                    description: 消息类型
+                messageContent:
+                    type: string
+                    description: 消息内容
+                messageTime:
+                    type: string
+                    description: 消息时间
         open_source.v1.OwnerInfo:
             type: object
             properties:

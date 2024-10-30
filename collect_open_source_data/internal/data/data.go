@@ -45,7 +45,7 @@ func NewDB(c *conf.Data) *gorm.DB {
 		//panic("failed to connect database")
 	}
 	_ = db.AutoMigrate(&domain.RepoInfo{}, &domain.Language{}, &domain.Owner{}, &domain.RepoCategory{},
-		domain.RepoCategoryId{}, &domain.RepoMetrics{}, &domain.RepoFav{})
+		domain.RepoCategoryId{}, &domain.RepoMetrics{}, &domain.RepoFav{}, &domain.MessageType{}, &domain.Message{})
 	return db
 }
 
