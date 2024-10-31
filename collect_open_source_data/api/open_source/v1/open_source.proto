@@ -78,6 +78,16 @@ service OpenSource {
       get: "/message"
     };
 	}
+	rpc UpdateMessage (UpdateMessageRequest) returns (google.protobuf.Empty){
+		option (google.api.http) = {
+			put: "/message"
+			body: "*"
+		};
+	}
+}
+
+message UpdateMessageRequest {
+	repeated int64 messageIDs = 1;
 }
 
 message  MessageReply {

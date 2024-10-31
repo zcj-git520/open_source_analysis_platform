@@ -52,6 +52,7 @@ type OpenSourceRepo interface {
 	RepoCountByLanguage(ctx context.Context, languageId int64) (int64, error)
 	AddMessage(ctx context.Context, message *domain.Message) error
 	FindMessage(ctx context.Context, uid, status int64) ([]*domain.Message, error)
+	UpdateMessage(ctx context.Context, msgIds []int64, uid int64) error
 }
 
 type OpenSourceInfo struct {
@@ -455,4 +456,14 @@ func (r *OpenSourceInfo) GetMessage(ctx context.Context, req *emptypb.Empty) (*p
 	return &pb.MessageReply{
 		Messages: data,
 	}, nil
+}
+
+func (r *OpenSourceInfo) UpdateMessage(ctx context.Context, req *pb.UpdateMessageRequest) (*emptypb.Empty, error) {
+	// 获取用户的的uid
+	uid := auth.GetUid(ctx)
+	// 更新消息的状态
+	if err := r.repo.UpdateMessage(ctx, req.MessageIDs, uid); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
 }

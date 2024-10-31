@@ -32,6 +32,7 @@ const (
 	OpenSource_GetScreenCategoryCount_FullMethodName = "/open_source.v1.OpenSource/GetScreenCategoryCount"
 	OpenSource_GetScreenRepoMeasure_FullMethodName   = "/open_source.v1.OpenSource/GetScreenRepoMeasure"
 	OpenSource_GetMessage_FullMethodName             = "/open_source.v1.OpenSource/GetMessage"
+	OpenSource_UpdateMessage_FullMethodName          = "/open_source.v1.OpenSource/UpdateMessage"
 )
 
 // OpenSourceClient is the client API for OpenSource service.
@@ -50,6 +51,7 @@ type OpenSourceClient interface {
 	GetScreenCategoryCount(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ScreenCategoryCountReply, error)
 	GetScreenRepoMeasure(ctx context.Context, in *RepoMeasureRequest, opts ...grpc.CallOption) (*RepoMeasureReply, error)
 	GetMessage(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MessageReply, error)
+	UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type openSourceClient struct {
@@ -180,6 +182,16 @@ func (c *openSourceClient) GetMessage(ctx context.Context, in *emptypb.Empty, op
 	return out, nil
 }
 
+func (c *openSourceClient) UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OpenSource_UpdateMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OpenSourceServer is the server API for OpenSource service.
 // All implementations must embed UnimplementedOpenSourceServer
 // for forward compatibility.
@@ -196,6 +208,7 @@ type OpenSourceServer interface {
 	GetScreenCategoryCount(context.Context, *emptypb.Empty) (*ScreenCategoryCountReply, error)
 	GetScreenRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
 	GetMessage(context.Context, *emptypb.Empty) (*MessageReply, error)
+	UpdateMessage(context.Context, *UpdateMessageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOpenSourceServer()
 }
 
@@ -241,6 +254,9 @@ func (UnimplementedOpenSourceServer) GetScreenRepoMeasure(context.Context, *Repo
 }
 func (UnimplementedOpenSourceServer) GetMessage(context.Context, *emptypb.Empty) (*MessageReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMessage not implemented")
+}
+func (UnimplementedOpenSourceServer) UpdateMessage(context.Context, *UpdateMessageRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMessage not implemented")
 }
 func (UnimplementedOpenSourceServer) mustEmbedUnimplementedOpenSourceServer() {}
 func (UnimplementedOpenSourceServer) testEmbeddedByValue()                    {}
@@ -479,6 +495,24 @@ func _OpenSource_GetMessage_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OpenSource_UpdateMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OpenSourceServer).UpdateMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OpenSource_UpdateMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OpenSourceServer).UpdateMessage(ctx, req.(*UpdateMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OpenSource_ServiceDesc is the grpc.ServiceDesc for OpenSource service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -533,6 +567,10 @@ var OpenSource_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMessage",
 			Handler:    _OpenSource_GetMessage_Handler,
+		},
+		{
+			MethodName: "UpdateMessage",
+			Handler:    _OpenSource_UpdateMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

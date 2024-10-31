@@ -53,6 +53,20 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/open_source.v1.MessageReply'
+        put:
+            tags:
+                - OpenSource
+            operationId: OpenSource_UpdateMessage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/open_source.v1.UpdateMessageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /owner:
         get:
             tags:
@@ -753,5 +767,12 @@ components:
                     type: string
                     description: 排序字段
             description: 排序条件
+        open_source.v1.UpdateMessageRequest:
+            type: object
+            properties:
+                messageIDs:
+                    type: array
+                    items:
+                        type: string
 tags:
     - name: OpenSource

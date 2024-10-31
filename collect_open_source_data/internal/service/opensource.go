@@ -61,3 +61,7 @@ func (s *OpenSourceService) GetScreenCategoryCount(ctx context.Context, req *emp
 func (s *OpenSourceService) GetMessage(ctx context.Context, req *emptypb.Empty) (*pb.MessageReply, error) {
 	return s.uc.GetMessage(ctx, req)
 }
+
+func (s *OpenSourceService) UpdateMessage(ctx context.Context, req *pb.UpdateMessageRequest) (*emptypb.Empty, error) {
+	return s.uc.UpdateMessage(ctx, req)
+}

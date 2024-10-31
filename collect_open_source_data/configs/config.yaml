@@ -26,4 +26,4 @@ email:
   smtp_password: "dkcgahsacpdcbdjg"
 collect:
   enable: false
-  token: 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
+  token: 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

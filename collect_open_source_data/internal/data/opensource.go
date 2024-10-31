@@ -347,6 +347,11 @@ func (o *openSourceInfoRepo) AddMessage(ctx context.Context, message *domain.Mes
 
 func (o *openSourceInfoRepo) FindMessage(ctx context.Context, uid, status int64) ([]*domain.Message, error) {
 	var message []*domain.Message
-	err := o.data.db.Where("uid = ?", uid).Where("status = ?", status).Find(&message).Error
+	err := o.data.db.Where("uid = ?", uid).Where("status = ?", status).Order("date DESC").Find(&message).Error
 	return message, err
+}
+
+func (o *openSourceInfoRepo) UpdateMessage(ctx context.Context, msgIds []int64, uid int64) error {
+	return o.data.db.Model(&domain.Message{}).Where("uid = ?", uid).Where("id in (?)", msgIds).
+		Updates(map[string]any{"status": 1}).Error
 }

@@ -116,6 +116,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 	whiteList["/open_source.v1.OpenSource/RepoFav"] = struct{}{}
 	whiteList["/open_source.v1.OpenSource/GetRepoFav"] = struct{}{}
 	whiteList["/open_source.v1.OpenSource/GetMessage"] = struct{}{}
+	whiteList["/open_source.v1.OpenSource/UpdateMessage"] = struct{}{}
 	return func(ctx context.Context, operation string) bool {
 		if _, ok := whiteList[operation]; ok {
 			return true

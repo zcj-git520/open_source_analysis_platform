@@ -32,6 +32,7 @@ const OperationOpenSourceGetScreenCategoryCount = "/open_source.v1.OpenSource/Ge
 const OperationOpenSourceGetScreenLanguageCount = "/open_source.v1.OpenSource/GetScreenLanguageCount"
 const OperationOpenSourceGetScreenRepoMeasure = "/open_source.v1.OpenSource/GetScreenRepoMeasure"
 const OperationOpenSourceRepoFav = "/open_source.v1.OpenSource/RepoFav"
+const OperationOpenSourceUpdateMessage = "/open_source.v1.OpenSource/UpdateMessage"
 
 type OpenSourceHTTPServer interface {
 	GetLanguage(context.Context, *LanguageRequest) (*LanguageReply, error)
@@ -46,6 +47,7 @@ type OpenSourceHTTPServer interface {
 	GetScreenLanguageCount(context.Context, *emptypb.Empty) (*ScreenLanguageCountReply, error)
 	GetScreenRepoMeasure(context.Context, *RepoMeasureRequest) (*RepoMeasureReply, error)
 	RepoFav(context.Context, *RepoFavRequest) (*RepoFavReply, error)
+	UpdateMessage(context.Context, *UpdateMessageRequest) (*emptypb.Empty, error)
 }
 
 func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
@@ -62,6 +64,7 @@ func RegisterOpenSourceHTTPServer(s *http.Server, srv OpenSourceHTTPServer) {
 	r.GET("/screen/category/count", _OpenSource_GetScreenCategoryCount0_HTTP_Handler(srv))
 	r.GET("/screen/repo/measure", _OpenSource_GetScreenRepoMeasure0_HTTP_Handler(srv))
 	r.GET("/message", _OpenSource_GetMessage0_HTTP_Handler(srv))
+	r.PUT("/message", _OpenSource_UpdateMessage0_HTTP_Handler(srv))
 }
 
 func _OpenSource_GetLanguage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
@@ -298,6 +301,28 @@ func _OpenSource_GetMessage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx htt
 	}
 }
 
+func _OpenSource_UpdateMessage0_HTTP_Handler(srv OpenSourceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateMessageRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOpenSourceUpdateMessage)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateMessage(ctx, req.(*UpdateMessageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type OpenSourceHTTPClient interface {
 	GetLanguage(ctx context.Context, req *LanguageRequest, opts ...http.CallOption) (rsp *LanguageReply, err error)
 	GetMessage(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *MessageReply, err error)
@@ -311,6 +336,7 @@ type OpenSourceHTTPClient interface {
 	GetScreenLanguageCount(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *ScreenLanguageCountReply, err error)
 	GetScreenRepoMeasure(ctx context.Context, req *RepoMeasureRequest, opts ...http.CallOption) (rsp *RepoMeasureReply, err error)
 	RepoFav(ctx context.Context, req *RepoFavRequest, opts ...http.CallOption) (rsp *RepoFavReply, err error)
+	UpdateMessage(ctx context.Context, req *UpdateMessageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type OpenSourceHTTPClientImpl struct {
@@ -471,6 +497,19 @@ func (c *OpenSourceHTTPClientImpl) RepoFav(ctx context.Context, in *RepoFavReque
 	opts = append(opts, http.Operation(OperationOpenSourceRepoFav))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *OpenSourceHTTPClientImpl) UpdateMessage(ctx context.Context, in *UpdateMessageRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/message"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationOpenSourceUpdateMessage))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
